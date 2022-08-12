@@ -3,11 +3,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import 'package:video/search/search.dart';
 import 'package:video_player/video_player.dart';
 
+import '../cliper/left_border_cliper.dart';
+import '../cliper/right_border_cliper.dart';
 import '../helper/file.dart';
 import '../helper/files.dart';
 
@@ -31,6 +35,8 @@ class _Play_videoState extends State<Play_video> {
   var f;
   late int index;
   bool left = false;
+  bool background_play = false;
+  bool lock = false;
 
   void _load_video(String v_videoPath) {
     f = File(v_videoPath);
@@ -74,6 +80,7 @@ class _Play_videoState extends State<Play_video> {
       //  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
       index = widget.index;
     });
+    defaultsorenatation();
     _onControllerChange(widget.file[index].v_videoPath);
     super.initState();
   }
@@ -90,20 +97,11 @@ class _Play_videoState extends State<Play_video> {
   @override
   void dispose() {
     super.dispose();
-    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // if(!background_play)
+    defaultsorenatation();
     _controller!.dispose();
   }
-  // void didUpdateWidget(VideoWidget oldWidget) {
-  //   if (oldWidget.play != widget.play) {
-  //     if (widget.play) {
-  //       _controller!.play();
-  //       _controller!.setLooping(true);
-  //     } else {
-  //       _controller!.pause();
-  //     }
-  //   }
-  //   super.didUpdateWidget(oldWidget);
-  // }
 
   @override
   Widget video_played() {
@@ -139,6 +137,27 @@ class _Play_videoState extends State<Play_video> {
             ));
       },
     );
+  }
+
+  void defaultsorenatation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  void specificorenation(bool orientation) {
+    orientation
+        ? SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+          ])
+        : SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]);
   }
 
   Widget iconbutton(IconData icon, Function param1) {
@@ -181,7 +200,20 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> Bottom_button() {
     return [
-      iconbutton(Icons.lock, () {}),
+      iconbutton(lock ? Icons.lock : Icons.lock_open, () {
+        if (!lock) {
+          setState(() {
+            specificorenation(
+                MediaQuery.of(context).orientation == Orientation.portrait);
+            lock = !lock;
+          });
+        } else {
+          setState(() {
+            defaultsorenatation();
+            lock = !lock;
+          });
+        }
+      }),
       iconbutton(Icons.arrow_left, index - 1 < 0 ? () {} : play_prv),
       iconbutton(_controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
           () {
@@ -201,27 +233,34 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> fixed_button() {
     return [
-      iconbutton(Icons.rotate_90_degrees_ccw_sharp, () {
-
+      iconbutton( Icons.screen_rotation_outlined,
+          () {
+        specificorenation(
+            !(MediaQuery.of(context).orientation == Orientation.portrait));
       }),
       SizedBox(
         width: 10,
       ),
-      iconbutton(_controller!.value.volume == 1.0
-                          ? Icons.volume_up
-                          : Icons.volume_off, () {
-         setState(() {
-                        if (_controller!.value.volume == 1.0) {
-                          _controller!.setVolume(0.0);
-                        } else {
-                          _controller!.setVolume(1.0);
-                        }
-                      });
+      iconbutton(
+          _controller!.value.volume == 1.0 ? Icons.volume_up : Icons.volume_off,
+          () {
+        setState(() {
+          if (_controller!.value.volume == 1.0) {
+            _controller!.setVolume(0.0);
+          } else {
+            _controller!.setVolume(1.0);
+          }
+        });
       }),
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.headphones, () {}),
+      iconbutton(Icons.headphones, () {
+        setState(() {
+          background_play = true;
+        });
+        Navigator.of(context).pop();
+      }),
       SizedBox(
         width: 10,
       ),
@@ -234,11 +273,11 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> variable_button() {
     return [
-      iconbutton(Icons.find_replace, () {}),
+      iconbutton(Icons.brightness_1, () {}),
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.find_replace, () {}),
+      iconbutton(Icons.lock_clock,() {}),
       SizedBox(
         width: 10,
       ),
@@ -247,6 +286,12 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> action() {
     return [
+
+       IconButton(
+          onPressed: () {
+            _bottoplaylist(context);
+          },
+          icon: Icon(Icons.closed_caption_outlined)),
       IconButton(
           onPressed: () {
             _bottoplaylist(context);
@@ -323,28 +368,91 @@ class _Play_videoState extends State<Play_video> {
     ];
   }
 
+void fastforward(){
+         Duration currentPosition = _controller!.value.position;
+          Duration targetPosition = currentPosition + const Duration(seconds: 10);
+          _controller!.seekTo(targetPosition);
+}
+
+void backward(){
+          Duration currentPosition = _controller!.value.position;
+          Duration targetPosition = currentPosition - const Duration(seconds: 10);
+          _controller!.seekTo(targetPosition);
+}
+
+void show_content(){
+  setState(() {
+                      show = !show;
+                    });
+}
+
   Widget build(BuildContext context) {
     return Container(
       child: Stack(
         children: [
           video_played(),
-          GestureDetector(
-            child: Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Colors.transparent,
-            ),
-            onTap: () {
-              setState(() {
-                show = !show;
-              });
-            },
+          !lock
+              ? GestureDetector(
+                
+                  child: Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    color: Colors.transparent,
+                  ),
+                  onTap: () {
+                    show_content();
+                  },
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          iconbutton(Icons.lock, () {
+                            setState(() {
+                              defaultsorenatation();
+                              lock = !lock;
+                            });
+                          }),
+                          iconbutton(Icons.lock, () {
+                            setState(() {
+                              defaultsorenatation();
+                              lock = !lock;
+                            });
+                          })
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+         GestureDetector (
+          onHorizontalDragEnd:(details) => fastforward() ,
+          onTap: show_content,
+          onDoubleTap: (){
+           
+            fastforward();
+          },
+            child: ClipPath(
+              clipper: OvalLeftBorderClipper(curveHeight: MediaQuery.of(context).size.width),
+              child: Container(color: Colors.transparent,height:double.infinity,width:double.infinity) ,),
           ),
-          // ClipPath(
-          //   clipper: customclippath(),
-          //   child: Container(color: Colors.red,height:double.infinity,width:double.infinity) ,),
+          GestureDetector(
 
-          show
+               onTap: show_content,
+               onDoubleTap: (){
+                 print("left");
+                 backward();
+               },
+            child: ClipPath(
+              clipper: OvalRightBorderClipper(curveHeight: MediaQuery.of(context).size.height),
+              child: Container(color: Colors.transparent,height:double.infinity,width:double.infinity) ,),
+          ),
+
+
+          show && !lock
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
