@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:video/Playlist/playlist_file.dart';
 import 'package:video/helper/file.dart';
+import 'package:video_player/video_player.dart';
 
 class folder_details with ChangeNotifier {
   List<folder> _folder_item = [];
-
-
-
-
 
   List<video>? findById(int id) {
     final index = _folder_item.indexWhere((folder) => folder.f_id == id);
@@ -251,7 +248,7 @@ class PlayList_detail with ChangeNotifier {
     return _playlist_item;
   }
 
-int getplayList_id(int p_id) {
+int getplayList_index_id(int p_id) {
     int index = _playlist_item.indexWhere((Playl) => Playl.p_id == p_id);
     return index;
   }
@@ -262,7 +259,7 @@ int getplayList_id(int p_id) {
   }
 
   List<video> getPlayListWithplay_id(int p_id) {
-    return _playlist_item[getplayList_id(p_id)].p_detail;
+    return _playlist_item[getplayList_index_id(p_id)].p_detail;
   }
 
   bool add_to_palylist(video v, String pTitle) {
@@ -308,7 +305,7 @@ int getplayList_id(int p_id) {
   }
 
   bool add_one_playlist(int p_id, video video_detail) {
-    int index = getplayList_id(p_id);
+    int index = getplayList_index_id(p_id);
     try {
         if (_playlist_item[index]
                 .p_detail
@@ -328,7 +325,7 @@ int getplayList_id(int p_id) {
   }
 
 bool remove_playlist_video(int p_id, int v_id) {
-int index = getplayList_id(p_id);
+int index = getplayList_index_id(p_id);
     try {
      
       {
@@ -351,8 +348,7 @@ int index = getplayList_id(p_id);
   int copy_playList(int p_id,String target, List<video> Pvideos) {
 
 
-    int tindex =
-        _playlist_item.indexWhere((element) => element.p_id == p_id);
+    int tindex =getplayList_index_id(p_id);
     int c = 0;
     try {
       if (tindex == -1) {
@@ -410,7 +406,7 @@ int index = getplayList_id(p_id);
 bool rename_playlist_video(int v_id,int p_id,String newtitle){
 
   try {
-    int pindex=getplayList_id(p_id);
+    int pindex=getplayList_index_id(p_id);
     int pvindex=_playlist_item[pindex].p_detail.indexWhere((element) => element.v_id==v_id);
     _playlist_item[pindex].p_detail[pvindex].v_title=newtitle;
     notifyListeners();
@@ -423,7 +419,7 @@ bool rename_playlist_video(int v_id,int p_id,String newtitle){
 bool rename_playlist_folder(int p_id,String newtitle){
 
   try {
-    int pindex=getplayList_id(p_id);
+    int pindex=getplayList_index_id(p_id);
      _playlist_item[pindex].p_title=newtitle;
     notifyListeners();
     return true;
@@ -465,5 +461,120 @@ bool rename_playlist_folder(int p_id,String newtitle){
     return false;
   }
 
+void reorederd_playlist_video(int old_index,int new_ndex,int p_id){
+
+    new_ndex=new_ndex>old_index?new_ndex-1:new_ndex;
+    int p_index=getplayList_index_id(p_id);
+    video v=_playlist_item[p_index].p_detail[old_index];
+    _playlist_item[p_index].p_detail.removeAt(old_index);
+    _playlist_item[p_index].p_detail.insert(new_ndex, v);
+    notifyListeners();
+}
+
+}
+
+
+
+// class queue_playerss with ChangeNotifier{
+
+//   static queue_player? q=null;
+   
+
+  
+// void setvideo_controler(VideoPlayerController controllers){
+//   q!.controller=controllers;
+//   notifyListeners();
+// }
+
+//   void add_video_list_in_queue(int currindex,List<video> videos){
+//     //q.controller=controllers;
+//     print("ji");
+//     q!.curentindex=currindex;
+//     q!.queue_video_list=videos;
+//     notifyListeners();
+//   }
+
+// queue_player? getqueuevideo(){
+//   return q;
+// }
+
+// String getcurrentvideo(int index){
+//   return q!.queue_video_list[index].v_videoPath;
+// }
+// String getskipnextvideo(int index){
+//   if(index>=q!.queue_video_list.length)
+//     return "";
+//   return q!.queue_video_list[index].v_videoPath;
+// }
+// String getskipprevvideo(int index){
+//   if(index<0)
+//     return "";
+//   return q!.queue_video_list[index].v_videoPath;
+// }
+
+
+// }
+
+
+class queue_playerss with ChangeNotifier{
+  VideoPlayerController? controller;
+  int curentindex=-1;
+  List<video>queue_video_list =[];
+  bool b_play=false;
+
+  //  queue_player({
+  //   this.controller=null,
+  //   required this.curentindex,
+  //   required this.queue_video_list,
+  //   this.b_play=false,
+    
+  // });
+
+  
+void setvideo_controler(VideoPlayerController controllers){
+  controller=controllers;
+  notifyListeners();
+}
+
+void add_video_list_in_queue(int currindex,List<video> videos){
+    //q.controller=controllers;
+    print("ji");
+    curentindex=currindex;
+    queue_video_list=videos.toList();
+   // videos.forEach((element) => {queue_video_list.add(element)});
+    notifyListeners();
+}
+void reorederd_quelist(int old_index,int new_ndex){
+
+    new_ndex=new_ndex>old_index?new_ndex-1:new_ndex;
+    video v=queue_video_list[old_index];
+    queue_video_list.removeAt(old_index);
+    queue_video_list.insert(new_ndex, v);
+    notifyListeners();
+}
+
+List getqueuevideo(){
+  return [b_play,controller,curentindex,queue_video_list] as List;
+}
+
+String getcurrentvideo(int index){
+  return queue_video_list[index].v_videoPath;
+}
+String getskipnextvideo(int index){
+  if(index>=queue_video_list.length)
+    return "";
+  return queue_video_list[index].v_videoPath;
+}
+String getskipprevvideo(int index){
+  if(index<0)
+    return "";
+  return queue_video_list[index].v_videoPath;
+}
+
+
+
+
+
+  
 
 }

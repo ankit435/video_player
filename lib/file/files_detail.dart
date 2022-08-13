@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
 
 import '../file/file.dart';
+import '../helper/files.dart';
 import '../video_player/video_play.dart';
 
 class Files_path extends StatefulWidget {
@@ -138,6 +140,7 @@ class _CharacteristListItemState extends State<Files_path> {
             }
           : () {
               // file dettai pass to context of video;
+             Provider.of<queue_playerss>(context, listen: false).add_video_list_in_queue(widget.index, widget.file_path);
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -18,6 +18,7 @@ class PlayList_details extends StatefulWidget {
 class _PlayList_detailsState extends State<PlayList_details> {
   @override
   Widget build(BuildContext context) {
+    
     return ListTile(
       leading: Icon(
         Icons.favorite_sharp,

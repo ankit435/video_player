@@ -69,6 +69,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
          ChangeNotifierProvider.value(
           value: PlayList_detail()
         ),
+        ChangeNotifierProvider.value(
+          value: queue_playerss()
+        ),
     ],
     child :MaterialApp(
       title: 'Video',

@@ -8,6 +8,7 @@ import 'package:video/helper/storage.dart';
 import '../properties/file_bootom_sheet.dart';
 import '../properties/bottomsheet_playlist.dart';
 import '../properties/sort_property.dart';
+import '../queue/queue_list_screen.dart';
 import '../showdialogbox/file_delete.dart';
 
 class Files extends StatefulWidget {
@@ -25,6 +26,7 @@ class _FilesState extends State<Files> {
   late List<video> File_path;
   late String title ;
   var f_id;
+  var queue;
   
   int selcted_size = 0;
   String sort="Name";
@@ -63,6 +65,24 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
           child:BottomPlayList(v_index:v_index,passvideo: const [],f_index: f_index,condition: true),
+        );
+      },
+    );
+  }
+
+
+void queue_list_video(BuildContext context) {
+    // print(f_Id);
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      isScrollControlled: false,
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {},
+          behavior: HitTestBehavior.opaque,
+          child: queue_list(queue_list_video: queue[3],)
         );
       },
     );
@@ -281,12 +301,39 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
         },);
   }
 
+
+    Widget iconbutton(IconData icon, Function param1) {
+    return SizedBox.fromSize(
+      size: Size(56, 56), // button width and height
+      child: ClipOval(
+        child: Material(
+          color: Colors.transparent, // button color
+          child: InkWell(
+            splashColor: Colors.green, // splash color
+            onTap: () {
+              param1();
+            }, // button pressed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon), // icon
+                // text
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     title = arg['v1'];
     f_id=arg['v2'];
     File_path = Provider.of<folder_details>(context, listen: true).getfoldertotalvideo(f_id,sort,sortrevrsed);
-    int size=Provider.of<folder_details>(context, listen: false).gefoldersize(f_id);
+    int size=Provider.of<folder_details>(context, listen: true).gefoldersize(f_id);
+     queue=Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
+   print(queue[3].length);
     String selected_title = selction_list.length.toString() + " " + 'selected';
     return Scaffold(
       appBar: _Appbar(selection ? selected_title : title),
@@ -311,8 +358,13 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
             child: icons_value == 0 || icons_value == 1
                 ? _listViewbulder(File_path)
                 : _gridviewbuilder(File_path),
-          )
+          ),
+        
+        queue[3].length>0?  Align(alignment: Alignment.bottomCenter, child: Container(  child:ListTile( tileColor: Colors.black, leading: Icon(Icons.disc_full),title: Text("Hello"),trailing: Row(mainAxisSize: MainAxisSize.min,children: <Widget>[
+            iconbutton(Icons.play_arrow,(){}),iconbutton(Icons.skip_next,(){}),iconbutton(Icons.menu,(){queue_list_video(context);})
+       ],),),),):Container()
         ],
+
       ),
     );
   }

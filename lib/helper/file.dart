@@ -1,5 +1,6 @@
 
 import 'package:flutter/widgets.dart';
+import 'package:video_player/video_player.dart';
 
 class folder with ChangeNotifier{
 
@@ -65,6 +66,26 @@ class video with ChangeNotifier{
 
 }
 
+
+class queue_player with ChangeNotifier{
+  VideoPlayerController? controller;
+  int curentindex;
+  List<video>queue_video_list =[];
+  bool b_play;
+
+   queue_player({
+    this.controller=null,
+    required this.curentindex,
+    required this.queue_video_list,
+    this.b_play=false,
+    
+  });
+
+
+
+  
+
+}
 
 class favourite with ChangeNotifier{
 

@@ -37,6 +37,7 @@ class _Play_videoState extends State<Play_video> {
   bool left = false;
   bool background_play = false;
   bool lock = false;
+  int newCurrentPosition=0;
 
   void _load_video(String v_videoPath) {
     f = File(v_videoPath);
@@ -80,11 +81,21 @@ class _Play_videoState extends State<Play_video> {
       //  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
       index = widget.index;
     });
+    // _controller!.addListener(() {
+    //   setState(() {
+    //     currentDurationInSecond = _controller!.value.position.inSeconds;
+    //   });
+    // });
     defaultsorenatation();
     _onControllerChange(widget.file[index].v_videoPath);
     super.initState();
   }
 
+  // void _getValuesAndPlay(String videoPath) {
+  //   newCurrentPosition = _controller.value.position;
+  //   _startPlay(videoPath);
+  //   print(newCurrentPosition.toString());
+  // }
   @override
   void didChangeDependencies() {
     Provider.of<folder_details>(context, listen: false).SetWatchedduration(
@@ -214,7 +225,7 @@ class _Play_videoState extends State<Play_video> {
           });
         }
       }),
-      iconbutton(Icons.arrow_left, index - 1 < 0 ? () {} : play_prv),
+      iconbutton(Icons.skip_previous, index - 1 < 0 ? () {} : play_prv),
       iconbutton(_controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
           () {
         setState(() {
@@ -225,7 +236,7 @@ class _Play_videoState extends State<Play_video> {
           }
         });
       }),
-      iconbutton(Icons.arrow_right,
+      iconbutton(Icons.skip_next,
           index + 1 >= widget.file.length ? () {} : play_next),
       iconbutton(Icons.fullscreen, () {}),
     ];
@@ -348,6 +359,8 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> bottobar() {
     return [
+
+
       _controller!.value.isPlaying
           ? VideoProgressIndicator(
               _controller!,
@@ -378,6 +391,8 @@ void backward(){
           Duration currentPosition = _controller!.value.position;
           Duration targetPosition = currentPosition - const Duration(seconds: 10);
           _controller!.seekTo(targetPosition);
+
+      
 }
 
 void show_content(){

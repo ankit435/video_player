@@ -35,7 +35,8 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
     );
   }
 
-  void _bottoplaylist(BuildContext context, int p_id) {
+  void _bottoplaylist(BuildContext context, int p_index) {
+    
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -49,8 +50,8 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
           child: BottomPlayList(
               v_index: -1,
               f_index: -1,
-              passvideo: playLists[p_id].p_detail,
-              condition: true),
+              passvideo: playLists[p_index].p_detail,
+              condition: false),
         );
       },
     );
@@ -82,10 +83,15 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
             )),
       ),
       Flexible(
-        child: ListView.builder(
+        child: ReorderableListView.builder(
+          onReorder: ((oldIndex, newIndex) => {
+            
+          }),
             itemCount: playLists.length,
             itemBuilder: (context, index) {
+
               return PlayList_details(
+                  key:ValueKey(playLists[index].p_id) ,
                   index: index,
                   playLists: playLists[index],
                   bottmplaysheet: _bottomsheetdetail);

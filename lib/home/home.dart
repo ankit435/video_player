@@ -8,6 +8,7 @@ import '../folder/showfile.dart';
 import '../properties/bottomsheet_playlist.dart';
 import '../properties/folder_bottom_sheet.dart';
 import '../properties/setting.dart';
+import '../queue/queue_list_screen.dart';
 import '../search/search.dart';
 
 class FlutterDemo extends StatefulWidget {
@@ -26,6 +27,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
   bool detect = false;
   bool selection = false;
     int selcted_size = 0;
+    var queue;
 
   Set<int> selction_list = {};
   void toggleselction() {
@@ -224,6 +226,22 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
       },
     );
   }
+void queue_list_video(BuildContext context) {
+    // print(f_Id);
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      isScrollControlled: false,
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {},
+          behavior: HitTestBehavior.opaque,
+          child: queue_list(queue_list_video: queue[3],)
+        );
+      },
+    );
+  }
   void _bottoplaylist(BuildContext context, List<video> f_videos) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -247,6 +265,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
   Widget build(BuildContext context) {
     //print(file)
     folder_list=Provider.of<folder_details>(context, listen: true).items();
+     queue=Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
     return Scaffold(
       appBar: _Appbar("Video"),
@@ -259,26 +278,52 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
       
     );
   }
-
+  Widget iconbutton(IconData icon, Function param1) {
+    return SizedBox.fromSize(
+      size: Size(56, 56), // button width and height
+      child: ClipOval(
+        child: Material(
+          color: Colors.transparent, // button color
+          child: InkWell(
+            splashColor: Colors.green, // splash color
+            onTap: () {
+              param1();
+            }, // button pressed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon), // icon
+                // text
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   Widget _body(){
-    return Row(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: folder_list.length,
-                  itemBuilder: (context, index) {
-                    return CharacteristListItem(
-                      bottomsheet: _videoproprties,
-                      folder_detail: folder_list[index],
-                      toggleselction: toggleselction,
-                      selection: selection,
-                      selction_list: selction_list,
-                      toggleselctionlist: toggleselctionlist,
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: folder_list.length,
+            itemBuilder: (context, index) {
+              return CharacteristListItem(
+                bottomsheet: _videoproprties,
+                folder_detail: folder_list[index],
+                toggleselction: toggleselction,
+                selection: selection,
+                selction_list: selction_list,
+                toggleselctionlist: toggleselctionlist,
+                //queue_list_video:queue_list_video
+              );
+            },
+          ),
+        ),
+      queue[3].length>0?  Align(alignment: Alignment.bottomCenter, child: Container(  child:ListTile( tileColor: Colors.black, leading: Icon(Icons.disc_full),title: Text("Hello"),trailing: Row(mainAxisSize: MainAxisSize.min,children: <Widget>[
+            iconbutton(Icons.play_arrow,(){}),iconbutton(Icons.skip_next,(){}),iconbutton(Icons.menu,(){queue_list_video(context);})
+       ],),),),):Container()
+      ],
+    );
   }
 }

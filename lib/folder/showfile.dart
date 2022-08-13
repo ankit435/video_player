@@ -13,6 +13,7 @@ class CharacteristListItem extends StatefulWidget {
   Set<int> selction_list;
   void Function(int, int) toggleselctionlist;
   void Function(BuildContext context, int f_Id) bottomsheet;
+ // void Function(BuildContext context) queue_list_video;
   CharacteristListItem({
     Key? key,
     required this.bottomsheet,
@@ -20,7 +21,8 @@ class CharacteristListItem extends StatefulWidget {
     required this.toggleselction,
     required this.selection,
     required this.selction_list,
-    required this.toggleselctionlist,
+    required this.toggleselctionlist, 
+    //required this.queue_list_video,
   }) : super(key: key);
 
   @override

@@ -79,16 +79,18 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                   })),
         ),
         Flexible(
-          child: ListView.builder(
+          child: ReorderableListView.builder(
+            onReorder: (oldIndex, newIndex) {
+              Provider.of<PlayList_detail>(context, listen: false).reorederd_playlist_video(oldIndex, newIndex, p_id);
+            },
               itemCount: playLists.length,
               itemBuilder: (context, index) {
                 return ListTile(
+                  key: ValueKey(index),
                   leading: Icon(Icons.queue_play_next_outlined),
                   title: Text(playLists[index].v_title),
                   trailing: IconButton(
                       onPressed: () {
-                        
-
                         _playlistbootomsheet(context,playLists[index].v_id,playLists[index].parent_folder_id);
                       },
                       icon: Icon(Icons.more_vert)),

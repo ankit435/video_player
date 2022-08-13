@@ -24,7 +24,7 @@ class PlayListfolder_add extends StatefulWidget {
 class _PlayListfolder_addState extends State<PlayListfolder_add> {
   @override
   Widget build(BuildContext context) {
-    
+    var p_index=Provider.of<PlayList_detail>(context, listen: false).getplayList_index_id(widget.p_id);
     return Wrap(
       children: <Widget>[
         const ListTile(
@@ -36,7 +36,7 @@ class _PlayListfolder_addState extends State<PlayListfolder_add> {
           title: const Text("Add to PlayList"),
           onTap: () {
             Navigator.pop(context);
-            widget.onPressed(context,widget.p_id);
+            widget.onPressed(context,p_index);
           },
         ),
         const ListTile(
