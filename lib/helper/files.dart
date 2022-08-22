@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:video/Playlist/playlist_file.dart';
 import 'package:video/helper/file.dart';
@@ -180,6 +182,7 @@ void updatevideoopen(int v_id,int f_id){
 }
 
   void Setduration(int duration,int v_id,int f_id) {
+    print( 'duration=='+ duration.toString());
   var f_index=folder_index(f_id);
   var v_index=folder_video_index(f_index, v_id);
   _folder_item[f_index].f_detail[v_index].v_duration=duration;
@@ -518,9 +521,9 @@ void reorederd_playlist_video(int old_index,int new_ndex,int p_id){
 
 class queue_playerss with ChangeNotifier{
   VideoPlayerController? controller;
-  int curentindex=-1;
+  static int curentindex=-1;
   List<video>queue_video_list =[];
-  bool b_play=false;
+  static bool b_play=false;
 
   //  queue_player({
   //   this.controller=null,
@@ -536,6 +539,17 @@ void setvideo_controler(VideoPlayerController controllers){
   notifyListeners();
 }
 
+
+void updatecontoler_play_pause(){
+   if (controller!.value.isPlaying) {
+            controller!.pause();
+          } else {
+            controller!.play();
+   }
+   notifyListeners();
+}
+
+
 void add_video_list_in_queue(int currindex,List<video> videos){
     //q.controller=controllers;
     print("ji");
@@ -550,31 +564,86 @@ void reorederd_quelist(int old_index,int new_ndex){
     video v=queue_video_list[old_index];
     queue_video_list.removeAt(old_index);
     queue_video_list.insert(new_ndex, v);
+    curentindex=curentindex==old_index?new_ndex:old_index>new_ndex?curentindex+1:curentindex-1;
     notifyListeners();
 }
 
 List getqueuevideo(){
-  return [b_play,controller,curentindex,queue_video_list] as List;
+  return [b_play,controller,curentindex,queue_video_list];
+}
+int getcurrent_index(){
+  return curentindex;
 }
 
-String getcurrentvideo(int index){
-  return queue_video_list[index].v_videoPath;
-}
-String getskipnextvideo(int index){
-  if(index>=queue_video_list.length)
-    return "";
-  return queue_video_list[index].v_videoPath;
-}
-String getskipprevvideo(int index){
-  if(index<0)
-    return "";
-  return queue_video_list[index].v_videoPath;
+String getcurrentvideo(){
+   //print("next_v=="+curentindex.toString()+"  === "+ queue_video_list.length.toString() );
+  return queue_video_list[curentindex].v_videoPath;
 }
 
+String video_title(){
+  try {
+     return queue_video_list[curentindex].v_title;
+  } catch (e) {
+    print("error in title");
+    print(e);
+  }
+  return "";
 
+}
 
+void updateindex(bool prev){
+   curentindex= prev==true?curentindex-1:curentindex+1;
+   print("b_play=="+curentindex.toString());
+   notifyListeners();
+}
 
+void remove_from_queue(int v_id){
+  try {
+     var q_index= queue_video_list.indexWhere((element) => element.v_id==v_id);
+  queue_video_list.removeAt(q_index);
+ if(queue_video_list.length>0&&(q_index==curentindex||curentindex>=queue_video_list.length)){
+  curentindex=Random().nextInt(queue_video_list.length);
+ }
+ 
+ if(queue_video_list.length==0){
+    curentindex=-1;
+ }
+ print(curentindex);
 
+  notifyListeners();
+  } catch (e) {
+    print("error are remove ");
+    print(e);
+  }
+
+}
+
+bool getskipnextvideo(){
+ 
+  if(curentindex+1>=queue_video_list.length)
+  {
+    return false;
+  }
+  updateindex(false);
+  return true;
+}
+bool getskipprevvideo(){
+  if(curentindex-1<0) {
+    return false;
+  }
+
+    updateindex(true);
+    return true;
+}
+
+void togle_bacground_play(){
+  updateindex(false);
   
+  b_play=!b_play;
+  
+  notifyListeners();
+}
+
+
 
 }

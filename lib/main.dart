@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         Setting.routeName:(ctx)=>const Setting(),
         Playlist_file.routeName:(context) => const Playlist_file(),
         Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
-        //Play_video.routeName:(context) => Play_video(),
+        Play_video.routeName:(context) => Play_video(),
 
       },
     ),);

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 
@@ -18,20 +19,106 @@ class queue_list extends StatefulWidget {
 
 class _queue_listState extends State<queue_list> {
   @override
+  Widget iconbutton(IconData icon, Function param1) {
+    return SizedBox.fromSize(
+      size: Size(56, 56), // button width and height
+      child: ClipOval(
+        child: Material(
+          color: Colors.transparent, // button color
+          child: InkWell(
+            splashColor: Colors.green, // splash color
+            onTap: () {
+              param1();
+            }, // button pressed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon), // icon
+                // text
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
+    var currqueuelist =
+        Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
     return Padding(
-      padding: const EdgeInsets.only(top: 15 ),
-      child: Container(
-          height: MediaQuery.of(context).size.height / 2,
-          child: ReorderableListView.builder(
-             onReorder: (int oldIndex, int newIndex) { 
-              Provider.of<queue_playerss>(context, listen: false).reorederd_quelist(oldIndex, newIndex);
-              },
-            
-              itemCount: widget.queue_list_video.length,
-              itemBuilder: (context, index) {
-                return Card( key: ValueKey(widget.queue_list_video[index].v_id), child: ListTile(leading: const Icon(Icons.drag_handle), title: Text(widget.queue_list_video[index].v_title),));
-              }, ),),
+      padding: const EdgeInsets.only(top: 15),
+      child: FractionallySizedBox(
+          heightFactor: 0.9,
+          child: widget.queue_list_video.length > 0
+              ? Column(
+                  children: [
+                   Card (
+                      child: Container(
+                       
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(0),
+                            leading: iconbutton(Icons.close, () {
+                          Navigator.pop(context);
+                        },),
+                        title: Text("playing queue  ${currqueuelist[3].length}"),
+                        trailing: Row( mainAxisSize: MainAxisSize.min,children: [
+                          const Text("Order"),
+                          iconbutton(Icons.sort_by_alpha_outlined, (){
+                    
+                          })
+                        ],),
+                    
+                    
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      child: ReorderableListView.builder(
+                        shrinkWrap: true,
+                        onReorder: (int oldIndex, int newIndex) {
+                          Provider.of<queue_playerss>(context, listen: false)
+                              .reorederd_quelist(oldIndex, newIndex);
+                        },
+                        itemCount: widget.queue_list_video.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            
+                              key:
+                                  ValueKey(widget.queue_list_video[index].v_id),
+                              child: ListTile(
+                                contentPadding: EdgeInsets.only(left: 12,right: 0),
+                                leading: const Icon(Icons.drag_handle),
+                                title: Text(
+                                  widget.queue_list_video[index].v_title,
+                                   overflow: TextOverflow.ellipsis,
+                                   maxLines: 2,
+                                  style: TextStyle(
+                                      color: currqueuelist[2] == index
+                                          ? Colors.green
+                                          : Colors.white),
+                                ),
+                                trailing:Row (
+                                  mainAxisSize: MainAxisSize.min,
+                                  
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children :[ 
+                                    currqueuelist[2] == index?iconbutton(Icons.play_arrow, () { }):Container(),
+                                    iconbutton(Icons.close, () {
+                                    Provider.of<queue_playerss>(context,
+                                            listen: false)
+                                        .remove_from_queue(
+                                            widget.queue_list_video[index].v_id);
+                                  }),
+                                  ]
+                                ),
+                              ));
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : Container()),
     );
   }
 }

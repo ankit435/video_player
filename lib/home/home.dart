@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:video/folder/directory.dart';
@@ -10,37 +11,36 @@ import '../properties/folder_bottom_sheet.dart';
 import '../properties/setting.dart';
 import '../queue/queue_list_screen.dart';
 import '../search/search.dart';
+import '../video_player/video_play.dart';
 
 class FlutterDemo extends StatefulWidget {
-
   const FlutterDemo({super.key});
 
   @override
   State<FlutterDemo> createState() => _FlutterDemoState();
 }
 
-
-class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  {
- 
+class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   var _isInit = true;
   var _isLoading = false;
   bool detect = false;
   bool selection = false;
-    int selcted_size = 0;
-    var queue;
+  int selcted_size = 0;
+  var queue;
 
   Set<int> selction_list = {};
   void toggleselction() {
-       print("hi");
+    print("hi");
     setState(() {
       selection = !selection;
     });
   }
+
   void toggleselctionlist(int value, int size) {
     setState(() {
-      if(selction_list.contains(value)) {
-         selction_list.remove(value);
-         selcted_size -= size;
+      if (selction_list.contains(value)) {
+        selction_list.remove(value);
+        selcted_size -= size;
       } else {
         selction_list.add(value);
         selcted_size += size;
@@ -54,6 +54,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
     _fetching_data();
     super.initState();
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -63,8 +64,8 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
 
   Widget _Popups() {
     return PopupMenuButton(
-      itemBuilder: (context) => const[
-         PopupMenuItem(
+      itemBuilder: (context) => const [
+        PopupMenuItem(
             value: 1,
             child: ListTile(
               leading: Icon(Icons.select_all_outlined),
@@ -104,19 +105,20 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
         if (value == 1) {
           toggleselction();
         } else if (value == 2) {
-          _isInit=true;
+          _isInit = true;
           _fetching_data();
         } else if (value == 3) {
           Navigator.of(context).pushNamed(Setting.routeName);
         } else if (value == 4) {
-           getAllvideos();
+          getAllvideos();
           print("ads");
         }
       },
     );
   }
-  List<Widget> _action(){
-  return ([
+
+  List<Widget> _action() {
+    return ([
       IconButton(
         onPressed: () {
           print("search click");
@@ -132,23 +134,22 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
       ),
       _Popups(),
     ]);
-
   }
-  
+
   AppBar _Appbar(String title) {
     return AppBar(title: Text(title), actions: _action());
   }
-  
-  void getAllvideos()  {
-    var video=Provider.of<folder_details>(context, listen: false).getAllvideo();
+
+  void getAllvideos() {
+    var video =
+        Provider.of<folder_details>(context, listen: false).getAllvideo();
     setState(() {
       //file_detail=video;
     });
-
   }
 
 // ignore: non_constant_identifier_names
-   Future<void>  _fetching_data() async {
+  Future<void> _fetching_data() async {
     //print(_isInit);
     if (_isInit) {
       print("reloading");
@@ -182,14 +183,15 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
         );
       }
     }
-     _isInit = false;
+    _isInit = false;
   }
+
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.detached) return;
     if (state == AppLifecycleState.paused && !detect) {
       setState(() {
-          detect = true;
+        detect = true;
       });
     } else if (state == AppLifecycleState.resumed) {
       setState(() {
@@ -200,15 +202,18 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
       // widget.onPressed;
     }
   }
- Future<void> _pullRefresh() async {
-    _isInit=true;
+
+  Future<void> _pullRefresh() async {
+    _isInit = true;
     _fetching_data();
     return Future.delayed(Duration(seconds: 1));
   }
+
   void didChangeDependencies() {
     _fetching_data();
     super.didChangeDependencies();
   }
+
   void _videoproprties(BuildContext context, int f_Id) {
     // print(f_Id);
     showModalBottomSheet(
@@ -226,7 +231,8 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver  
       },
     );
   }
-void queue_list_video(BuildContext context) {
+
+  void queue_list_video(BuildContext context) {
     // print(f_Id);
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -235,13 +241,15 @@ void queue_list_video(BuildContext context) {
       context: context,
       builder: (context) {
         return GestureDetector(
-          onTap: () {},
-          behavior: HitTestBehavior.opaque,
-          child: queue_list(queue_list_video: queue[3],)
-        );
+            onTap: () {},
+            behavior: HitTestBehavior.opaque,
+            child: queue_list(
+              queue_list_video: queue[3],
+            ));
       },
     );
   }
+
   void _bottoplaylist(BuildContext context, List<video> f_videos) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -264,20 +272,29 @@ void queue_list_video(BuildContext context) {
   var folder_list;
   Widget build(BuildContext context) {
     //print(file)
-    folder_list=Provider.of<folder_details>(context, listen: true).items();
-     queue=Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
+    folder_list = Provider.of<folder_details>(context, listen: true).items();
+    queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
     return Scaffold(
       appBar: _Appbar("Video"),
-      body: _isLoading?Container(child: Center(child: CircularProgressIndicator(),)): Center(
-        child: folder_list.isNotEmpty? RefreshIndicator( onRefresh: _pullRefresh,child: _body()):ElevatedButton(onPressed: (){
-          _isInit=true;
-          _fetching_data();
-        }, child: Text("Reload")),
-      ),
-      
+      body: _isLoading
+          ? Container(
+              child: Center(
+              child: CircularProgressIndicator(),
+            ))
+          : Center(
+              child: folder_list.isNotEmpty
+                  ? RefreshIndicator(onRefresh: _pullRefresh, child: _body())
+                  : ElevatedButton(
+                      onPressed: () {
+                        _isInit = true;
+                        _fetching_data();
+                      },
+                      child: Text("Reload")),
+            ),
     );
   }
+
   Widget iconbutton(IconData icon, Function param1) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
@@ -301,7 +318,8 @@ void queue_list_video(BuildContext context) {
       ),
     );
   }
-  Widget _body(){
+
+  Widget _body() {
     return Column(
       children: [
         Expanded(
@@ -320,9 +338,47 @@ void queue_list_video(BuildContext context) {
             },
           ),
         ),
-      queue[3].length>0?  Align(alignment: Alignment.bottomCenter, child: Container(  child:ListTile( tileColor: Colors.black, leading: Icon(Icons.disc_full),title: Text("Hello"),trailing: Row(mainAxisSize: MainAxisSize.min,children: <Widget>[
-            iconbutton(Icons.play_arrow,(){}),iconbutton(Icons.skip_next,(){}),iconbutton(Icons.menu,(){queue_list_video(context);})
-       ],),),),):Container()
+        queue[0]&&queue[3].length>0
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Play_video.routeName);
+                    },
+                    tileColor: Colors.black,
+                    leading: Icon(Icons.disc_full),
+                    title: AutoSizeText(
+                        Provider.of<queue_playerss>(context, listen: false)
+                            .video_title(),
+                        maxLines: 2,
+                        minFontSize: 13,
+                        maxFontSize: 18,
+                        overflow: TextOverflow.ellipsis),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        iconbutton(queue[1].value.isPlaying ? Icons.pause : Icons.play_arrow, () {
+                            Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .updatecontoler_play_pause();
+                        }),
+                        iconbutton(Icons.skip_next, () {
+                          print(Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .getskipnextvideo());
+
+                          // print(queue[0]);
+                        }),
+                        iconbutton(Icons.menu, () {
+                          queue_list_video(context);
+                        })
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : Container()
       ],
     );
   }

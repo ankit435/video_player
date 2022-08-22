@@ -1,12 +1,15 @@
+import 'dart:io';
 import 'dart:ui';
+
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
-import '../file/file.dart';
 import '../helper/files.dart';
 import '../video_player/video_play.dart';
 
@@ -37,6 +40,8 @@ class Files_path extends StatefulWidget {
 }
 
 class _CharacteristListItemState extends State<Files_path> {
+
+
   Widget checkbox() {
     return Checkbox(
       value:
@@ -107,13 +112,27 @@ class _CharacteristListItemState extends State<Files_path> {
     );
   }
 
+
   Widget build(BuildContext context) {
+
+//   uint8list= VideoThumbnail.thumbnailData(
+//   video: widget.file_path[widget.index].v_videoPath,
+//   imageFormat: ImageFormat.JPEG,
+//   maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+//   quality: 25,
+// );
     return ListTile(
       leading: widget.value == 1
           ? const Icon(
               Icons.folder,
             )
-          : null,
+         // : _controller!.value.isInitialized?
+         : Container(
+          width: 70.0,
+          height: 65.0,
+          color: Colors.yellow
+        ),
+      //: CircularProgressIndicator(),
       title: titles(),
       subtitle: widget.onPressed1 == null
           ? null
@@ -141,13 +160,14 @@ class _CharacteristListItemState extends State<Files_path> {
           : () {
               // file dettai pass to context of video;
              Provider.of<queue_playerss>(context, listen: false).add_video_list_in_queue(widget.index, widget.file_path);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      Play_video(file: widget.file_path, index: widget.index),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         Play_video(),
+              //   ),
+              // );
+              Navigator.of(context).pushNamed(Play_video.routeName);
             },
       onLongPress: widget.onPressed1 != null ? widget.onPressed : null,
     );

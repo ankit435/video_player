@@ -67,7 +67,7 @@ try {
               v_title: folder_name(i.absolute.path),
               v_thumbnailPath: i.absolute.path,
               v_videoPath: i.path,
-              v_duration: VideoPlayerController.file(i).value.duration.inSeconds,
+              v_duration: -1,
               v_timestamp: i.lastModifiedSync(),
               v_watched: 0,
               v_size: i.lengthSync(),

@@ -1,4 +1,4 @@
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video/file/files_detail.dart';
@@ -10,6 +10,7 @@ import '../properties/bottomsheet_playlist.dart';
 import '../properties/sort_property.dart';
 import '../queue/queue_list_screen.dart';
 import '../showdialogbox/file_delete.dart';
+import '../video_player/video_play.dart';
 
 class Files extends StatefulWidget {
   const Files({Key? key}) : super(key: key);
@@ -21,21 +22,24 @@ class Files extends StatefulWidget {
 class _FilesState extends State<Files> {
   @override
   bool selection = false;
-  Map<int,int> selction_list = {};
+  Map<int, int> selction_list = {};
   int icons_value = 0;
   late List<video> File_path;
-  late String title ;
+  late String title;
   var f_id;
   var queue;
-  
+
   int selcted_size = 0;
-  String sort="Name";
-   final Map<String,bool>? sort_cond= {"Name":false,"Date":false,"Size":false,"Length":false};
-  bool sortrevrsed=false;
+  String sort = "Name";
+  final Map<String, bool>? sort_cond = {
+    "Name": false,
+    "Date": false,
+    "Size": false,
+    "Length": false
+  };
+  bool sortrevrsed = false;
 
-
-
-void _videoproprties(BuildContext context, int id,int f_id) {
+  void _videoproprties(BuildContext context, int id, int f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -45,15 +49,17 @@ void _videoproprties(BuildContext context, int id,int f_id) {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-
-          child:Bottom_model(v_id:id,file_detail: File_path,f_id:f_id,onPressed:_bottoplaylist),
+          child: Bottom_model(
+              v_id: id,
+              file_detail: File_path,
+              f_id: f_id,
+              onPressed: _bottoplaylist),
         );
       },
     );
   }
 
-
-void _bottoplaylist(BuildContext context, int v_index,int f_index) {
+  void _bottoplaylist(BuildContext context, int v_index, int f_index) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -64,14 +70,17 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
-          child:BottomPlayList(v_index:v_index,passvideo: const [],f_index: f_index,condition: true),
+          child: BottomPlayList(
+              v_index: v_index,
+              passvideo: const [],
+              f_index: f_index,
+              condition: true),
         );
       },
     );
   }
 
-
-void queue_list_video(BuildContext context) {
+  void queue_list_video(BuildContext context) {
     // print(f_Id);
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -80,21 +89,24 @@ void queue_list_video(BuildContext context) {
       context: context,
       builder: (context) {
         return GestureDetector(
-          onTap: () {},
-          behavior: HitTestBehavior.opaque,
-          child: queue_list(queue_list_video: queue[3],)
-        );
+            onTap: () {},
+            behavior: HitTestBehavior.opaque,
+            child: queue_list(
+              queue_list_video: queue[3],
+            ));
       },
     );
   }
 
-  void sorting(String sorts,bool reverse){
+  void sorting(String sorts, bool reverse) {
     setState(() {
-      sortrevrsed=reverse;
-      sort=sorts;
-      File_path = Provider.of<folder_details>(context, listen: false).getfoldertotalvideo(f_id,sort,sortrevrsed);
+      sortrevrsed = reverse;
+      sort = sorts;
+      File_path = Provider.of<folder_details>(context, listen: false)
+          .getfoldertotalvideo(f_id, sort, sortrevrsed);
     });
   }
+
   void toggleselction() {
     setState(() {
       selection = !selection;
@@ -105,13 +117,13 @@ void queue_list_video(BuildContext context) {
 
 // }
 
-  void toggleselctionlist(int value, int size,int p_id) {
+  void toggleselctionlist(int value, int size, int p_id) {
     setState(() {
-      if(selction_list.containsKey(value)) {
-         selction_list.remove(value);
-         selcted_size -= size;
+      if (selction_list.containsKey(value)) {
+        selction_list.remove(value);
+        selcted_size -= size;
       } else {
-        selction_list.addAll({value:p_id});
+        selction_list.addAll({value: p_id});
         selcted_size += size;
       }
     });
@@ -119,8 +131,9 @@ void queue_list_video(BuildContext context) {
 
   Future<void> ondelete() async {
     toggleselction();
-    if(selction_list.isNotEmpty) {
-      await Provider.of<folder_details>(context,listen: false).delete_file(selction_list);
+    if (selction_list.isNotEmpty) {
+      await Provider.of<folder_details>(context, listen: false)
+          .delete_file(selction_list);
     }
 
     selction_list.clear();
@@ -133,7 +146,9 @@ void queue_list_video(BuildContext context) {
         selcted_size = 0;
       } else {
         selction_list.clear();
-        file_path.forEach((element) {selction_list.addAll({element.v_id:element.parent_folder_id});});
+        file_path.forEach((element) {
+          selction_list.addAll({element.v_id: element.parent_folder_id});
+        });
         selcted_size = size;
       }
     });
@@ -141,66 +156,63 @@ void queue_list_video(BuildContext context) {
 
   Widget _Popups() {
     return PopupMenuButton(
-        itemBuilder: (context) => selection
-            ? [
-                 const PopupMenuItem(
-                  value: 1,
-                    child: ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text("Add to fav"),
-                )),
-                const PopupMenuItem(
-                  value: 2,
-                    child: ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text("share"),
-                )),
+      itemBuilder: (context) => selection
+          ? [
               const PopupMenuItem(
-                value: 3,
-                    child: ListTile(
-                  leading: Icon(Icons.details),
-                  title: Text("properties"),
-                )
-                ),
-              ]
-            : [
-               const PopupMenuItem(
-                     value:4,
-                    child: ListTile(
-                      leading: Icon(Icons.select_all),
-                      title: Text("Select"),
-                    )),
-                 const PopupMenuItem(
-                  value:5,
+                  value: 1,
                   child: ListTile(
-                  leading: Icon(Icons.sort),
-                  title: Text("sort by"),
-                )),
-              ],
-        elevation: 2,
+                    leading: Icon(Icons.favorite),
+                    title: Text("Add to fav"),
+                  )),
+              const PopupMenuItem(
+                  value: 2,
+                  child: ListTile(
+                    leading: Icon(Icons.share),
+                    title: Text("share"),
+                  )),
+              const PopupMenuItem(
+                  value: 3,
+                  child: ListTile(
+                    leading: Icon(Icons.details),
+                    title: Text("properties"),
+                  )),
+            ]
+          : [
+              const PopupMenuItem(
+                  value: 4,
+                  child: ListTile(
+                    leading: Icon(Icons.select_all),
+                    title: Text("Select"),
+                  )),
+              const PopupMenuItem(
+                  value: 5,
+                  child: ListTile(
+                    leading: Icon(Icons.sort),
+                    title: Text("sort by"),
+                  )),
+            ],
+      elevation: 2,
       // on selected we show the dialog box
       onSelected: (value) {
         if (value == 1) {
-         
         } else if (value == 2) {
-          
         } else if (value == 3) {
-         
         } else if (value == 4) {
-         toggleselction();
-        }
-         else if (value == 5) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return short_property(sorting:sorting, sort_by: sort, sort_cond: sort_cond,);
-              },
-            );
+          toggleselction();
+        } else if (value == 5) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return short_property(
+                sorting: sorting,
+                sort_by: sort,
+                sort_cond: sort_cond,
+              );
+            },
+          );
         }
       },
-              
-              
-              );
+    );
   }
 
   List<Widget> action() {
@@ -209,23 +221,21 @@ void queue_list_video(BuildContext context) {
             IconButton(
               onPressed: (() {
                 print("file click");
-                      
               }),
               icon: Icon(Icons.lock_rounded),
             ),
             IconButton(
-              onPressed: (){
-                    showDialog(
+              onPressed: () {
+                showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Delete_file_dialog(ondelete:ondelete);
+                      return Delete_file_dialog(ondelete: ondelete);
                     });
               },
               //ondelete,
               icon: Icon(Icons.delete),
             ),
-            
-             _Popups(),
+            _Popups(),
           ]
         : [
             IconButton(
@@ -263,8 +273,9 @@ void queue_list_video(BuildContext context) {
   AppBar _Appbar(String title) {
     return AppBar(
       leading: new IconButton(
-        icon: new Icon(selection?Icons.close: Icons.arrow_back),
-        onPressed: () =>selection? toggleselction(): Navigator.of(context).pop(),
+        icon: new Icon(selection ? Icons.close : Icons.arrow_back),
+        onPressed: () =>
+            selection ? toggleselction() : Navigator.of(context).pop(),
       ),
       title: Text(title),
       actions: action(),
@@ -283,26 +294,26 @@ void queue_list_video(BuildContext context) {
             selection: selection,
             selction_list: selction_list,
             onPressed1: toggleselctionlist,
-            bottommodel:_videoproprties,
+            bottommodel: _videoproprties,
           );
         });
   }
 
   Widget _gridviewbuilder(List<video> File_path) {
     return GridView.builder(
-        itemCount: File_path.length,
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) {
-          return GridTile(
-              child: Container(
-                  color: Colors.red,
-                  child: Center(child: Text(File_path[index].v_title))));
-        },);
+      itemCount: File_path.length,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      itemBuilder: (context, index) {
+        return GridTile(
+            child: Container(
+                color: Colors.red,
+                child: Center(child: Text(File_path[index].v_title))));
+      },
+    );
   }
 
-
-    Widget iconbutton(IconData icon, Function param1) {
+  Widget iconbutton(IconData icon, Function param1) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -329,11 +340,13 @@ void queue_list_video(BuildContext context) {
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     title = arg['v1'];
-    f_id=arg['v2'];
-    File_path = Provider.of<folder_details>(context, listen: true).getfoldertotalvideo(f_id,sort,sortrevrsed);
-    int size=Provider.of<folder_details>(context, listen: true).gefoldersize(f_id);
-     queue=Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
-   print(queue[3].length);
+    f_id = arg['v2'];
+    File_path = Provider.of<folder_details>(context, listen: true)
+        .getfoldertotalvideo(f_id, sort, sortrevrsed);
+    int size =
+        Provider.of<folder_details>(context, listen: true).gefoldersize(f_id);
+    queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
+
     String selected_title = selction_list.length.toString() + " " + 'selected';
     return Scaffold(
       appBar: _Appbar(selection ? selected_title : title),
@@ -359,12 +372,48 @@ void queue_list_video(BuildContext context) {
                 ? _listViewbulder(File_path)
                 : _gridviewbuilder(File_path),
           ),
-        
-        queue[3].length>0?  Align(alignment: Alignment.bottomCenter, child: Container(  child:ListTile( tileColor: Colors.black, leading: Icon(Icons.disc_full),title: Text("Hello"),trailing: Row(mainAxisSize: MainAxisSize.min,children: <Widget>[
-            iconbutton(Icons.play_arrow,(){}),iconbutton(Icons.skip_next,(){}),iconbutton(Icons.menu,(){queue_list_video(context);})
-       ],),),),):Container()
-        ],
+          queue[0]&&queue[3].length>0
+              ? Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    child: ListTile(
+                      onTap: (){
+                        Navigator.of(context).pushNamed(Play_video.routeName);
+                      },
+                      tileColor: Colors.black,
+                      leading: Icon(Icons.disc_full),
+                      title: AutoSizeText(
+                        Provider.of<queue_playerss>(context, listen: false)
+                            .video_title(),
+                        maxLines: 2,
+                        minFontSize: 13,
+                        maxFontSize: 18,
+                        overflow: TextOverflow.ellipsis),
+                     trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        iconbutton(queue[1].value.isPlaying ? Icons.pause : Icons.play_arrow, () {
+                            Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .updatecontoler_play_pause();
+                        }),
+                        iconbutton(Icons.skip_next, () {
+                          print(Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .getskipnextvideo());
 
+                          // print(queue[0]);
+                        }),
+                        iconbutton(Icons.menu, () {
+                          queue_list_video(context);
+                        })
+                      ],
+                    ),
+                    ),
+                  ),
+                )
+              : Container()
+        ],
       ),
     );
   }

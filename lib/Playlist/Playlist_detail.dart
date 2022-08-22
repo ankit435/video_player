@@ -20,6 +20,7 @@ class _PlayList_detailsState extends State<PlayList_details> {
   Widget build(BuildContext context) {
     
     return ListTile(
+      contentPadding: EdgeInsets.all(0),
       leading: Icon(
         Icons.favorite_sharp,
         color: Colors.red,
