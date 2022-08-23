@@ -31,9 +31,15 @@ class _Floder_bottomsheetState extends State<Floder_bottomsheet> {
   // f_videos.forEach((element) => print(element.v_id));
     return Wrap(
       children: <Widget>[
-        const ListTile(
+         ListTile(
           leading: Icon(Icons.play_arrow_outlined),
           title: Text("Play Next"),
+          onTap: (){
+              Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .play_next_queue(f_videos);
+               Navigator.of(context).pop();
+          },
         ),
         ListTile(
           leading: const Icon(Icons.playlist_add),
@@ -43,8 +49,13 @@ class _Floder_bottomsheetState extends State<Floder_bottomsheet> {
             widget.bottoplaylist(context,f_videos);
           },
         ),
-        const ListTile(
-            leading: Icon(Icons.queue_play_next), title: Text("Add to queue")),
+         ListTile(
+            leading: Icon(Icons.queue_play_next), title: Text("Add to queue"),onTap: (){
+               Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .add_to_queue(f_videos);
+                     Navigator.of(context).pop();
+            },),
         ListTile(
           leading: Icon(Icons.delete),
           title: Text("Delete"),

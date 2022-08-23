@@ -27,9 +27,25 @@ class _PlayListfolder_addState extends State<PlayListfolder_add> {
     var p_index=Provider.of<PlayList_detail>(context, listen: false).getplayList_index_id(widget.p_id);
     return Wrap(
       children: <Widget>[
-        const ListTile(
+         ListTile(
+          leading: Icon(Icons.headphones),
+          title: const Text("Background_play"),
+          onTap: (){
+            Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .add_video_list_in_queue(0,Provider.of<PlayList_detail>(context, listen: false).getPlayListWithplay_id(widget.p_id));
+                     Navigator.of(context).pop();
+          },
+        ),
+         ListTile(
           leading: Icon(Icons.play_arrow_outlined),
           title: Text("Play Next"),
+            onTap: (){
+              Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .play_next_queue(Provider.of<PlayList_detail>(context, listen: false).getPlayListWithplay_id(widget.p_id));
+               Navigator.of(context).pop();
+          },
         ),
         ListTile(
           leading: const Icon(Icons.playlist_add),
@@ -39,8 +55,13 @@ class _PlayListfolder_addState extends State<PlayListfolder_add> {
             widget.onPressed(context,p_index);
           },
         ),
-        const ListTile(
-            leading: Icon(Icons.queue_play_next), title: Text("Add to queue")),
+        ListTile(
+            leading: Icon(Icons.queue_play_next), title: Text("Add to queue"),onTap: (){
+                Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .add_to_queue(Provider.of<PlayList_detail>(context, listen: false).getPlayListWithplay_id(widget.p_id));
+                     Navigator.of(context).pop();
+            },),
         ListTile(
           leading: Icon(Icons.delete),
           title: Text("Delete"),

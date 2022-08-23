@@ -32,10 +32,23 @@ class _Bottom_modelState extends State<Bottom_model> {
   int f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_id);
 
   int v_index=Provider.of<folder_details>(context, listen: false).folder_video_index(f_index,widget.v_id);
-   var video=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
+   var videos=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
    
     return Wrap(
       children: <Widget>[
+         ListTile(
+          leading: Icon(Icons.play_arrow_outlined),
+          title: Text("Play Next"),
+          onTap: (){
+            List<video>f_videos=[videos];
+              Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .play_next_queue(f_videos);
+               Navigator.of(context).pop();
+          },
+          
+          
+        ),
         const ListTile(
           leading: Icon(Icons.lock),
           title: Text("Lock Folder"),
@@ -46,7 +59,7 @@ class _Bottom_modelState extends State<Bottom_model> {
           } ,),
        ListTile(leading: Icon(Icons.delete), title: Text("Delete"),onTap: (){
            Navigator.pop(context);    
-         Provider.of<folder_details>(context, listen: false).delete_one_file(video);
+         Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
 
        } ),
        ListTile(leading: Icon(Icons.share), title: Text("Share"),onTap: (){}),

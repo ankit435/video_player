@@ -552,12 +552,34 @@ void updatecontoler_play_pause(){
 
 void add_video_list_in_queue(int currindex,List<video> videos){
     //q.controller=controllers;
-    print("ji");
+
     curentindex=currindex;
     queue_video_list=videos.toList();
    // videos.forEach((element) => {queue_video_list.add(element)});
     notifyListeners();
 }
+void add_to_queue(List<video> videos){
+
+      if(queue_video_list.isEmpty){
+        queue_video_list=videos.toList();
+      }
+      else{
+        videos.forEach((element) {if(queue_video_list.indexWhere((v) => v.v_id==element.v_id)==-1){queue_video_list.add(element);}});
+      }
+    notifyListeners();
+}
+void play_next_queue(List<video> videos){
+    var oldindex=curentindex;
+    if(queue_video_list.isEmpty){
+        queue_video_list=videos.toList();
+      }
+      else{
+         videos.forEach((element) {if(queue_video_list.indexWhere((v) => v.v_id==element.v_id)==-1){queue_video_list.insert(curentindex++,element);}});
+      }
+    curentindex=oldindex;
+      notifyListeners();
+}
+
 void reorederd_quelist(int old_index,int new_ndex){
 
     new_ndex=new_ndex>old_index?new_ndex-1:new_ndex;
@@ -637,8 +659,7 @@ bool getskipprevvideo(){
 }
 
 void togle_bacground_play(){
-  updateindex(false);
-  
+
   b_play=!b_play;
   
   notifyListeners();

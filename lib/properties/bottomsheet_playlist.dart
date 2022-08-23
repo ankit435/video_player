@@ -31,8 +31,8 @@ var video;
        video=Provider.of<folder_details>(context, listen: false).getvideo(widget.f_index,widget.v_index);
    }
     playLists= Provider.of<PlayList_detail>(context, listen: false).items();
-    return FractionallySizedBox(
-      heightFactor: 0.9,
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
       child: Column(
        children: [
          Container(child: ListTile(leading: Icon(Icons.create_new_folder_outlined),title: Text("Create Playlist"), onTap: (){

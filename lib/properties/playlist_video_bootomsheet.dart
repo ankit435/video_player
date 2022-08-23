@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:video/helper/file.dart';
+
 import 'package:video/helper/files.dart';
 import 'package:video/properties/properties.dart';
 
 import '../helper/cruds_operation.dart';
+import '../helper/file.dart';
 import '../showdialogbox/Rename_playlist_file_and_folder.dart';
 
 class playlistbootoomshet extends StatefulWidget {
@@ -35,14 +36,21 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
         .folder_index(widget.f_id);
     int v_index = Provider.of<folder_details>(context, listen: false)
         .folder_video_index(f_index, widget.v_id);
-    var video=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
+    var videos=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
 
   
     return Wrap(
       children: <Widget>[
-        const ListTile(
+         ListTile(
           leading: Icon(Icons.play_arrow_outlined),
           title: Text("Play Next"),
+          onTap: (){
+            List<video>videoss=[videos];
+            Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .play_next_queue(videoss);
+               Navigator.of(context).pop();
+          },
         ),
         ListTile(
           leading: const Icon(Icons.playlist_add),
@@ -52,8 +60,17 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
             widget.onPressed(context, v_index, f_index);
           },
         ),
-        const ListTile(
-            leading: Icon(Icons.queue_play_next), title: Text("Add to queue")),
+         ListTile(
+            leading: Icon(Icons.queue_play_next), title: Text("Add to queue"),onTap: (){
+              List<video>videoss=[videos];
+              
+
+                Provider.of<queue_playerss>(context,
+                                  listen: false)
+                              .add_to_queue(videoss);
+               Navigator.of(context).pop();
+                  
+            },),
         ListTile(
           leading: Icon(Icons.remove_circle_outline_outlined),
           title: Text("Remove"),

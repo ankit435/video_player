@@ -159,6 +159,8 @@ class _CharacteristListItemState extends State<Files_path> {
             }
           : () {
               // file dettai pass to context of video;
+            //  print(widget.index);
+              
              Provider.of<queue_playerss>(context, listen: false).add_video_list_in_queue(widget.index, widget.file_path);
               // Navigator.push(
               //   context,
