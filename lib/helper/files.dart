@@ -574,10 +574,14 @@ void play_next_queue(List<video> videos){
         queue_video_list=videos.toList();
       }
       else{
-         videos.forEach((element) {if(queue_video_list.indexWhere((v) => v.v_id==element.v_id)==-1){queue_video_list.insert(curentindex++,element);}});
+         videos.forEach((element) {if(queue_video_list.indexWhere((v) => v.v_id==element.v_id)==-1){queue_video_list.insert(++curentindex,element);}});
       }
     curentindex=oldindex;
       notifyListeners();
+}
+
+video getvideo_by_id(){
+  return queue_video_list[curentindex];
 }
 
 void reorederd_quelist(int old_index,int new_ndex){

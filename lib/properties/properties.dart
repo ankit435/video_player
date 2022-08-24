@@ -19,6 +19,13 @@ final int f_index;
 class _video_propertyState extends State<video_property> {
   @override
   var video;
+
+  String getDuration(double value) {
+    Duration duration = Duration(milliseconds: value.round());
+    return [duration.inMinutes, duration.inSeconds]
+        .map((element) => element.remainder(60).toString().padLeft(2, '0'))
+        .join(':');
+  }
   Widget build(BuildContext context) {
 
   video=Provider.of<folder_details>(context, listen: true).getvideo(widget.f_index,widget.v_index);
@@ -40,7 +47,7 @@ class _video_propertyState extends State<video_property> {
                   ListTile(leading: Text("Size    "), title: Text(Storage().getFileSize(video.v_size,1)),),
                   ListTile(leading: Text("Date    "), title: Text(video.v_lastmodified.toString()),),
                   ListTile(leading: Text("Format  "), title: Text(Storage().getFileExtension(video.v_title)),),   
-                  ListTile(leading: Text("Length  "), title: Text(video.v_duration.toString()),),         
+                  ListTile(leading: Text("Length  "), title: Text(video.v_duration==-1?"not_initialize":getDuration(video.v_duration.toDouble())),),         
                 ],
             ),
           ),

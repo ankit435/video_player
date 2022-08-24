@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:video/video_player/video_utilites/slider.dart';
 
 import 'package:video_player/video_player.dart';
 
 import '../cliper/left_border_cliper.dart';
 import '../cliper/right_border_cliper.dart';
+import '../helper/file.dart';
 import '../helper/files.dart';
 
 class Play_video extends StatefulWidget {
+  
   const Play_video({Key? key}) : super(key: key);
   static const routeName = '/video_played';
 
@@ -27,51 +30,53 @@ class _Play_videoState extends State<Play_video> {
 
   VideoPlayerController? _controller;
   var f;
+  bool mounted=true;
 
   bool left = false;
   bool background_play = false;
   bool lock = false;
   int newCurrentPosition = 0;
   var queue_player;
+  double speed=1.0;
   //Future<void>screen_display;
 
-  
-
-  void _load_video(String v_videoPath, int index) {
-    f = File(v_videoPath);
+  void _load_video(video v) {
+    if(mounted){
+    f = File(v.v_videoPath);
     _controller = VideoPlayerController.file(f!)
       ..initialize().then((_) {
+        
         setState(() {
-          if (queue_player[3][index].v_open == false &&
-              queue_player[3][index].v_duration == -1) {
+          if (v.v_open == false && v.v_duration == -1) {
             Provider.of<folder_details>(context, listen: false).Setduration(
-                _controller!.value.duration.inSeconds,
-                queue_player[3][index].v_id,
-                queue_player[3][index].parent_folder_id);
+                _controller!.value.duration.inMilliseconds,
+                v.v_id,
+                v.parent_folder_id);
           }
-          Provider.of<folder_details>(context, listen: false).updatevideoopen(
-              queue_player[3][index].v_id,
-              queue_player[3][index].parent_folder_id);
+        Provider.of<folder_details>(context, listen: false)
+              .updatevideoopen(v.v_id, v.parent_folder_id);
+          updateseeker(v.v_watched.toDouble());
         });
       });
-    // _controller!.addListener(
-    //   () => setState(() => currentDurationInSecond = _controller!.value.position.inSeconds),
-    // );
+       _controller!.addListener(() {
+          setlistenerseeker();
+        });
     _controller!.play();
   }
+  }
 
-  Future<void> _onControllerChange(String link, int index) async {
+  Future<void> _onControllerChange(video link) async {
+    if(mounted){
     if (_controller == null) {
-      _load_video(link, index);
+      _load_video(link);
     } else {
       final oldController = _controller;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await oldController!.dispose();
-        _load_video(link, index);
+        _load_video(link);
       });
-      // setState(() {
-      //   _controller = null;
-      // });
+    }
+    
     }
   }
 
@@ -82,39 +87,46 @@ class _Play_videoState extends State<Play_video> {
     // });
 
     defaultsorenatation();
-    queue_player =
-        Provider.of<queue_playerss>(context, listen: false).getqueuevideo();
-    if (queue_player[0] && false) {
-      setState(() {
-        _controller = queue_player[1];
-      });
-    } else {
-      _onControllerChange(getcurr_video(), queue_player[2]);
-    }
+    if(mounted){
+    video v = getvideo();
+    _onControllerChange(v);
+
     _controller!.addListener(() {
-      updateseeker();
+      setlistenerseeker();
     });
+    }
     super.initState();
   }
 
-  void updateseeker() {
+  void setlistenerseeker() {
+    if(mounted){
     setState(() {
       currentDuration = _controller!.value.position.inMilliseconds;
     });
+    }
   }
 
-  // void _getValuesAndPlay(String videoPath) {
-  //   newCurrentPosition = _controller.value.position;
-  //   _startPlay(videoPath);
-  //   print(newCurrentPosition.toString());
-  // }
+  void updateslider(double value){
+    setState(() {
+      speed=value;
+       _controller!.setPlaybackSpeed(speed);
+    });
+   
+    
+  }
+
+  void updateseeker(double value) {
+    _controller!.seekTo(Duration(milliseconds: value.round()));
+  }
+
+  video getvideo() {
+    return Provider.of<queue_playerss>(context, listen: false).getvideo_by_id();
+  }
 
   void update_curent_watch_time() {
-    // print("currentDurationInSecond===" +currentDurationInSecond.toString());
-    Provider.of<folder_details>(context, listen: false).SetWatchedduration(
-        currentDuration,
-        queue_player[3][getcurrent_index()].v_id,
-        queue_player[3][getcurrent_index()].parent_folder_id);
+    video v =getvideo();
+    Provider.of<folder_details>(context, listen: false)
+        .SetWatchedduration(currentDuration, v.v_id, v.parent_folder_id);
   }
 
   @override
@@ -128,14 +140,19 @@ class _Play_videoState extends State<Play_video> {
 //  update_curent_watch_time();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     // if(!background_play)
+  //  update_curent_watch_time();
+    mounted=false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     defaultsorenatation();
 
-    if (_controller!.value.isPlaying) _controller!.pause();
-    _controller!.removeListener(() {
-      updateseeker();
+    if (_controller!.value.isPlaying||_controller!=null) {
+      _controller!.pause();
+       _controller!.removeListener(() {
+      setlistenerseeker();
     });
-
+    }
+    update_curent_watch_time();
+   
     _controller!.dispose();
   }
 
@@ -168,9 +185,23 @@ class _Play_videoState extends State<Play_video> {
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
-            child: Container(
-              height: 300,
-            ));
+            child: Container(height: 300,));
+      },
+    );
+  }
+
+void _bottoslider(BuildContext context) {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+            onTap: () {},
+            behavior: HitTestBehavior.opaque,
+            //contdition to be ture for one video
+            child: playback_slider(updateslider:updateslider,speed:speed));
       },
     );
   }
@@ -196,7 +227,8 @@ class _Play_videoState extends State<Play_video> {
           ]);
   }
 
-  Widget iconbutton(IconData icon, Function param1) {
+  Widget iconbutton(IconData? icon, Function param1,{String text=""} ) {
+   
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -210,10 +242,10 @@ class _Play_videoState extends State<Play_video> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
+               text.isEmpty? Icon(
                   icon,
                   color: Theme.of(context).primaryIconTheme.color,
-                ), // icon
+                ):FittedBox(child: Text("${text}X", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
                 // text
               ],
             ),
@@ -224,31 +256,19 @@ class _Play_videoState extends State<Play_video> {
   }
 
   bool play_next() {
+    update_curent_watch_time();
     bool cond =
         Provider.of<queue_playerss>(context, listen: false).getskipnextvideo();
-
-    print("cond==" + cond.toString());
     return cond;
   }
 
-// Container(
-//       child: Row(
-//         children: [
-//           Text('00:37'),
-//           Expanded(
-//               child: Slider(...),
-//              ),
-//           Text('01:15'),
-//          SizedBox(width: 16),
-//         ],
-//       ),
-//     );
-  bool play_prv() {
+  bool play_prv() {update_curent_watch_time();
     return Provider.of<queue_playerss>(context, listen: false)
         .getskipprevvideo();
   }
 
   String getcurr_video() {
+    
     return Provider.of<queue_playerss>(context, listen: false)
         .getcurrentvideo();
   }
@@ -275,16 +295,13 @@ class _Play_videoState extends State<Play_video> {
         }
       }),
       iconbutton(Icons.skip_previous, () {
-        play_prv()
-            ? {
-                update_curent_watch_time(),
-                _onControllerChange(getcurr_video(), getcurrent_index())
-              }
-            : null;
+        play_prv() ? _onControllerChange(getvideo()) : null;
       }),
       iconbutton(_controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
           () {
+            
         setState(() {
+          update_curent_watch_time();
           if (_controller!.value.isPlaying) {
             _controller!.pause();
           } else {
@@ -293,15 +310,10 @@ class _Play_videoState extends State<Play_video> {
         });
       }),
       iconbutton(Icons.skip_next, () {
-        play_next()
-            ? {
-                update_curent_watch_time(),
-                _onControllerChange(getcurr_video(), getcurrent_index())
-              }
-            : null;
+        play_next() ? _onControllerChange(getvideo()) : null;
       }),
       iconbutton(Icons.fullscreen, () {
-       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       }),
     ];
   }
@@ -335,18 +347,18 @@ class _Play_videoState extends State<Play_video> {
         });
         Provider.of<queue_playerss>(context, listen: false)
             .togle_bacground_play();
-         Provider.of<queue_playerss>(context, listen: false)
+        Provider.of<queue_playerss>(context, listen: false)
             .setvideo_controler(_controller!);
         Navigator.of(context).pop();
         if (_controller!.value.isPlaying) {
           _controller!.pause();
         }
-        dispose();
+      //  dispose();
       }),
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.speed, () {}),
+      iconbutton(Icons.speed, () {_bottoslider(context);},text:speed.toString()),
       SizedBox(
         width: 10,
       ),
@@ -390,14 +402,15 @@ class _Play_videoState extends State<Play_video> {
     return [
       AppBar(
         title: AutoSizeText(
-
-            Provider.of<queue_playerss>(context, listen: false).video_title(),
-            maxLines: 2,
-            minFontSize: 17,
-            maxFontSize: 18,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color:Theme.of(context).primaryIconTheme.color,),
-            ),
+          Provider.of<queue_playerss>(context, listen: false).video_title(),
+          maxLines: 2,
+          minFontSize: 17,
+          maxFontSize: 18,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).primaryIconTheme.color,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         actions: action(),
@@ -431,9 +444,6 @@ class _Play_videoState extends State<Play_video> {
     ];
   }
 
-  //  Text(getDuration(currentDuration.inMilliseconds.toDouble()), style: TextStyle(color: Colors.grey, fontSize: 12.5, fontWeight: FontWeight.w500)),
-  //       Text(getDuration(endduration.inMilliseconds.toDouble()), style: TextStyle(color: Colors.grey, fontSize: 12.5, fontWeight: FontWeight.w500)),
-
   List<Widget> bottobar() {
     return [
       Padding(
@@ -455,7 +465,7 @@ class _Play_videoState extends State<Play_video> {
                   max: _controller!.value.duration.inMilliseconds.toDouble(),
                   value: currentDuration.toDouble(),
                   onChanged: (value) {
-                     _controller!.seekTo(Duration(milliseconds: value.round()));
+                    updateseeker(value);
                   },
                 ),
               ),
@@ -471,7 +481,6 @@ class _Play_videoState extends State<Play_video> {
           ),
         ),
       ),
-
       Padding(
         padding: const EdgeInsets.all(15.0),
         child: Row(
@@ -502,7 +511,6 @@ class _Play_videoState extends State<Play_video> {
 
   String getDuration(double value) {
     Duration duration = Duration(milliseconds: value.round());
-
     return [duration.inMinutes, duration.inSeconds]
         .map((element) => element.remainder(60).toString().padLeft(2, '0'))
         .join(':');
@@ -514,12 +522,11 @@ class _Play_videoState extends State<Play_video> {
 // },),
 
   Widget build(BuildContext context) {
-    
     return Scaffold(
         body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: Colors.black,
+      height: double.infinity,
+      width: double.infinity,
+      color: Colors.black,
       child: Stack(
         children: [
           video_played(),

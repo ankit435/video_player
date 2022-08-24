@@ -20,13 +20,13 @@ class _PlayList_detailsState extends State<PlayList_details> {
   Widget build(BuildContext context) {
     
     return ListTile(
-      contentPadding: EdgeInsets.all(0),
+      
       leading: Icon(
         Icons.favorite_sharp,
         color: Colors.red,
       ),
       title: Text(widget.playLists.p_title),
-      subtitle: Text(widget.playLists.p_detail.length.toString()+" "+"Video"),
+      subtitle: Text("${widget.playLists.p_detail.length} Video"),
       trailing: IconButton(onPressed: () {
 
         widget.bottmplaysheet( context, widget.playLists.p_id);
