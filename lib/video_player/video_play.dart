@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:video/video_player/video_utilites/slider.dart';
+import 'package:video/video_player/video_utilites/video_player_bottomsheet.dart';
 
 import 'package:video_player/video_player.dart';
 
@@ -15,8 +16,8 @@ import '../helper/file.dart';
 import '../helper/files.dart';
 
 class Play_video extends StatefulWidget {
-  
-  const Play_video({Key? key}) : super(key: key);
+  final int f_id;
+  const Play_video({Key? key, required this.f_id}) : super(key: key);
   static const routeName = '/video_played';
 
   @override
@@ -30,53 +31,52 @@ class _Play_videoState extends State<Play_video> {
 
   VideoPlayerController? _controller;
   var f;
-  bool mounted=true;
+  bool mounted = true;
 
   bool left = false;
   bool background_play = false;
   bool lock = false;
   int newCurrentPosition = 0;
   var queue_player;
-  double speed=1.0;
+  double speed = 1.0;
   //Future<void>screen_display;
 
+
   void _load_video(video v) {
-    if(mounted){
-    f = File(v.v_videoPath);
-    _controller = VideoPlayerController.file(f!)
-      ..initialize().then((_) {
-        
-        setState(() {
-          if (v.v_open == false && v.v_duration == -1) {
-            Provider.of<folder_details>(context, listen: false).Setduration(
-                _controller!.value.duration.inMilliseconds,
-                v.v_id,
-                v.parent_folder_id);
-          }
-        Provider.of<folder_details>(context, listen: false)
-              .updatevideoopen(v.v_id, v.parent_folder_id);
-          updateseeker(v.v_watched.toDouble());
+    if (mounted) {
+      f = File(v.v_videoPath);
+      _controller = VideoPlayerController.file(f!)
+        ..initialize().then((_) {
+          setState(() {
+            if (v.v_open == false && v.v_duration == -1) {
+              Provider.of<folder_details>(context, listen: false).Setduration(
+                  _controller!.value.duration.inMilliseconds,
+                  v.v_id,
+                  v.parent_folder_id);
+            }
+            Provider.of<folder_details>(context, listen: false)
+                .updatevideoopen(v.v_id, v.parent_folder_id);
+            updateseeker(v.v_watched.toDouble());
+          });
         });
+      _controller!.addListener(() {
+        setlistenerseeker();
       });
-       _controller!.addListener(() {
-          setlistenerseeker();
-        });
-    _controller!.play();
-  }
+      _controller!.play();
+    }
   }
 
   Future<void> _onControllerChange(video link) async {
-    if(mounted){
-    if (_controller == null) {
-      _load_video(link);
-    } else {
-      final oldController = _controller;
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await oldController!.dispose();
+    if (mounted) {
+      if (_controller == null) {
         _load_video(link);
-      });
-    }
-    
+      } else {
+        final oldController = _controller;
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await oldController!.dispose();
+          _load_video(link);
+        });
+      }
     }
   }
 
@@ -87,32 +87,30 @@ class _Play_videoState extends State<Play_video> {
     // });
 
     defaultsorenatation();
-    if(mounted){
-    video v = getvideo();
-    _onControllerChange(v);
+    if (mounted) {
+      video v = getvideo();
+      _onControllerChange(v);
 
-    _controller!.addListener(() {
-      setlistenerseeker();
-    });
+      _controller!.addListener(() {
+        setlistenerseeker();
+      });
     }
     super.initState();
   }
 
   void setlistenerseeker() {
-    if(mounted){
-    setState(() {
-      currentDuration = _controller!.value.position.inMilliseconds;
-    });
+    if (mounted) {
+      setState(() {
+        currentDuration = _controller!.value.position.inMilliseconds;
+      });
     }
   }
 
-  void updateslider(double value){
+  void updateslider(double value) {
     setState(() {
-      speed=value;
-       _controller!.setPlaybackSpeed(speed);
+      speed = value;
+      _controller!.setPlaybackSpeed(speed);
     });
-   
-    
   }
 
   void updateseeker(double value) {
@@ -124,7 +122,7 @@ class _Play_videoState extends State<Play_video> {
   }
 
   void update_curent_watch_time() {
-    video v =getvideo();
+    video v = getvideo();
     Provider.of<folder_details>(context, listen: false)
         .SetWatchedduration(currentDuration, v.v_id, v.parent_folder_id);
   }
@@ -140,19 +138,19 @@ class _Play_videoState extends State<Play_video> {
 //  update_curent_watch_time();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     // if(!background_play)
-  //  update_curent_watch_time();
-    mounted=false;
+    //  update_curent_watch_time();
+    mounted = false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     defaultsorenatation();
 
-    if (_controller!.value.isPlaying||_controller!=null) {
+    if (_controller!.value.isPlaying || _controller != null) {
       _controller!.pause();
-       _controller!.removeListener(() {
-      setlistenerseeker();
-    });
+      _controller!.removeListener(() {
+        setlistenerseeker();
+      });
     }
-    update_curent_watch_time();
-   
+    // update_curent_watch_time();
+
     _controller!.dispose();
   }
 
@@ -174,7 +172,7 @@ class _Play_videoState extends State<Play_video> {
     );
   }
 
-  void _bottoplaylist(BuildContext context) {
+  void _bottofolder_queue_list(BuildContext context) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -185,12 +183,13 @@ class _Play_videoState extends State<Play_video> {
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
-            child: Container(height: 300,));
+            child: video_bottom_sheet(
+                playfolder_video: playfolder_video, f_id: widget.f_id));
       },
     );
   }
 
-void _bottoslider(BuildContext context) {
+  void _bottombutton(BuildContext context) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -201,7 +200,40 @@ void _bottoslider(BuildContext context) {
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
-            child: playback_slider(updateslider:updateslider,speed:speed));
+            child: Container(
+              height: 300,
+            ));
+      },
+    );
+  }
+
+  void playfolder_video(int index) {
+      update_curent_watch_time();
+    if (Provider.of<queue_playerss>(context, listen: false)
+        .set_current_index(index)) {
+    
+      _onControllerChange(getvideo());
+    } else {
+      print("somthing went wrong");
+    }
+  }
+
+  void icon_button_press(int val){
+    
+  }
+
+  void _bottoslider(BuildContext context) {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+            onTap: () {},
+            behavior: HitTestBehavior.opaque,
+            //contdition to be ture for one video
+            child: playback_slider(updateslider: updateslider, speed: speed));
       },
     );
   }
@@ -227,8 +259,7 @@ void _bottoslider(BuildContext context) {
           ]);
   }
 
-  Widget iconbutton(IconData? icon, Function param1,{String text=""} ) {
-   
+  Widget iconbutton(IconData? icon, Function param1, {String text = ""}) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -242,10 +273,17 @@ void _bottoslider(BuildContext context) {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-               text.isEmpty? Icon(
-                  icon,
-                  color: Theme.of(context).primaryIconTheme.color,
-                ):FittedBox(child: Text("${text}X", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
+                text.isEmpty
+                    ? Icon(
+                        icon,
+                        color: Theme.of(context).primaryIconTheme.color,
+                      )
+                    : FittedBox(
+                        child: Text(
+                        "${text}X",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ))
                 // text
               ],
             ),
@@ -262,13 +300,13 @@ void _bottoslider(BuildContext context) {
     return cond;
   }
 
-  bool play_prv() {update_curent_watch_time();
+  bool play_prv() {
+    update_curent_watch_time();
     return Provider.of<queue_playerss>(context, listen: false)
         .getskipprevvideo();
   }
 
   String getcurr_video() {
-    
     return Provider.of<queue_playerss>(context, listen: false)
         .getcurrentvideo();
   }
@@ -277,6 +315,10 @@ void _bottoslider(BuildContext context) {
     return Provider.of<queue_playerss>(context, listen: false)
         .getcurrent_index();
   }
+  
+
+
+
 
   List<Widget> Bottom_button() {
     return [
@@ -299,7 +341,6 @@ void _bottoslider(BuildContext context) {
       }),
       iconbutton(_controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
           () {
-            
         setState(() {
           update_curent_watch_time();
           if (_controller!.value.isPlaying) {
@@ -353,12 +394,14 @@ void _bottoslider(BuildContext context) {
         if (_controller!.value.isPlaying) {
           _controller!.pause();
         }
-      //  dispose();
+        //  dispose();
       }),
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.speed, () {_bottoslider(context);},text:speed.toString()),
+      iconbutton(Icons.speed, () {
+        _bottoslider(context);
+      }, text: speed.toString()),
       SizedBox(
         width: 10,
       ),
@@ -382,17 +425,18 @@ void _bottoslider(BuildContext context) {
     return [
       IconButton(
           onPressed: () {
-            _bottoplaylist(context);
+            _bottombutton(context);
           },
           icon: Icon(Icons.closed_caption_outlined)),
       IconButton(
-          onPressed: () {
-            _bottoplaylist(context);
-          },
-          icon: Icon(Icons.playlist_add_check_circle)),
+        onPressed: () {
+          _bottofolder_queue_list(context);
+        },
+        icon: Icon(Icons.playlist_play),
+      ),
       IconButton(
           onPressed: () {
-            _bottoplaylist(context);
+            _bottombutton(context);
           },
           icon: Icon(Icons.more_vert)),
     ];
@@ -516,10 +560,6 @@ void _bottoslider(BuildContext context) {
         .join(':');
   }
 
-// Slider(inactiveColor: Colors.black12,activeColor: Colors.black,min: minimumValue,max: maximumValue,value: currentValue,onChanged: (value) {
-//   currentValue=value;
-//   player.seek(Duration(milliseconds: currentValue.round()));
-// },),
 
   Widget build(BuildContext context) {
     return Scaffold(

@@ -209,6 +209,10 @@ void updatevideoopen(int v_id,int f_id){
     return videos;
   }
 
+  String folder_name(int f_id) {
+    return _folder_item[folder_index(f_id)].f_title;
+  }
+
 }
 
 
@@ -668,6 +672,22 @@ void togle_bacground_play(){
   
   notifyListeners();
 }
+
+  bool set_current_index(int index) {
+    try {
+      if(index>=0&&index<queue_video_list.length) {
+        curentindex=index;
+      } else{
+        return false;
+      }
+    notifyListeners();
+    return true;
+    } catch (e) {
+      
+    }
+    return false;
+   
+  }
 
 
 

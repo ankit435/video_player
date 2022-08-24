@@ -162,14 +162,14 @@ class _CharacteristListItemState extends State<Files_path> {
             //  print(widget.index);
               
              Provider.of<queue_playerss>(context, listen: false).add_video_list_in_queue(widget.index, widget.file_path);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) =>
-              //         Play_video(),
-              //   ),
-              // );
-              Navigator.of(context).pushNamed(Play_video.routeName);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      Play_video(f_id:widget.file_path[widget.index].parent_folder_id),
+                ),
+              );
+              //Navigator.of(context).pushNamed(Play_video.routeName);
             },
       onLongPress: widget.onPressed1 != null ? widget.onPressed : null,
     );
