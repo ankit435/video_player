@@ -26,6 +26,11 @@ class _video_propertyState extends State<video_property> {
         .map((element) => element.remainder(60).toString().padLeft(2, '0'))
         .join(':');
   }
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   Widget build(BuildContext context) {
 
   video=Provider.of<folder_details>(context, listen: true).getvideo(widget.f_index,widget.v_index);
@@ -37,24 +42,24 @@ class _video_propertyState extends State<video_property> {
             insetPadding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           scrollable: true,
-          title: Text('Properties'),
+          title: text('Properties'),
           content: Container(
             width: MediaQuery.of(context).size.width-20,
             child: Column(
                 children:  <Widget>[
-                  ListTile(leading: Text("File    "), title: Text(video.v_title),),
-                  ListTile(leading: Text("Location"), title: Text(video.v_videoPath),),
-                  ListTile(leading: Text("Size    "), title: Text(Storage().getFileSize(video.v_size,1)),),
-                  ListTile(leading: Text("Date    "), title: Text(video.v_lastmodified.toString()),),
-                  ListTile(leading: Text("Format  "), title: Text(Storage().getFileExtension(video.v_title)),),   
-                  ListTile(leading: Text("Length  "), title: Text(video.v_duration==-1?"not_initialize":getDuration(video.v_duration.toDouble())),),         
+                  ListTile(leading: text("File    "), title: text(video.v_title),),
+                  ListTile(leading: text("Location"), title: text(video.v_videoPath),),
+                  ListTile(leading: text("Size    "), title: text(Storage().getFileSize(video.v_size,1)),),
+                  ListTile(leading: text("Date    "), title: text(video.v_lastmodified.toString()),),
+                  ListTile(leading: text("Format  "), title: text(Storage().getFileExtension(video.v_title)),),   
+                  ListTile(leading: text("Length  "), title: text(video.v_duration==-1?"not_initialize":getDuration(video.v_duration.toDouble())),),         
                 ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: text('OK'),
             ),
           ],
         ));

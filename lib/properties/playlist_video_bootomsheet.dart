@@ -7,6 +7,7 @@ import 'package:video/properties/properties.dart';
 import '../helper/cruds_operation.dart';
 import '../helper/file.dart';
 import '../showdialogbox/Rename_playlist_file_and_folder.dart';
+import 'package:share_plus/share_plus.dart';
 
 class playlistbootoomshet extends StatefulWidget {
   final String p_title;
@@ -29,7 +30,14 @@ class playlistbootoomshet extends StatefulWidget {
 
 class _playlistbootoomshetState extends State<playlistbootoomshet> {
   @override
-  
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
 
   Widget build(BuildContext context) {
     int f_index = Provider.of<folder_details>(context, listen: false)
@@ -42,8 +50,8 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
     return Wrap(
       children: <Widget>[
          ListTile(
-          leading: Icon(Icons.play_arrow_outlined),
-          title: Text("Play Next"),
+          leading: icons(Icons.play_arrow_outlined),
+          title: text("Play Next"),
           onTap: (){
             List<video>videoss=[videos];
             Provider.of<queue_playerss>(context,
@@ -53,15 +61,15 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.playlist_add),
-          title: const Text("Add to PlayList"),
+          leading:  icons(Icons.playlist_add),
+          title:  text("Add to PlayList"),
           onTap: () {
             Navigator.pop(context);
             widget.onPressed(context, v_index, f_index);
           },
         ),
          ListTile(
-            leading: Icon(Icons.queue_play_next), title: Text("Add to queue"),onTap: (){
+            leading: icons(Icons.queue_play_next), title: text("Add to queue"),onTap: (){
               List<video>videoss=[videos];
               
 
@@ -72,20 +80,24 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
                   
             },),
         ListTile(
-          leading: Icon(Icons.remove_circle_outline_outlined),
-          title: Text("Remove"),
+          leading: icons(Icons.remove_circle_outline_outlined),
+          title: text("Remove"),
           onTap: () {
             Navigator.pop(context);
            // cruds_operation().delete_play_list_video(widget.p_id, video);
             // Provider.of<folder_details>(context, listen: false).delete_one_file(video);
           },
         ),
-        const ListTile(leading: Icon(Icons.share), title: Text("Share")),
+         ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {
+          Navigator.of(context).pop();
+           await Share.shareFiles([videos.v_videoPath]);
+           
+         },),
 
 
          ListTile(
-          leading: Icon(Icons.edit),
-          title: Text("Rename"),
+          leading: icons(Icons.edit),
+          title: text("Rename"),
           onTap: (){
              Navigator.pop(context);
             showDialog(
@@ -98,8 +110,8 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
           }
         ),
         ListTile(
-          leading: Icon(Icons.details),
-          title: Text("Properties"),
+          leading: icons(Icons.details),
+          title: text("Properties"),
           onTap: () {
             Navigator.pop(context);
             showDialog(

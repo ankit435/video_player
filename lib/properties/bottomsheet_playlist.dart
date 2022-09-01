@@ -23,6 +23,10 @@ class BottomPlayList extends StatefulWidget {
 
 class _BottomPlayListState extends State<BottomPlayList> {
   @override
+
+  Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
 List<PlayList> playLists=[];
 var video;
   Widget build(BuildContext context) {
@@ -35,7 +39,19 @@ var video;
       constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
       child: Column(
        children: [
-         Container(child: ListTile(leading: Icon(Icons.create_new_folder_outlined),title: Text("Create Playlist"), onTap: (){
+        SizedBox(height:10),
+
+        
+        Align(child:Container(height: 10,width: 60,
+         decoration: BoxDecoration(
+          color: Colors.red,
+      borderRadius: BorderRadius.all(
+      Radius.circular(5),
+      ),
+        ),
+        ),),
+        
+         Container(child: ListTile(leading: icons(Icons.create_new_folder_outlined),title: Text("Create Playlist"), onTap: (){
            Navigator.pop(context);
             showDialog(
               context: context,
@@ -49,7 +65,7 @@ var video;
           shrinkWrap: true,
               itemCount: playLists.length,
               itemBuilder: (context, index) {
-               return ListTile(leading: Icon(Icons.favorite),title: Text(playLists[index].p_title), 
+               return ListTile(leading: icons(Icons.favorite),title: Text(playLists[index].p_title), 
                onTap:(){
                     Navigator.of(context).pop();
                     //Provider.of<PlayList_detail>(context, listen: false).add_to_palylist(widget.file_detail[widget.v_id],playLists[index].p_title);
@@ -86,7 +102,7 @@ var video;
       // ListView.builder(
       //       itemCount: playLists.length,
       //       itemBuilder: (context, index) {
-      //        return ListTile(leading: Icon(Icons.favorite),title: Text(playLists[index].p_title), 
+      //        return ListTile(leading: icons(Icons.favorite),title: Text(playLists[index].p_title), 
       //       //  onTap:(){
       //       //       Provider.of<PlayList_detail>(context, listen: true).add_to_palylist(widget.file_detail[widget.v_id],playLists[index].p_title);
       //       //  } ,

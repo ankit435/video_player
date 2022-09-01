@@ -25,25 +25,31 @@ class _BottomnavigationState extends State<Bottomnavigation> {
         Music(),
         Playlist_Screen(),
       ];
+
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
+
    Widget _bottomNavigation() {
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      items:  <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: icons(Icons.home),
           label: 'Home',
           
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.video_library),
+          icon: icons(Icons.video_library),
           label: 'Video',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.my_library_music_outlined),
+          icon: icons(Icons.my_library_music_outlined),
           label: 'Muisc',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
+          icon: icons(Icons.favorite,),
           label: 'favorite',
+          
         ),
       ],
       type: BottomNavigationBarType.fixed,
@@ -54,7 +60,8 @@ class _BottomnavigationState extends State<Bottomnavigation> {
           Theme.of(context).textTheme.titleMedium!.fontSize!.toDouble(),
       unselectedFontSize:
           Theme.of(context).textTheme.titleMedium!.fontSize!.toDouble(),
-      selectedItemColor: Colors.red,
+      selectedItemColor: Theme.of(context).secondaryHeaderColor,
+      
       onTap: _onItemTapped,
     );
   }

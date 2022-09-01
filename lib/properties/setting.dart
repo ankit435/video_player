@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+import 'package:video/helper/files.dart';
 
 class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
@@ -34,84 +36,108 @@ class _SettingState extends State<Setting> {
     );
   }
 
-  Widget listiles(String titles, String subtitle, String key) {
+  Widget listiles(String titles, {String subtitle="", String key="",Function? param1} ) {
     return ListTile(
-        title: Text(titles),
-        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
-        trailing: key.isNotEmpty ? Switch_button(true) : null);
+        title: text(titles),
+        subtitle: subtitle.isNotEmpty ? text(subtitle) : null,
+        trailing: key.isNotEmpty ? Switch_button(true) : null,
+        onTap: param1==null?null:() {
+          param1();
+        });
+
+        
+        
   }
+
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Setting")),
-        body:SingleChildScrollView (
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                alignment: Alignment.centerLeft,
-                child: Text("General",style: TextStyle(color: Colors.red),),
-                
-              ),
-              Column(
+     
+        appBar: AppBar( 
+          backgroundColor: Theme.of(context).primaryColor,
+       title: text("Setting")),
+        body:Container(
+             color: Theme.of(context).backgroundColor,
+          child: Center(
+            child: SingleChildScrollView (
+              child: Column(
                 children: [
-                  listiles("Theme", "default theme", ""),
-                  listiles("Language", "Auto", ""),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                    alignment: Alignment.centerLeft,
+                    child: Text("General",style: TextStyle(color: Colors.red),),
+                    
+                  ),
+                  Column(
+                    children: [
+                      listiles("Theme", subtitle: Theme.of(context).toString(),param1:(){
+                        Navigator.pushNamed(context, '/theme_screen');
+                      }),
+                      listiles("Language",subtitle:  "Auto", param1:(){
+                      Provider.of<themes>(context,listen: false).update_curr_theme_id(2);
+                      }),
+                    ],
+                  ),
+                 Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Media",style: TextStyle(color: Colors.red),),
+                    
+                  ),
+                  Column(
+                    children: [
+                      listiles("Show dotFolder", key: "Folder"),
+                      listiles("Show dotFile", key: "File"),
+                      listiles("History", key: "History"),
+                    ],
+                  ),
+                 Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Premium",style: TextStyle(color: Colors.red),),
+                    
+                  ),
+                  Column(
+                    children: [
+                      listiles("Show dotFolder", key:  "Folder"),
+                      listiles("Show dotFile",key: "File"),
+                      listiles("History", key:  "History"),
+                    ],
+                  ),
+                 Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Decoder",style: TextStyle(color: Colors.red),),
+                    
+                  ),
+                  Column(
+                    children: [
+                       listiles("Show dotFolder", key:  "Folder"),
+                      listiles("Show dotFile", key: "File"),
+                      listiles("History",key: "History"),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Decoder",style: TextStyle(color: Colors.red),),
+                    
+                  ),
+                  Column(
+                    children: [
+                       listiles("Show dotFolder", key:  "Folder"),
+                      listiles("Show dotFile", key: "File"),
+                      listiles("History",key:  "History"),
+                    ],
+                  ),
                 ],
               ),
-             Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                alignment: Alignment.centerLeft,
-                child: Text("Media",style: TextStyle(color: Colors.red),),
-                
-              ),
-              Column(
-                children: [
-                  listiles("Show dotFolder", "", "Folder"),
-                  listiles("Show dotFile", "", "File"),
-                  listiles("History", "", "History"),
-                ],
-              ),
-             Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                alignment: Alignment.centerLeft,
-                child: Text("Premium",style: TextStyle(color: Colors.red),),
-                
-              ),
-              Column(
-                children: [
-                   listiles("Show dotFolder", "", "Folder"),
-                  listiles("Show dotFile", "", "File"),
-                  listiles("History", "", "History"),
-                ],
-              ),
-             Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                alignment: Alignment.centerLeft,
-                child: Text("Decoder",style: TextStyle(color: Colors.red),),
-                
-              ),
-              Column(
-                children: [
-                   listiles("Show dotFolder", "", "Folder"),
-                  listiles("Show dotFile", "", "File"),
-                  listiles("History", "", "History"),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                alignment: Alignment.centerLeft,
-                child: Text("Decoder",style: TextStyle(color: Colors.red),),
-                
-              ),
-              Column(
-                children: [
-                   listiles("Show dotFolder", "", "Folder"),
-                  listiles("Show dotFile", "", "File"),
-                  listiles("History", "", "History"),
-                ],
-              ),
-            ],
+            ),
           ),
         ));
   }

@@ -31,6 +31,7 @@ class _Playlist_fileState extends State<Playlist_file> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: false,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -88,7 +89,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                 return ListTile(
                   key: ValueKey(index),
                   leading: Icon(Icons.queue_play_next_outlined),
-                  title: Text(playLists[index].v_title),
+                  title: text(playLists[index].v_title),
                   trailing: IconButton(
                       onPressed: () {
                         _playlistbootomsheet(context,playLists[index].v_id,playLists[index].parent_folder_id);
@@ -100,7 +101,11 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
       ],
     );
   }
-
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   Widget build(BuildContext context) {
     var arg=ModalRoute.of(context)!.settings.arguments as Map;
     p_id=arg['v2'];
@@ -109,10 +114,13 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
 
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
+          SliverAppBar( 
+            backgroundColor: Theme.of(context).primaryColor,
+       
             expandedHeight: 240,
             flexibleSpace: FlexibleSpaceBar(
 
@@ -121,11 +129,11 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
             pinned: true,
             floating: true,
             snap: true,
-            title: Text(p_title),
+            title: text(p_title),
             // actions: action(),
           ),
         ],
-        body: _body(),
+        body: Container(   color: Theme.of(context).backgroundColor,child: _body()),
       ),
     );
   }

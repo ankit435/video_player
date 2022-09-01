@@ -37,7 +37,10 @@ dependencies:
   permission_handler: ^10.0.0
   auto_size_text: ^3.0.0
   video_player: ^2.4.5
+  share_plus: ^4.0.10+1
   video_thumbnail: ^0.5.2
+  flutter_circle_color_picker: ^0.3.0
+  
 
 
   

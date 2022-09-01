@@ -40,6 +40,7 @@ class _Video_HomeState extends State<Video_Home> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: false,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -50,6 +51,11 @@ class _Video_HomeState extends State<Video_Home> {
     );
   }
 
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
 
 void _bottoplaylist(BuildContext context, int v_index,int f_index) {
     showModalBottomSheet(
@@ -57,6 +63,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -112,15 +119,15 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
     return PopupMenuButton(
         itemBuilder: (context) => selection
             ? [
-                const PopupMenuItem(
+                 PopupMenuItem(
                     child: ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text("Add to fav"),
+                  leading: icons(Icons.favorite),
+                  title: text("Add to fav"),
                 )),
-                const PopupMenuItem(
+                 PopupMenuItem(
                     child: ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text("share"),
+                  leading: icons(Icons.share),
+                  title: text("share"),
                 )),
                PopupMenuItem(
                 
@@ -128,8 +135,8 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                 },
                   
                     child: ListTile(
-                  leading: Icon(Icons.details),
-                  title: Text("properties"),
+                  leading: icons(Icons.details),
+                  title: text("properties"),
                 )
                 
                 
@@ -139,13 +146,13 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                 PopupMenuItem(
                     onTap: () => toggleselction(),
                     child: ListTile(
-                      leading: Icon(Icons.select_all),
-                      title: Text("Select"),
+                      leading: icons(Icons.select_all),
+                      title: text("Select"),
                     )),
-                const PopupMenuItem(
+                 PopupMenuItem(
                     child: ListTile(
-                  leading: Icon(Icons.sort),
-                  title: Text("sort by"),
+                  leading: icons(Icons.sort),
+                  title: text("sort by"),
                 )),
               ]);
   }
@@ -158,15 +165,15 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                 print("file click");
                       
               }),
-              icon: Icon(Icons.lock_rounded),
+              icon: icons(Icons.lock_rounded),
             ),
             IconButton(
               onPressed: (){ showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Delete_file_dialog(ondelete:ondelete);
+                      return Show_dialog(onPressedtext:"Delete",onPressed:ondelete,title: "Delete Video from Device",text: "Are you sure you want to delete ${selction_list.length} File?",);
                     });},
-              icon: Icon(Icons.delete),
+              icon: icons(Icons.delete),
             ),
             _Popups(),
           ]
@@ -194,7 +201,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                     }
                   });
                 },
-                icon: Icon(icons_value == 0
+                icon: icons(icons_value == 0
                     ? Icons.list
                     : icons_value == 1
                         ? Icons.list_alt_rounded
@@ -205,11 +212,12 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
 
   AppBar _Appbar(String title) {
     return AppBar(
-      leading: selection?new IconButton(
-        icon: new Icon(Icons.close),
+      backgroundColor: Theme.of(context).primaryColor,
+      leading: selection?IconButton(
+        icon: icons(Icons.close),
         onPressed: () =>selection? toggleselction(): Navigator.of(context).pop(),
       ):null,
-      title: Text(title),
+      title: text(title),
       actions: action(),
     );
   }
@@ -240,7 +248,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           return GridTile(
               child: Container(
                   color: Colors.red,
-                  child: Center(child: Text(file_detail[index].v_title))));
+                  child: Center(child: text(file_detail[index].v_title))));
         });
   }
 
@@ -291,9 +299,14 @@ Widget _body(){
       )
   );
 }
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
+
   Widget build(BuildContext context) {
     String selected_title = selction_list.length.toString() + " " + 'selected';
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _Appbar(selection ? selected_title : title),
      // body: _body(),
     //  body: NestedScrollView(
@@ -302,11 +315,11 @@ Widget _body(){
     //     SliverAppBar(
     //       floating: true,
     //       snap: true,
-    //       title: Text(selection ? selected_title : title),
+    //       title: text(selection ? selected_title : title),
     //       actions: action(),
     //       )
     //   ],
-      body: _body());
+      body: Container(   color: Theme.of(context).backgroundColor,child: _body()));
    // );
   }
 }

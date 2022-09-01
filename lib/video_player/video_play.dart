@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:video/helper/theme_model.dart';
 import 'package:video/video_player/video_utilites/slider.dart';
 import 'package:video/video_player/video_utilites/video_player_bottomsheet.dart';
 
@@ -135,10 +136,7 @@ class _Play_videoState extends State<Play_video> {
   @override
   void dispose() {
     super.dispose();
-//  update_curent_watch_time();
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    // if(!background_play)
-    //  update_curent_watch_time();
+
     mounted = false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     defaultsorenatation();
@@ -178,6 +176,7 @@ class _Play_videoState extends State<Play_video> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
             onTap: () {},
@@ -195,6 +194,7 @@ class _Play_videoState extends State<Play_video> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
             onTap: () {},
@@ -228,6 +228,7 @@ class _Play_videoState extends State<Play_video> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
             onTap: () {},
@@ -444,7 +445,8 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> topbaar() {
     return [
-      AppBar(
+      AppBar( 
+      //  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: AutoSizeText(
           Provider.of<queue_playerss>(context, listen: false).video_title(),
           maxLines: 2,
@@ -498,13 +500,13 @@ class _Play_videoState extends State<Play_video> {
             children: [
               Text(getDuration(currentDuration.toDouble()),
                   style: TextStyle(
-                      color: Colors.red,
+                      color: Theme.of(context).sliderTheme.activeTrackColor,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w500)),
               Expanded(
                 child: Slider(
-                  inactiveColor: Colors.blue,
-                  activeColor: Colors.red,
+                  // inactiveColor: Colors.blue,
+                  // activeColor: Colors.red,
                   min: 0.0,
                   max: _controller!.value.duration.inMilliseconds.toDouble(),
                   value: currentDuration.toDouble(),
@@ -518,7 +520,7 @@ class _Play_videoState extends State<Play_video> {
                       _controller!.value.duration.inMilliseconds.toDouble() -
                           currentDuration.toDouble()),
                   style: TextStyle(
-                      color: Colors.blue,
+                     color:Theme.of(context).sliderTheme.inactiveTrackColor,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w500)),
             ],
@@ -563,6 +565,7 @@ class _Play_videoState extends State<Play_video> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(
       height: double.infinity,
       width: double.infinity,

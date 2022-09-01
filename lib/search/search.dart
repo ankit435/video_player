@@ -60,6 +60,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -80,7 +81,7 @@ Widget listvaluebuilder(){
                   itemCount: values.length,
                   itemBuilder: (context, index) {
                     // return ListTile(
-                    //   title: Text(values[index].v_title),
+                    //   title: text(values[index].v_title),
                     // );
             return Files_path(
             file_path: values,
@@ -126,16 +127,21 @@ Future<List<video>?> _inFutureList() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+   
+      appBar: AppBar( 
+       
         title: TextFormField(
             controller: searchController,
             autofocus: true,
             decoration: const InputDecoration(labelText: 'Search')),
       ),
-      body: filter==null||filter==''?Container() :  Center(
-        child: 
-        //oldtext==filter&&filter!=Null?listvaluebuilder():
-        fututurebuilder(),
+      body: Container(
+           color: Theme.of(context).backgroundColor,
+        child: filter==null||filter==''?Container() :  Center(
+          child: 
+          //oldtext==filter&&filter!=Null?listvaluebuilder():
+          fututurebuilder(),
+        ),
       ),
     );
   }

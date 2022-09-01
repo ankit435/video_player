@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:video/helper/file.dart';
 
 import '../file/file.dart';
@@ -30,6 +31,9 @@ class CharacteristListItem extends StatefulWidget {
 }
 
 class _CharacteristListItemState extends State<CharacteristListItem> {
+
+
+
   @override
   Widget iconbutton(IconData icon,  Function(BuildContext context, int f_Id) param1) {
     return SizedBox.fromSize(
@@ -77,7 +81,7 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.more_vert), // icon
+                Icon(Icons.more_vert, color: IconTheme.of(context).color,), // icon
                 // text
               ],
             ),
@@ -88,18 +92,28 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
   }
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(
+      leading:  Icon(
         Icons.folder,
+        color:IconTheme.of(context).color,
       ),
-      title: Text(widget.folder_detail.f_title),
-      onTap: widget.selection?null:() {
+      title: Text(widget.folder_detail.f_title,
+          style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ),
+         ),
+      onTap: widget.selection? (){widget.toggleselctionlist(widget.folder_detail.f_id,widget.folder_detail.f_size);}:() {
         Navigator.of(context).pushNamed(Files.routeName, arguments: {
           'v1': widget.folder_detail.f_title,
           'v2': widget.folder_detail.f_id
-        });
+        }
+        );
       },
       trailing: widget.selection?checbox():iconbutoon(),
-      onLongPress:  widget.toggleselction
+      onLongPress: (){
+        widget.toggleselction!();
+        widget.toggleselctionlist(widget.folder_detail.f_id,widget.folder_detail.f_size);
+
+      },
       
     );
   }

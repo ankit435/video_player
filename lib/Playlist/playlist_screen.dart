@@ -25,6 +25,7 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -42,7 +43,9 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
+
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
@@ -57,6 +60,11 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
     );
   }
 
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   Widget _body() {
     return Column(children: [
       Container(
@@ -103,18 +111,21 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
   Widget build(BuildContext context) {
     playLists = Provider.of<PlayList_detail>(context, listen: true).items();
     return Scaffold(
+      
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          const SliverAppBar(
+          SliverAppBar( 
+            backgroundColor: Theme.of(context).primaryColor,
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             // pinned: true,
             floating: true,
             snap: true,
-            title: Text("PlayList"),
+            title: text("PlayList"),
             // actions: action(),
           ),
         ],
-        body: _body(),
+        body: Container(   color: Theme.of(context).backgroundColor,child: _body()),
       ),
     );
   }

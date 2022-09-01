@@ -1,16 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 // import 'package:video/folder/directory.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
 import 'package:video/helper/storage.dart';
+import 'package:video/video_player/video_utilites/bottom_icon_buttons.dart';
 import '../folder/showfile.dart';
 import '../properties/bottomsheet_playlist.dart';
 import '../properties/folder_bottom_sheet.dart';
 import '../properties/setting.dart';
 import '../queue/queue_list_screen.dart';
 import '../search/search.dart';
+import '../showdialogbox/file_delete.dart';
 import '../video_player/video_play.dart';
 
 class FlutterDemo extends StatefulWidget {
@@ -33,6 +36,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     print("hi");
     setState(() {
       selection = !selection;
+      selction_list.clear();
     });
   }
 
@@ -63,81 +67,163 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
   Widget _Popups() {
-    return PopupMenuButton(
-      itemBuilder: (context) => const [
-        PopupMenuItem(
-            value: 1,
-            child: ListTile(
-              leading: Icon(Icons.select_all_outlined),
-              title: Text("Select"),
-            )),
-        PopupMenuItem(
-            child: ListTile(
-          leading: Icon(Icons.equalizer),
-          title: Text("Equalizer"),
-        )),
-        PopupMenuItem(
-          value: 2,
-          child: ListTile(
-            leading: Icon(Icons.refresh),
-            title: Text("Refresh"),
-          ),
-        ),
-        PopupMenuItem(
-            value: 3,
-            // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
-            child: ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Setting"),
-            )),
-        PopupMenuItem(
-            value: 4,
-            child: ListTile(
-              leading: Icon(Icons.ads_click_outlined),
-              title: Text("ads"),
-            ))
-      ],
-      // offset: Offset(0, 100),
-      // color: Colors.grey,
-      elevation: 2,
-      // on selected we show the dialog box
-      onSelected: (value) {
-        if (value == 1) {
-          toggleselction();
-        } else if (value == 2) {
-          _isInit = true;
-          _fetching_data();
-        } else if (value == 3) {
-          Navigator.of(context).pushNamed(Setting.routeName);
-        } else if (value == 4) {
-          getAllvideos();
-          print("ads");
-        }
-      },
-    );
+    return selection == false
+        ? PopupMenuButton(
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                  value: 1,
+                  child: ListTile(
+                    leading: Icon(Icons.select_all_outlined),
+                    title: Text("Select"),
+                  )),
+              PopupMenuItem(
+                  child: ListTile(
+                leading: Icon(Icons.equalizer),
+                title: Text("Equalizer"),
+              )),
+              PopupMenuItem(
+                value: 2,
+                child: ListTile(
+                  leading: Icon(Icons.refresh),
+                  title: Text("Refresh"),
+                ),
+              ),
+              PopupMenuItem(
+                  value: 3,
+                  // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
+                  child: ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text("Setting"),
+                  )),
+              PopupMenuItem(
+                  value: 4,
+                  child: ListTile(
+                    leading: Icon(Icons.ads_click_outlined),
+                    title: Text("ads"),
+                  ))
+            ],
+            // offset: Offset(0, 100),
+            // color: Colors.grey,
+            elevation: 2,
+            // on selected we show the dialog box
+            onSelected: (value) {
+              if (value == 1) {
+                toggleselction();
+              } else if (value == 2) {
+                _isInit = true;
+                _fetching_data();
+              } else if (value == 3) {
+                Navigator.of(context).pushNamed(Setting.routeName);
+              } else if (value == 4) {
+                getAllvideos();
+                print("ads");
+              }
+            },
+          )
+        : PopupMenuButton(
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                  value: 1,
+                  // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
+                  child: ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text("Hide Folder"),
+                  )),
+              PopupMenuItem(
+                  value: 2,
+                  child: ListTile(
+                    leading: Icon(Icons.playlist_add),
+                    title: Text("Add to playlist"),
+                  )),
+              PopupMenuItem(
+                  value: 3,
+                  child: ListTile(
+                    leading: Icon(Icons.share),
+                    title: Text("Share"),
+                  ))
+            ],
+
+            elevation: 2,
+            // on selected we show the dialog box
+            onSelected: (value) async {
+              if (value == 1) {
+              } else if (value == 2) {
+                _bottoplaylist(
+                    context,
+                    Provider.of<folder_details>(context, listen: false)
+                        .selection_foldervideo(selction_list));
+                setState(() {
+                  selction_list.clear();
+                  selection = false;
+                });
+              } else if (value == 3) {
+                await Share.shareFiles(
+                    Provider.of<folder_details>(context, listen: false)
+                        .get_folder_path(selction_list));
+                setState(() {
+                  selction_list.clear();
+                  selection = false;
+                });
+              }
+            },
+          );
   }
 
   List<Widget> _action() {
-    return ([
-      IconButton(
-        onPressed: () {
-          print("search click");
-          Navigator.of(context).pushNamed(Search.routeName);
-        },
-        icon: const Icon(Icons.search),
-      ),
-      IconButton(
-        onPressed: (() {
-          print("file click");
-        }),
-        icon: Icon(Icons.lock_rounded),
-      ),
-      _Popups(),
-    ]);
+    return (selection == false
+        ? [
+            IconButton(
+              onPressed: () {
+                print("search click");
+                Navigator.of(context).pushNamed(Search.routeName);
+              },
+              icon: Icon(Icons.search),
+            ),
+            IconButton(
+              onPressed: (() {
+                print("file click");
+              }),
+              icon: Icon(Icons.lock_rounded),
+            ),
+            _Popups(),
+          ]
+        : [
+            IconButton(
+              onPressed: (() {
+                print("file click");
+              }),
+              icon: Icon(Icons.lock_rounded),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Show_dialog(
+                        onPressedtext: "Delete",
+                        onPressed: ondelete,
+                        title: "Delete Video from Device",
+                        text:
+                            "Are you sure you want to delete ${selction_list.length} Folder?",
+                      );
+                    });
+              },
+              icon: const Icon(Icons.delete),
+            ),
+            _Popups()
+          ]);
   }
 
   AppBar _Appbar(String title) {
-    return AppBar(title: Text(title), actions: _action());
+    return AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+      
+        leading: selection
+            ? IconButton(
+                icon: Icon(Icons.close), onPressed: () => toggleselction())
+            : null,
+        title: Text(title),
+        actions: _action());
   }
 
   void getAllvideos() {
@@ -146,6 +232,15 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     setState(() {
       //file_detail=video;
     });
+  }
+
+  Future<void> ondelete() async {
+    toggleselction();
+    if (selction_list.isNotEmpty) {
+      await Provider.of<folder_details>(context, listen: false)
+          .deleteFolder(selction_list);
+    }
+    selction_list.clear();
   }
 
 // ignore: non_constant_identifier_names
@@ -221,6 +316,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -238,6 +334,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: false,
+      backgroundColor: Theme.of(context).backgroundColor,
       context: context,
       builder: (context) {
         return GestureDetector(
@@ -256,6 +353,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return GestureDetector(
           onTap: () {},
@@ -276,22 +374,28 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
     return Scaffold(
-      appBar: _Appbar("Video"),
-      body: _isLoading
-          ? Container(
-              child: Center(
-              child: CircularProgressIndicator(),
-            ))
-          : Center(
-              child: folder_list.isNotEmpty
-                  ? RefreshIndicator(onRefresh: _pullRefresh, child: _body())
-                  : ElevatedButton(
-                      onPressed: () {
-                        _isInit = true;
-                        _fetching_data();
-                      },
-                      child: Text("Reload")),
-            ),
+    
+      appBar: _Appbar(selction_list.length <= 0
+          ? "Video"
+          : selction_list.length.toString() + " Selected"),
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: _isLoading
+            ? Container(
+                child: Center(
+                child: CircularProgressIndicator(),
+              ))
+            : Center(
+                child: folder_list.isNotEmpty
+                    ? RefreshIndicator(onRefresh: _pullRefresh, child: _body())
+                    : ElevatedButton(
+                        onPressed: () {
+                          _isInit = true;
+                          _fetching_data();
+                        },
+                        child: Text("Reload")),
+              ),
+      ),
     );
   }
 
@@ -309,7 +413,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon), // icon
+                Icon(icon, color:IconTheme.of(context).color,), // icon
                 // text
               ],
             ),
@@ -338,7 +442,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
             },
           ),
         ),
-        queue[0]&&queue[3].length>0
+        queue[0] && queue[3].length > 0
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -347,20 +451,36 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                       Navigator.of(context).pushNamed(Play_video.routeName);
                     },
                     tileColor: Colors.black,
-                    leading: Icon(Icons.disc_full),
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        iconbutton(Icons.close, () {
+                          Provider.of<queue_playerss>(context, listen: false)
+                              .togle_bacground_play();
+                        }),
+                        Icon(Icons.disc_full),
+                      ],
+                    ),
                     title: AutoSizeText(
                         Provider.of<queue_playerss>(context, listen: false)
                             .video_title(),
                         maxLines: 2,
                         minFontSize: 13,
                         maxFontSize: 18,
-                        overflow: TextOverflow.ellipsis),
+                        overflow: TextOverflow.ellipsis,
+                         style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ),
+                        )
+                        ,
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        iconbutton(queue[1].value.isPlaying ? Icons.pause : Icons.play_arrow, () {
-                            Provider.of<queue_playerss>(context,
-                                  listen: false)
+                        iconbutton(
+                            queue[1].value.isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow, () {
+                          Provider.of<queue_playerss>(context, listen: false)
                               .updatecontoler_play_pause();
                         }),
                         iconbutton(Icons.skip_next, () {

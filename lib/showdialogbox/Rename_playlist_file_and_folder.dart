@@ -44,7 +44,11 @@ class _Rename_playlist_file_and_folderState extends State<Rename_playlist_file_a
     });
     return isButtonEnabled;
   }
-
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -53,7 +57,7 @@ class _Rename_playlist_file_and_folderState extends State<Rename_playlist_file_a
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           scrollable: true,
-          title: Text('Rename'),
+          title: text('Rename'),
           content: Container(
             width: MediaQuery.of(context).size.width - 20,
             child: Column(
@@ -72,7 +76,7 @@ class _Rename_playlist_file_and_folderState extends State<Rename_playlist_file_a
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child:  text('Cancel'),
             ),
             TextButton(
               onPressed: isEmpty()
@@ -88,7 +92,7 @@ class _Rename_playlist_file_and_folderState extends State<Rename_playlist_file_a
                                   _inputController.text);
                     }
                   : null,
-              child: const Text('Rename'),
+              child:  text('Rename'),
             ),
           ],
         ));

@@ -45,7 +45,11 @@ class _Create_playlistState extends State<Create_playlist> {
     });
     return isButtonEnabled;
   }
-
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
 
   Widget build(BuildContext context) {
     if (widget.condition)
@@ -58,7 +62,7 @@ class _Create_playlistState extends State<Create_playlist> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           scrollable: true,
-          title: Text(' Create Playlist'),
+          title: text(' Create Playlist'),
           content: Container(
             width: MediaQuery.of(context).size.width - 20,
             child: Column(
@@ -77,7 +81,7 @@ class _Create_playlistState extends State<Create_playlist> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child:  text('Cancel'),
             ),
             TextButton(
               onPressed: isEmpty()
@@ -103,7 +107,7 @@ class _Create_playlistState extends State<Create_playlist> {
                                   arguments: _inputController.text);
                             }
                   : null,
-              child: const Text('Create'),
+              child: text('Create'),
             ),
           ],
         ));

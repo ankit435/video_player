@@ -60,10 +60,12 @@ bool selection = false;
     return DefaultTabController (
       length: 4,
       child: Scaffold(
+      
         body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
+          SliverAppBar( 
+       backgroundColor: Theme.of(context).primaryColor,
             pinned: true,
             floating: true,
             snap: true,

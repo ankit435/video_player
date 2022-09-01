@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,8 +39,6 @@ class Files_path extends StatefulWidget {
 }
 
 class _CharacteristListItemState extends State<Files_path> {
-
-
   Widget checkbox() {
     return Checkbox(
       value:
@@ -70,7 +67,10 @@ class _CharacteristListItemState extends State<Files_path> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(Icons.more_vert), // icon
+                Icon(
+                  Icons.more_vert,
+                  color: IconTheme.of(context).color,
+                ), // icon
                 // text
               ],
             ),
@@ -95,7 +95,7 @@ class _CharacteristListItemState extends State<Files_path> {
 
   Widget subtitle() {
     return !widget.file_path[widget.index].v_open
-        ? const Text(
+        ? Text(
             "New",
             style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           )
@@ -103,18 +103,22 @@ class _CharacteristListItemState extends State<Files_path> {
   }
 
   Widget titles() {
-    return AutoSizeText(
-      widget.file_path[widget.index].v_title,
-      maxLines: 2,
-      minFontSize: 13,
-      maxFontSize: 18,
-      //overflow: TextOverflow.ellipsis
-    );
+    return AutoSizeText(widget.file_path[widget.index].v_title,
+        maxLines: 2,
+        minFontSize: 13,
+        maxFontSize: 18,
+        style: Theme.of(context).textTheme.bodyText1,
+        overflow: TextOverflow.ellipsis);
   }
 
+  Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
 
   Widget build(BuildContext context) {
-
 //   uint8list= VideoThumbnail.thumbnailData(
 //   video: widget.file_path[widget.index].v_videoPath,
 //   imageFormat: ImageFormat.JPEG,
@@ -126,12 +130,8 @@ class _CharacteristListItemState extends State<Files_path> {
           ? const Icon(
               Icons.folder,
             )
-         // : _controller!.value.isInitialized?
-         : Container(
-          width: 70.0,
-          height: 65.0,
-          color: Colors.yellow
-        ),
+          // : _controller!.value.isInitialized?
+          : Container(width: 70.0, height: 65.0, color: Colors.yellow),
       //: CircularProgressIndicator(),
       title: titles(),
       subtitle: widget.onPressed1 == null
@@ -141,7 +141,7 @@ class _CharacteristListItemState extends State<Files_path> {
               child: !widget.selection
                   ? subtitle()
                   : widget.selection
-                      ? Text(Storage().getFileSize(
+                      ? text(Storage().getFileSize(
                           widget.file_path[widget.index].v_size, 1))
                       : null,
             ),
@@ -159,19 +159,28 @@ class _CharacteristListItemState extends State<Files_path> {
             }
           : () {
               // file dettai pass to context of video;
-            //  print(widget.index);
-              
-             Provider.of<queue_playerss>(context, listen: false).add_video_list_in_queue(widget.index, widget.file_path);
+              //  print(widget.index);
+
+              Provider.of<queue_playerss>(context, listen: false)
+                  .add_video_list_in_queue(widget.index, widget.file_path);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      Play_video(f_id:widget.file_path[widget.index].parent_folder_id),
+                  builder: (context) => Play_video(
+                      f_id: widget.file_path[widget.index].parent_folder_id),
                 ),
               );
               //Navigator.of(context).pushNamed(Play_video.routeName);
             },
-      onLongPress: widget.onPressed1 != null ? widget.onPressed : null,
+      onLongPress: widget.onPressed1 != null
+          ? () {
+              widget.onPressed!();
+              widget.onPressed1!(
+                  widget.file_path[widget.index].v_id,
+                  widget.file_path[widget.index].v_size,
+                  widget.file_path[widget.index].parent_folder_id);
+            }
+          : null,
     );
   }
 }

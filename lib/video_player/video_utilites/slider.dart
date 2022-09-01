@@ -60,11 +60,9 @@ double dp(double val, int places){
             padding: const EdgeInsets.only(left: 10,right: 10),
             child: Row(
               children: [
-                Text("0.25"),
+                Text("0.25",style: TextStyle(color: Theme.of(context).sliderTheme.activeTrackColor,),),
                 Expanded(
                   child: Slider(
-                    inactiveColor: Colors.blue,
-                    activeColor: Colors.red,
                     min: 0.25,
                     max: 4.0,
                     value: widget.speed,
@@ -78,7 +76,7 @@ double dp(double val, int places){
                     },
                   ),
                 ),
-                Text("4.0"),
+                Text("4.0",style: TextStyle(color: Theme.of(context).sliderTheme.activeTrackColor,)),
               ],
             ),
           ),

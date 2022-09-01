@@ -36,7 +36,7 @@ class _ImageScreenState extends State<ImageScreen> with WidgetsBindingObserver {
 
 Future<void> didChangeDependencies() async {
   // print("hi");
-   hasFilePermission=await _model.requestFilePermission();
+  //  hasFilePermission=await _model.requestFilePermission();
   // print(hasFilePermission);
   super.didChangeDependencies();
 }
@@ -83,8 +83,10 @@ Future<void> didChangeDependencies() async {
                   isPermanent: true, onPressed: _checkPermissionsAndPick);
               break;
             case VideoSection.browseFiles:
-              widget =  !hasFilePermission?Bottomnavigation(): ImagePermissions(
-                  isPermanent: true, onPressed: _checkPermissionsAndPick);
+             widget =checkpermission(onPressed: _checkPermissionsAndPick,hasFilePermission:hasFilePermission);
+              break;
+            case VideoSection.loadeVideo:
+              widget = Bottomnavigation();
               break;
           }
           return widget;
@@ -94,13 +96,48 @@ Future<void> didChangeDependencies() async {
   }
 
   Future<void> _checkPermissionsAndPick()  async{
-     final hasFilePermission = await _model.requestFilePermission();
+    final cond = await _model.requestFilePermission();
      print(hasFilePermission);
+     setState(() {
+       hasFilePermission=cond;
+     });
     // if (hasFilePermission) FlutterDemo(title: "Lol", storage: Storage());
     // print("ready to player");
     // return hasFilePermission;
   }
+
+    
+  
 }
+
+
+class checkpermission extends StatefulWidget {
+  Future<void> Function() onPressed;
+  final bool hasFilePermission ;
+   checkpermission({Key? key, required this.onPressed, required this.hasFilePermission }) : super(key: key);
+
+  @override
+  State<checkpermission> createState() => _checkpermissionState();
+}
+
+class _checkpermissionState extends State<checkpermission> {
+  @override
+
+
+void initState() {
+    // TODO: implement initState
+    widget.onPressed();
+    super.initState();
+  }
+
+  Widget build(BuildContext context) {
+    return widget.hasFilePermission?Bottomnavigation():ImagePermissions(isPermanent: false, onPressed: widget.onPressed);
+
+  }
+}
+
+
+
 
 class ImagePermissions extends StatelessWidget {
   final bool isPermanent;
@@ -115,7 +152,9 @@ class ImagePermissions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar( 
+      
         title: Text('VIdeo'),
       ),
       body: Center(

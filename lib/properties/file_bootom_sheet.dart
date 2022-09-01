@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
 import 'package:video/properties/properties.dart';
 
-import '../helper/cruds_operation.dart';
 import '../showdialogbox/rename_folder_file.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class Bottom_model extends StatefulWidget {
@@ -27,6 +28,16 @@ class _Bottom_modelState extends State<Bottom_model> {
   // ignore: non_constant_identifier_names
 
 
+
+Widget text(String text){
+  return Text(text ,  style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ),);
+}
+
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
   Widget build(BuildContext context) {
 
   int f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_id);
@@ -37,8 +48,8 @@ class _Bottom_modelState extends State<Bottom_model> {
     return Wrap(
       children: <Widget>[
          ListTile(
-          leading: Icon(Icons.play_arrow_outlined),
-          title: Text("Play Next"),
+          leading: icons(Icons.play_arrow_outlined),
+          title: text("Play Next",),
           onTap: (){
             List<video>f_videos=[videos];
               Provider.of<queue_playerss>(context,
@@ -49,21 +60,25 @@ class _Bottom_modelState extends State<Bottom_model> {
           
           
         ),
-        const ListTile(
-          leading: Icon(Icons.lock),
-          title: Text("Lock Folder"),
+         ListTile(
+          leading: icons(Icons.lock),
+          title: text("Lock Folder"),
         ),
-         ListTile(leading: const Icon(Icons.playlist_add), title: const Text("Add to PlayList"),onTap: () {
+         ListTile(leading: icons(Icons.playlist_add), title:  text("Add to PlayList"),onTap: () {
             Navigator.pop(context);
             widget.onPressed(context,v_index,f_index);
           } ,),
-       ListTile(leading: Icon(Icons.delete), title: Text("Delete"),onTap: (){
+       ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
            Navigator.pop(context);    
          Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
 
        } ),
-       ListTile(leading: Icon(Icons.share), title: Text("Share"),onTap: (){}),
-       ListTile(leading: Icon(Icons.edit), title: Text("Rename"),
+       ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {
+            
+            await Share.shareFiles([videos.v_videoPath]);
+            Navigator.of(context).pop();
+       }),
+       ListTile(leading: icons(Icons.edit), title: text("Rename"),
       
         onTap: (){
               Navigator.pop(context);
@@ -78,8 +93,8 @@ class _Bottom_modelState extends State<Bottom_model> {
        
        ),
         ListTile(
-          leading: Icon(Icons.details),
-          title: Text("Properties"),
+          leading: icons(Icons.details),
+          title: text("Properties"),
           onTap: () {
             Navigator.pop(context);
             showDialog(

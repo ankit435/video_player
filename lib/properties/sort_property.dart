@@ -34,6 +34,12 @@ class _video_propertyState extends State<short_property> {
     super.initState();
   }
 
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
+
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -42,7 +48,7 @@ class _video_propertyState extends State<short_property> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           scrollable: true,
-          title: Text('Sort by'),
+          title: text('Sort by'),
           content: Container(
             width: MediaQuery.of(context).size.width - 20,
             child: Column(
@@ -58,7 +64,7 @@ class _video_propertyState extends State<short_property> {
                       });
                     },
                   ),
-                  title: Text("Name"),
+                  title: text("Name"),
                   trailing: sort == "Name"
                       ? IconButton(
                           icon: Icon(Name
@@ -88,7 +94,7 @@ class _video_propertyState extends State<short_property> {
                       });
                     },
                   ),
-                  title: Text("Date"),
+                  title: text("Date"),
                   trailing: sort == "Date"
                       ? IconButton(
                           icon: Icon(Date
@@ -118,7 +124,7 @@ class _video_propertyState extends State<short_property> {
                       });
                     },
                   ),
-                  title: Text("Size"),
+                  title: text("Size"),
                   trailing: sort == "Size"
                       ? IconButton(
                           icon: Icon(Size
@@ -148,7 +154,7 @@ class _video_propertyState extends State<short_property> {
                       });
                     },
                   ),
-                  title: Text("Length"),
+                  title: text("Length"),
                   trailing: sort == "Length"
                       ? IconButton(
                           icon: Icon(Length
@@ -178,7 +184,7 @@ class _video_propertyState extends State<short_property> {
                 Navigator.pop(context);
                 widget.sorting(sort, sortc);
               },
-              child: Text('OK'),
+              child: text('OK'),
             ),
           ],
         ));

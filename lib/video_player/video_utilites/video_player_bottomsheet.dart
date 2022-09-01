@@ -54,6 +54,15 @@ class _video_bottom_sheetState extends State<video_bottom_sheet> {
           child: currqueuelist[3].length > 0
               ? Column(
                   children: [
+                     SizedBox(height:10),
+
+        
+        Align(child:Container(height: 5,decoration: BoxDecoration(
+          color: Colors.red,
+      borderRadius: BorderRadius.all(
+      Radius.circular(5),
+      ),
+        ),width: 60,)),
                    Card (
                       child: Container(
                         child: ListTile(

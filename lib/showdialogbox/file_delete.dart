@@ -9,40 +9,50 @@ import 'package:video/helper/storage.dart';
 import '../Videos/video.dart';
 import '../helper/files.dart';
 
-class Delete_file_dialog extends StatefulWidget {
+class Show_dialog extends StatefulWidget {
  
- Future<void> Function() ondelete;
-   Delete_file_dialog(
-      {Key? key,required this.ondelete ,}
+ Future<void> Function() onPressed;
+ final String title;
+ final String text;
+ final String onPressedtext;
+        Show_dialog(
+      {Key? key,required this.onPressed,required this. text ,required this.title,required this.onPressedtext}
       )
       : super(key: key);
   @override
-  State<Delete_file_dialog> createState() => _Delete_file_dialogState();
+  State<Show_dialog> createState() => _Show_dialogState();
 }
 
-class _Delete_file_dialogState extends State<Delete_file_dialog> {
+class _Show_dialogState extends State<Show_dialog> {
   @override
+
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   
   Widget build(BuildContext context) {
     return Scaffold(
+      
         backgroundColor: Colors.transparent,
         body: AlertDialog(
           insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           scrollable: true,
-          title: Text('Delete Video from Device'),
+          title: text(widget.title),
           content: Container(
-           child: Text("Video will be delete permanetly"),
+           child: text(widget.text),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child:  text('Cancel'),
             ),
             TextButton(
-              onPressed: (){Navigator.pop(context);widget.ondelete();},
-              child: const Text('Delete'),
+              onPressed: (){Navigator.pop(context);widget.onPressed();},
+              child: text(widget.onPressedtext),
             ),
           ],
         ));

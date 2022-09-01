@@ -33,7 +33,7 @@ class _queue_listState extends State<queue_list> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon), // icon
+                Icon(icon, color:IconTheme.of(context).color,), // icon
                 // text
               ],
             ),
@@ -46,79 +46,91 @@ class _queue_listState extends State<queue_list> {
   Widget build(BuildContext context) {
     var currqueuelist =
         Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: FractionallySizedBox(
-          heightFactor: 0.9,
-          child: widget.queue_list_video.length > 0
-              ? Column(
-                  children: [
-                   Card (
-                      child: Container(
-                       
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                            leading: iconbutton(Icons.close, () {
-                          Navigator.pop(context);
-                        },),
-                        title: Text("playing queue  ${currqueuelist[3].length}"),
-                        trailing: Row( mainAxisSize: MainAxisSize.min,children: [
-                          const Text("Order"),
-                          iconbutton(Icons.sort_by_alpha_outlined, (){
-                    
-                          })
-                        ],),
-                    
-                    
+    return FractionallySizedBox(
+        heightFactor: 0.9,
+        child: widget.queue_list_video.length > 0
+            ? Column(
+                children: [
+                  SizedBox(height: 10),
+                  Align(
+                    child: Container(
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5),
+                        ),
+                      ),
+                      width: 60,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Card(
+                    child: Container(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(0),
+                        leading: iconbutton(
+                          Icons.close,
+                          () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        title:
+                            Text("playing queue  ${currqueuelist[3].length}"),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text("Order"),
+                            iconbutton(Icons.sort_by_alpha_outlined, () {})
+                          ],
                         ),
                       ),
                     ),
-                    Flexible(
-                      child: ReorderableListView.builder(
-                        shrinkWrap: true,
-                        onReorder: (int oldIndex, int newIndex) {
-                          Provider.of<queue_playerss>(context, listen: false)
-                              .reorederd_quelist(oldIndex, newIndex);
-                        },
-                        itemCount: widget.queue_list_video.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            
-                              key:
-                                  ValueKey(widget.queue_list_video[index].v_id),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.only(left: 12,right: 0),
-                                leading: const Icon(Icons.drag_handle),
-                                title: Text(
-                                  widget.queue_list_video[index].v_title,
-                                   overflow: TextOverflow.ellipsis,
-                                   maxLines: 2,
-                                  style: TextStyle(
-                                      color: currqueuelist[2] == index
-                                          ? Colors.green
-                                          : Colors.white),
-                                ),
-                                trailing:Row (
+                  ),
+                  Flexible(
+                    child: ReorderableListView.builder(
+                      shrinkWrap: true,
+                      onReorder: (int oldIndex, int newIndex) {
+                        Provider.of<queue_playerss>(context, listen: false)
+                            .reorederd_quelist(oldIndex, newIndex);
+                      },
+                      itemCount: widget.queue_list_video.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                            key: ValueKey(widget.queue_list_video[index].v_id),
+                            child: ListTile(
+                              contentPadding:
+                                  EdgeInsets.only(left: 12, right: 0),
+                              leading: const Icon(Icons.drag_handle),
+                              title: Text(
+                                widget.queue_list_video[index].v_title,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(
+                                    color: currqueuelist[2] == index
+                                        ?Theme.of(context).primaryColor
+                                        :  Theme.of(context).textTheme.bodyText1!.color,),
+                              ),
+                              trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  
                                   mainAxisAlignment: MainAxisAlignment.end,
-                                  children :[ 
-                                    currqueuelist[2] == index?iconbutton(Icons.play_arrow, () { }):Container(),
+                                  children: [
+                                    currqueuelist[2] == index
+                                        ? iconbutton(Icons.play_arrow, () {})
+                                        : Container(),
                                     iconbutton(Icons.close, () {
-                                    Provider.of<queue_playerss>(context,
-                                            listen: false)
-                                        .remove_from_queue(
-                                            widget.queue_list_video[index].v_id);
-                                  }),
-                                  ]
-                                ),
-                              ));
-                        },
-                      ),
+                                      Provider.of<queue_playerss>(context,
+                                              listen: false)
+                                          .remove_from_queue(widget
+                                              .queue_list_video[index].v_id);
+                                    }),
+                                  ]),
+                            ));
+                      },
                     ),
-                  ],
-                )
-              : Container()),
-    );
+                  ),
+                ],
+              )
+            : Container());
   }
 }

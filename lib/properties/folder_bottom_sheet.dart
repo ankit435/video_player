@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video/helper/files.dart';
 
 import '../helper/file.dart';
@@ -25,15 +26,34 @@ class Floder_bottomsheet extends StatefulWidget {
 
 class _Floder_bottomsheetState extends State<Floder_bottomsheet> {
   @override
+
+
+  Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
+
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
   Widget build(BuildContext context) {
     var f_videos=Provider.of<folder_details>(context, listen: false).getfoldertotalvideo(widget.f_Id,"Name",false);
     var f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_Id);
   // f_videos.forEach((element) => print(element.v_id));
     return Wrap(
       children: <Widget>[
+      //   SizedBox(height:10),
+      //   Align(child:Container(height: 5,decoration: BoxDecoration(
+      //     color: Colors.red,
+      // borderRadius: BorderRadius.all(
+      // Radius.circular(5),
+      // ),
+        // ),
+        // width: 60,),),
          ListTile(
-          leading: Icon(Icons.play_arrow_outlined),
-          title: Text("Play Next"),
+          leading: icons(Icons.play_arrow_outlined),
+          title: text("Play Next"),
           onTap: (){
               Provider.of<queue_playerss>(context,
                                   listen: false)
@@ -42,29 +62,37 @@ class _Floder_bottomsheetState extends State<Floder_bottomsheet> {
           },
         ),
         ListTile(
-          leading: const Icon(Icons.playlist_add),
-          title: const Text("Add to PlayList"),
+          leading:  icons(Icons.playlist_add),
+          title:  text("Add to PlayList"),
           onTap: () {
             Navigator.pop(context);
             widget.bottoplaylist(context,f_videos);
           },
         ),
+        ListTile(
+          leading: icons(Icons.share),
+          title:  text("Share"),
+          onTap: () async {
+            Navigator.pop(context);
+            await Share.shareFiles(Provider.of<folder_details>(context, listen: false).get_folder_path({widget.f_Id}));
+          },
+        ),
          ListTile(
-            leading: Icon(Icons.queue_play_next), title: Text("Add to queue"),onTap: (){
+            leading: icons(Icons.queue_play_next), title: text("Add to queue"),onTap: (){
                Provider.of<queue_playerss>(context,
                                   listen: false)
                               .add_to_queue(f_videos);
                      Navigator.of(context).pop();
             },),
         ListTile(
-          leading: Icon(Icons.delete),
-          title: Text("Delete"),
+          leading: icons(Icons.delete),
+          title: text("Delete"),
           onTap: () {
             Navigator.pop(context);
-            Provider.of<folder_details>(context, listen: false).deleteFolder(widget.f_Id);
+            Provider.of<folder_details>(context, listen: false).deleteFolder({widget.f_Id});
           },
         ),
-        ListTile(leading: Icon(Icons.edit), title: Text("Rename"),
+        ListTile(leading: icons(Icons.edit), title: text("Rename"),
         onTap: (){
 
             Navigator.pop(context);
