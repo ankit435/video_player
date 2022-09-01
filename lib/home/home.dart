@@ -65,41 +65,48 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+  Widget text(String text){
+     return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
 
   Widget _Popups() {
     return selection == false
         ? PopupMenuButton(
-            itemBuilder: (context) => const [
+          color:  Theme.of(context).backgroundColor,
+          icon: icons(Icons.more_vert),
+            itemBuilder: (context) =>  [
               PopupMenuItem(
                   value: 1,
                   child: ListTile(
-                    leading: Icon(Icons.select_all_outlined),
-                    title: Text("Select"),
+                    leading: icons(Icons.select_all),
+                    title: text("Select"),
                   )),
               PopupMenuItem(
                   child: ListTile(
-                leading: Icon(Icons.equalizer),
-                title: Text("Equalizer"),
+                leading: icons(Icons.equalizer),
+                title: text("Equalizer"),
               )),
               PopupMenuItem(
                 value: 2,
                 child: ListTile(
-                  leading: Icon(Icons.refresh),
-                  title: Text("Refresh"),
+                  leading: icons(Icons.refresh),
+                  title: text("Refresh"),
                 ),
               ),
               PopupMenuItem(
                   value: 3,
                   // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
                   child: ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text("Setting"),
+                    leading: icons(Icons.settings),
+                    title: text("Setting"),
                   )),
               PopupMenuItem(
                   value: 4,
                   child: ListTile(
-                    leading: Icon(Icons.ads_click_outlined),
-                    title: Text("ads"),
+                    leading: icons(Icons.ads_click_outlined),
+                    title: text("ads"),
                   ))
             ],
             // offset: Offset(0, 100),
@@ -121,25 +128,27 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
             },
           )
         : PopupMenuButton(
-            itemBuilder: (context) => const [
+          color:  Theme.of(context).backgroundColor,
+           icon: icons(Icons.more_vert),
+            itemBuilder: (context) =>  [
               PopupMenuItem(
                   value: 1,
                   // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
                   child: ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text("Hide Folder"),
+                    leading: icons(Icons.settings),
+                    title: text("Hide Folder"),
                   )),
               PopupMenuItem(
                   value: 2,
                   child: ListTile(
-                    leading: Icon(Icons.playlist_add),
-                    title: Text("Add to playlist"),
+                    leading: icons(Icons.playlist_add),
+                    title: text("Add to playlist"),
                   )),
               PopupMenuItem(
                   value: 3,
                   child: ListTile(
-                    leading: Icon(Icons.share),
-                    title: Text("Share"),
+                    leading: icons(Icons.share),
+                    title: text("Share"),
                   ))
             ],
 
@@ -177,13 +186,13 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                 print("search click");
                 Navigator.of(context).pushNamed(Search.routeName);
               },
-              icon: Icon(Icons.search),
+              icon: icons(Icons.search),
             ),
             IconButton(
               onPressed: (() {
                 print("file click");
               }),
-              icon: Icon(Icons.lock_rounded),
+              icon: icons(Icons.lock_rounded),
             ),
             _Popups(),
           ]
@@ -192,7 +201,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
               onPressed: (() {
                 print("file click");
               }),
-              icon: Icon(Icons.lock_rounded),
+              icon: icons(Icons.lock_rounded),
             ),
             IconButton(
               onPressed: () {
@@ -208,21 +217,24 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                       );
                     });
               },
-              icon: const Icon(Icons.delete),
+              icon: icons(Icons.delete),
             ),
             _Popups()
           ]);
   }
 
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
   AppBar _Appbar(String title) {
     return AppBar(
         backgroundColor: Theme.of(context).primaryColor,
       
         leading: selection
             ? IconButton(
-                icon: Icon(Icons.close), onPressed: () => toggleselction())
+                icon: icons(Icons.close), onPressed: () => toggleselction())
             : null,
-        title: Text(title),
+        title: text(title),
         actions: _action());
   }
 
@@ -235,11 +247,11 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
   Future<void> ondelete() async {
-    toggleselction();
     if (selction_list.isNotEmpty) {
       await Provider.of<folder_details>(context, listen: false)
           .deleteFolder(selction_list);
     }
+    toggleselction();
     selction_list.clear();
   }
 
@@ -247,7 +259,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   Future<void> _fetching_data() async {
     //print(_isInit);
     if (_isInit) {
-      print("reloading");
+      
       setState(() {
         _isLoading = true;
       });
@@ -264,14 +276,14 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text('Check storage permission !.'),
+            title: text('An error occurred!'),
+            content: text('Check storage permission !.'),
             actions: <Widget>[
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('okay'),
+                child: text('okay'),
               )
             ],
           ),
@@ -282,8 +294,13 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached) return;
+    if (state == AppLifecycleState.inactive ||state == AppLifecycleState.detached) 
+    {
+      //_isInit = true;
+    
+      return;
+    }
+    
     if (state == AppLifecycleState.paused && !detect) {
       setState(() {
         detect = true;
@@ -388,12 +405,13 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
             : Center(
                 child: folder_list.isNotEmpty
                     ? RefreshIndicator(onRefresh: _pullRefresh, child: _body())
-                    : ElevatedButton(
+                    : 
+                    ElevatedButton(
                         onPressed: () {
                           _isInit = true;
                           _fetching_data();
                         },
-                        child: Text("Reload")),
+                        child: text("Reload")),
               ),
       ),
     );

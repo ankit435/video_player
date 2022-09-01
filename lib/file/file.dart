@@ -139,12 +139,12 @@ Widget text(String text){
   }
 
   Future<void> ondelete() async {
-    toggleselction();
+   
     if (selction_list.isNotEmpty) {
       await Provider.of<folder_details>(context, listen: false)
           .delete_file(selction_list);
     }
-
+     toggleselction();
     selction_list.clear();
   }
 
@@ -165,6 +165,8 @@ Widget text(String text){
 
   Widget _Popups() {
     return PopupMenuButton(
+      color:  Theme.of(context).backgroundColor,
+      icon: icons(Icons.more_vert),
       itemBuilder: (context) => selection
           ? [
                PopupMenuItem(
@@ -295,7 +297,7 @@ Widget text(String text){
         onPressed: () =>
             selection ? toggleselction() : Navigator.of(context).pop(),
       ),
-      title: text(title),
+      title: Text(title),
       actions: action(),
     );
   }

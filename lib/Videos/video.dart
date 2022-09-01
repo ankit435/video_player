@@ -114,9 +114,15 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
       }
     });
   }
+  Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+}
 
   Widget _Popups() {
     return PopupMenuButton(
+      icon: icons(Icons.more_vert),
+      color:  Theme.of(context).backgroundColor,
+
         itemBuilder: (context) => selection
             ? [
                  PopupMenuItem(
@@ -273,6 +279,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
 Widget _body(){
   file_detail=Provider.of<folder_details>(context, listen: true).getAllvideo();
   size=Provider.of<folder_details>(context, listen: false).gettotalvideosize();
+  print(file_detail.length);
   return (
     Column(
         children: [
@@ -299,9 +306,7 @@ Widget _body(){
       )
   );
 }
-Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
-}
+
 
   Widget build(BuildContext context) {
     String selected_title = selction_list.length.toString() + " " + 'selected';
