@@ -20,7 +20,10 @@ class _PlayList_detailsState extends State<PlayList_details> {
   Widget text(String text){
   return Text(text , style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
-           ));
+  ));
+}
+Widget icons(IconData icon){
+  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
   Widget build(BuildContext context) {
     
@@ -28,7 +31,7 @@ class _PlayList_detailsState extends State<PlayList_details> {
       
       leading: Icon(
         Icons.favorite_sharp,
-        color: Colors.red,
+        color:  Theme.of(context).primaryColor
       ),
       title: text(widget.playLists.p_title),
       subtitle: text("${widget.playLists.p_detail.length} Video"),
@@ -37,7 +40,7 @@ class _PlayList_detailsState extends State<PlayList_details> {
         widget.bottmplaysheet( context, widget.playLists.p_id);
 
       }
-      , icon: Icon(Icons.more_vert)),
+      , icon: icons(Icons.more_vert)),
       onTap: (){Navigator.of(context).pushNamed(Playlist_file.routeName,arguments:{'v1':widget.playLists.p_title,'v2':widget.playLists.p_id});},
     );
   }

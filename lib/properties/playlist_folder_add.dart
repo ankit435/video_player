@@ -10,12 +10,14 @@ import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
 
 import '../showdialogbox/Rename_playlist_file_and_folder.dart';
+import '../showdialogbox/file_delete.dart';
 
 class PlayListfolder_add extends StatefulWidget {
   final int p_id;
   void Function(BuildContext context, int p_id) onPressed;
+  void Function(Set<int> p_id) on_delete;
 
-  PlayListfolder_add({Key? key,required this.p_id, required this.onPressed }) : super(key: key);
+  PlayListfolder_add({Key? key,required this.p_id, required this.onPressed,  required this.on_delete }) : super(key: key);
 
   @override
   State<PlayListfolder_add> createState() => _PlayListfolder_addState();
@@ -32,6 +34,13 @@ class _PlayListfolder_addState extends State<PlayListfolder_add> {
 Widget icons(IconData icon){
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
+
+// Future<void> ondelete({int? p_id,int? v_id,int? f_id}) async {
+//     Provider.of<PlayList_detail>(context, listen: false).remove_playlist_folder(widget. p_id);
+// }
+
+
+
   Widget build(BuildContext context) {
     var p_index=Provider.of<PlayList_detail>(context, listen: false).getplayList_index_id(widget.p_id);
     return Wrap(
@@ -56,6 +65,7 @@ Widget icons(IconData icon){
                Navigator.of(context).pop();
           },
         ),
+
         ListTile(
           leading:  icons(Icons.playlist_add),
           title:text("Add to PlayList"),
@@ -75,8 +85,15 @@ Widget icons(IconData icon){
           leading: icons(Icons.delete),
           title: text("Delete"),
           onTap: () {
-            Navigator.pop(context);
-            Provider.of<PlayList_detail>(context, listen: false).remove_playlist_folder(widget.p_id);
+             Navigator.pop(context);
+            showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Show_dialog(onPressedtext:"Delete",onPressed:(){widget.on_delete({widget.p_id});},title: "Delete Folder from PlayList",text:"Are you sure you want to Delete this PlayList?");
+                    });
+            
+           
+            
           },
         ),
        ListTile(leading: icons(Icons.edit), title: text("Rename"),

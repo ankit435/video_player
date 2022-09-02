@@ -48,6 +48,8 @@ class themes with ChangeNotifier {
 
         )
         ),
+
+
     theme(
         theme_id: 2,
         brightness: Brightness.light,
@@ -114,6 +116,9 @@ class themes with ChangeNotifier {
             bodyText1: TextStyle(color: Color.fromARGB(255, 9, 236, 43)), //<-- SEE HERE
           ),
           )),
+        
+        
+        
   ];
 
   List<theme> get themes_data => _themes_data;
@@ -453,6 +458,8 @@ class folder_details with ChangeNotifier {
 
     return folders;
   }
+
+  
 }
 
 class video_details with ChangeNotifier {
@@ -565,19 +572,25 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  bool remove_playlist_video(int p_id, int v_id) {
-    int index = getplayList_index_id(p_id);
+  bool remove_playlist_video(Map<int, int> selctionList) {
+
+      
+
+   
     try {
       {
-        int p_video_index =
-            _playlist_item[index].p_detail.indexWhere((pv) => pv.v_id == v_id);
-        if (p_video_index != -1) {
-          _playlist_item[index].p_detail.removeAt(p_video_index);
+       selctionList.forEach((key, value) {
+        int index = getplayList_index_id(value);
+        if(index!=-1){
+          _playlist_item[index].p_detail.removeWhere((element) => element.v_id == key);
         }
+      });
+        notifyListeners();
+      return true;
+
       }
 
-      notifyListeners();
-      return true;
+    
     } catch (e) {
       print(e);
     }
@@ -662,9 +675,11 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  bool remove_playlist_folder(int p_id) {
+  bool remove_playlist_folder(Set<int> p_id) {
     try {
-      _playlist_item.removeWhere((element) => element.p_id == p_id);
+      p_id.forEach((p_id) {
+        _playlist_item.removeWhere((plylist) => plylist.p_id == p_id);
+      });
       notifyListeners();
       return true;
     } catch (e) {}
@@ -688,12 +703,23 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
+
   void reorederd_playlist_video(int old_index, int new_ndex, int p_id) {
     new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
     int p_index = getplayList_index_id(p_id);
     video v = _playlist_item[p_index].p_detail[old_index];
     _playlist_item[p_index].p_detail.removeAt(old_index);
     _playlist_item[p_index].p_detail.insert(new_ndex, v);
+    notifyListeners();
+  }
+
+  void remove_from_playlist(Map<int, int> map) {
+    map.forEach((key, value) {
+      int p_index = getplayList_index_id(key);
+      if(p_index!=-1){
+        _playlist_item[p_index].p_detail.removeWhere((element) => element.v_id == value);
+      }
+    });
     notifyListeners();
   }
 }

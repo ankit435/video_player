@@ -9,19 +9,22 @@ import '../helper/file.dart';
 import '../showdialogbox/Rename_playlist_file_and_folder.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../showdialogbox/file_delete.dart';
+
 class playlistbootoomshet extends StatefulWidget {
   final String p_title;
   final int v_id;
   final int f_id;
   final int p_id;
   void Function(BuildContext context, int id, int f_id) onPressed;
+  void Function(Map<int, int> delete) on_delete;
   playlistbootoomshet(
       {Key? key,
       required this.p_id,
       required this.p_title,
       required this.v_id,
       required this.f_id,
-      required this.onPressed})
+      required this.onPressed, required this.on_delete})
       : super(key: key);
 
   @override
@@ -38,6 +41,7 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
 Widget icons(IconData icon){
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
+
 
   Widget build(BuildContext context) {
     int f_index = Provider.of<folder_details>(context, listen: false)
@@ -84,8 +88,13 @@ Widget icons(IconData icon){
           title: text("Remove"),
           onTap: () {
             Navigator.pop(context);
-           // cruds_operation().delete_play_list_video(widget.p_id, video);
-            // Provider.of<folder_details>(context, listen: false).delete_one_file(video);
+            Map<int,int> delete={widget.p_id:widget.f_id};
+          
+            showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Show_dialog(onPressedtext:"Remove",onPressed:(){widget.on_delete(delete);},title: "Playlist",text:"Are you sure you want remove this Video?");
+                    });
           },
         ),
          ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {

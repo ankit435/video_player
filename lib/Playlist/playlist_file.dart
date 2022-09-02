@@ -9,6 +9,7 @@ import '../helper/file.dart';
 import '../helper/files.dart';
 import '../properties/bottomsheet_playlist.dart';
 import '../properties/playlist_video_bootomsheet.dart';
+import '../video_player/video_play.dart';
 import 'create_playList.dart';
 
 class Playlist_file extends StatefulWidget {
@@ -36,10 +37,14 @@ class _Playlist_fileState extends State<Playlist_file> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child:playlistbootoomshet(v_id:id,p_title: p_title,f_id:f_id,onPressed:_bottoplaylist,p_id:p_id),
+          child:playlistbootoomshet(v_id:id,p_title: p_title,f_id:f_id,onPressed:_bottoplaylist,p_id:p_id,on_delete:ondelete),
         );
       },
     );
+  }
+
+  Future<void> ondelete(Map<int,int>delete) async {
+    Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist(delete);
   }
 
 void _bottoplaylist(BuildContext context, int v_index,int f_index) {
@@ -57,6 +62,10 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
       },
     );
   }
+
+  // void ondelete(Map<int,int> delete){
+  //    Provider.of<PlayList_detail>(context, listen: false).remove_playlist_video(delete);
+  // }
 
 @override
 
@@ -90,6 +99,18 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                   key: ValueKey(index),
                   leading: Icon(Icons.queue_play_next_outlined),
                   title: text(playLists[index].v_title),
+                  onTap: (){
+                     Provider.of<queue_playerss>(context, listen: false)
+                  .add_video_list_in_queue(index, playLists);
+                  
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Play_video(
+                      f_id: playLists[index].parent_folder_id),
+                ),
+              );
+                  },
                   trailing: IconButton(
                       onPressed: () {
                         _playlistbootomsheet(context,playLists[index].v_id,playLists[index].parent_folder_id);

@@ -6,6 +6,7 @@ import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
 import 'package:video/properties/properties.dart';
 
+import '../showdialogbox/file_delete.dart';
 import '../showdialogbox/rename_folder_file.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -35,9 +36,15 @@ Widget text(String text){
            ),);
 }
 
+Future<void> ondelete() async{
+   await Provider.of<folder_details>(context, listen: false).delete_file({widget.f_id, widget.v_id} as Map<int,int>);
+}
+
 Widget icons(IconData icon){
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
+
+
   Widget build(BuildContext context) {
 
   int f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_id);
@@ -70,7 +77,13 @@ Widget icons(IconData icon){
           } ,),
        ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
            Navigator.pop(context);    
-         Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Show_dialog(onPressedtext:"Delete",onPressed:ondelete,title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
+                    });
+        // Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
 
        } ),
        ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {

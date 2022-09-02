@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:video/helper/files.dart';
 
 import '../helper/file.dart';
+import '../showdialogbox/file_delete.dart';
 import '../showdialogbox/rename_folder_file.dart';
 
 class Floder_bottomsheet extends StatefulWidget {
@@ -34,6 +35,12 @@ class _Floder_bottomsheetState extends State<Floder_bottomsheet> {
            ));
 }
 
+
+
+Future<void> ondelete() async {
+   Provider.of<folder_details>(context, listen: false)
+          .deleteFolder({widget.f_Id});
+}
 Widget icons(IconData icon){
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
@@ -89,7 +96,12 @@ Widget icons(IconData icon){
           title: text("Delete"),
           onTap: () {
             Navigator.pop(context);
-            Provider.of<folder_details>(context, listen: false).deleteFolder({widget.f_Id});
+              showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Show_dialog(onPressedtext:"Delete",onPressed:ondelete,title: "Delete Folder from Device",text:"Are you sure you want to delete this Folder?");
+                    });
+
           },
         ),
         ListTile(leading: icons(Icons.edit), title: text("Rename"),

@@ -10,8 +10,7 @@ import '../Videos/video.dart';
 import '../helper/files.dart';
 
 class Show_dialog extends StatefulWidget {
- 
- Future<void> Function() onPressed;
+void Function() onPressed;
  final String title;
  final String text;
  final String onPressedtext;

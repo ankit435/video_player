@@ -30,7 +30,7 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child: PlayListfolder_add(p_id: p_id, onPressed: _bottoplaylist),
+          child: PlayListfolder_add(p_id: p_id, onPressed: _bottoplaylist, on_delete:ondelete),
         );
       },
     );
@@ -59,6 +59,11 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
       },
     );
   }
+
+
+  Future<void> ondelete(Set<int>p_id) async {
+    Provider.of<PlayList_detail>(context, listen: false).remove_playlist_folder(p_id);
+}
 
 Widget text(String text){
   return Text(text , style: TextStyle(
