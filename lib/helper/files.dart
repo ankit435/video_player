@@ -303,10 +303,10 @@ class folder_details with ChangeNotifier {
 
   Future<bool> delete_file(Map<int, int> selctionList) async {
     try {
-      selctionList.forEach((key, element) {
+      selctionList.forEach((v_id, f_id) {
         // print(key.toString()+"  "+element.toString());
-        int fIndex = folder_index(element);
-        int index = folder_video_index(fIndex, key);
+        int fIndex = folder_index(f_id);
+        int index = folder_video_index(fIndex, v_id);
 
         // print(fIndex.toString()+"  "+index.toString());
         _folder_item[fIndex].f_size = (_folder_item[fIndex].f_size) -
@@ -350,7 +350,6 @@ class folder_details with ChangeNotifier {
       delete.forEach((f_id) {
         _folder_item.removeAt(folder_index(f_id));
       });
-
       notifyListeners();
       return true;
     } catch (e) {}
@@ -407,13 +406,14 @@ class folder_details with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<video>>? getsearchvideo(String? filter) async {
-    List<video>? videos = [];
+  List<video> getsearchvideo(String? filter)  {
+    List<video> videos = [];
+    if(filter==null)return [];
 
     _folder_item.forEach((element) {
       videos.addAll(element.f_detail
           .where((video) =>
-              video.v_title.toLowerCase().contains(filter!.toLowerCase()))
+              video.v_title.toLowerCase().contains(filter.toLowerCase()))
           .toList());
     });
 

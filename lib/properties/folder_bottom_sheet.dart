@@ -18,8 +18,9 @@ class Floder_bottomsheet extends StatefulWidget {
 
   final int f_Id;
   final int v_id;
+  Future<void> Function(Set<int> delete) onsinglefolderdelete;
 
-   Floder_bottomsheet({Key? key, required this.bottoplaylist, required this.f_Id ,required this.v_id}) : super(key: key);
+   Floder_bottomsheet({Key? key, required this.bottoplaylist, required this.f_Id ,required this.v_id, required this.onsinglefolderdelete }) : super(key: key);
 
   @override
   State<Floder_bottomsheet> createState() => _Floder_bottomsheetState();
@@ -99,7 +100,7 @@ Widget icons(IconData icon){
               showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Show_dialog(onPressedtext:"Delete",onPressed:ondelete,title: "Delete Folder from Device",text:"Are you sure you want to delete this Folder?");
+                      return Show_dialog(onPressedtext:"Delete",onPressed:(){widget. onsinglefolderdelete({widget.f_Id});},title: "Delete Folder from Device",text:"Are you sure you want to delete this Folder?");
                     });
 
           },

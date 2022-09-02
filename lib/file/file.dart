@@ -56,6 +56,7 @@ Widget text(String text){
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           child: Bottom_model(
+            onsinglefiledelete:onsinglefiledelete,
               v_id: id,
               file_detail: File_path,
               f_id: f_id,
@@ -78,6 +79,7 @@ Widget text(String text){
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
           child: BottomPlayList(
+              
               v_index: v_index,
               passvideo:  [],
               f_index: f_index,
@@ -148,6 +150,14 @@ Widget text(String text){
     selction_list.clear();
   }
 
+
+ Future<void> onsinglefiledelete(Map<int,int>single_video_list) async {
+   
+    if (single_video_list.isNotEmpty) {
+      await Provider.of<folder_details>(context, listen: false)
+          .delete_file(single_video_list);
+    }
+  }
   void _select_all_file(List<video> file_path, int size) {
     setState(() {
       if (file_path.length == selction_list.length) {

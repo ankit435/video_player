@@ -16,8 +16,12 @@ class Bottom_model extends StatefulWidget {
   final List<video> file_detail;
   final int v_id;
   final int f_id;
+  //Future<void> Function(Map<int, int> delete) ondelete;
   void Function(BuildContext context, int id, int f_id) onPressed;
-   Bottom_model({Key? key, required this.file_detail, required this.v_id, required this.f_id, required this.onPressed})
+  Future<void> Function(Map<int, int> single_video_list) onsinglefiledelete;
+   Bottom_model({Key? key, required this.file_detail, required this.v_id, required this.f_id, required this.onPressed, required this. onsinglefiledelete, 
+   ///required this.ondelete
+  })
       : super(key: key);
 
   @override
@@ -28,8 +32,7 @@ class _Bottom_modelState extends State<Bottom_model> {
   @override
   // ignore: non_constant_identifier_names
 
-
-
+Map<int,int>delete={};
 Widget text(String text){
   return Text(text ,  style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
@@ -37,7 +40,8 @@ Widget text(String text){
 }
 
 Future<void> ondelete() async{
-   await Provider.of<folder_details>(context, listen: false).delete_file({widget.f_id, widget.v_id} as Map<int,int>);
+  delete.addAll({widget.v_id:widget.f_id});
+  await Provider.of<folder_details>(context, listen: false).delete_file(delete);
 }
 
 Widget icons(IconData icon){
@@ -76,18 +80,19 @@ Widget icons(IconData icon){
             widget.onPressed(context,v_index,f_index);
           } ,),
        ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
-           Navigator.pop(context);    
-
+          //print("hello");
+         
+              Navigator.pop(context);    
+              Map<int,int> delete={widget.v_id:widget.f_id};
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Show_dialog(onPressedtext:"Delete",onPressed:ondelete,title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
+                      return Show_dialog(onPressedtext:"Delete",onPressed:(){widget.onsinglefiledelete(delete);},title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
                     });
         // Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
 
        } ),
        ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {
-            
             await Share.shareFiles([videos.v_videoPath]);
             Navigator.of(context).pop();
        }),

@@ -45,7 +45,7 @@ class _Video_HomeState extends State<Video_Home> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child:Bottom_model(v_id:id,file_detail: file_detail,f_id:f_id,onPressed:_bottoplaylist),
+          child:Bottom_model(v_id:id,file_detail: file_detail,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
         );
       },
     );
@@ -57,6 +57,13 @@ Widget text(String text){
            ));
 }
 
+ Future<void> onsinglefiledelete(Map<int,int>single_video_list) async {
+   
+    if (single_video_list.isNotEmpty) {
+      await Provider.of<folder_details>(context, listen: false)
+          .delete_file(single_video_list);
+    }
+  }
 void _bottoplaylist(BuildContext context, int v_index,int f_index) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(

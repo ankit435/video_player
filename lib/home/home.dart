@@ -209,6 +209,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                     context: context,
                     builder: (BuildContext context) {
                       return Show_dialog(
+
                         onPressedtext: "Delete",
                         onPressed: ondelete,
                         title: "Delete Video from Device",
@@ -244,6 +245,13 @@ Widget icons(IconData icon){
     setState(() {
       //file_detail=video;
     });
+  }
+  Future<void> onsinglefolderdelete(Set<int>delete) async {
+   
+    if (delete.isNotEmpty) {
+      await Provider.of<folder_details>(context, listen: false)
+          .deleteFolder(delete);
+    }
   }
 
   Future<void> ondelete() async {
@@ -339,6 +347,7 @@ Widget icons(IconData icon){
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           child: Floder_bottomsheet(
+            onsinglefolderdelete:onsinglefolderdelete,
               bottoplaylist: _bottoplaylist, f_Id: f_Id, v_id: -1),
         );
       },
