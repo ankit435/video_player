@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
+import 'package:video/helper/theme_model.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../helper/files.dart';
@@ -39,8 +40,26 @@ class Files_path extends StatefulWidget {
 }
 
 class _CharacteristListItemState extends State<Files_path> {
+
+
+
+  Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Theme.of(context).colorScheme.primary.withOpacity(0.12);
+      }
+      return  Theme.of(context).primaryColor.withOpacity(0.9);
+    }
+
   Widget checkbox() {
     return Checkbox(
+    
+     checkColor: Theme.of(context).textTheme.bodyText1!.color,
+     fillColor: MaterialStateProperty.resolveWith(getColor),
       value:
           widget.selction_list.containsKey(widget.file_path[widget.index].v_id),
       onChanged: (value) {
@@ -131,7 +150,7 @@ class _CharacteristListItemState extends State<Files_path> {
               Icons.folder,
             )
           // : _controller!.value.isInitialized?
-          : Container(width: 70.0, height: 65.0, color: Colors.yellow),
+          : Container(child: FittedBox (child: Image(image: AssetImage("assets/video/video-play-button.png"),fit: BoxFit.cover,height: 50,width: 50,))),
       //: CircularProgressIndicator(),
       title: titles(),
       subtitle: widget.onPressed1 == null
@@ -162,15 +181,15 @@ class _CharacteristListItemState extends State<Files_path> {
               //  print(widget.index);
 
               Provider.of<queue_playerss>(context, listen: false)
-                  .add_video_list_in_queue(widget.index, widget.file_path);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Play_video(
-                      f_id: widget.file_path[widget.index].parent_folder_id),
-                ),
-              );
-              //Navigator.of(context).pushNamed(Play_video.routeName);
+                  .add_video_list_in_queue(widget.index, widget.file_path,f_id: widget.file_path[widget.index].parent_folder_id);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => Play_video(
+              //         f_id: widget.file_path[widget.index].parent_folder_id),
+              //   ),
+              // );
+              Navigator.of(context).pushNamed(Play_video.routeName);
             },
       onLongPress: widget.onPressed1 != null
           ? () {

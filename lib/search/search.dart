@@ -94,8 +94,7 @@ Widget listvaluebuilder(){
                     // return ListTile(
                     //   title: text(values[index].v_title),
                     // );
-            return Card(
-              child: Files_path(
+            return Files_path(
               file_path: values,
               index: index,
               value: 0,
@@ -104,7 +103,6 @@ Widget listvaluebuilder(){
               selction_list: {},
               onPressed1: null,
               bottommodel:_videoproprties,
-                      ),
             );
                   },
                 ),
@@ -114,7 +112,7 @@ Widget listvaluebuilder(){
   }
 
 
-   late Timer _timer;
+  late Timer _timer;
   int _start = 3;
   bool loading = true;
 

@@ -46,31 +46,34 @@ class _Video_playlistState extends State<Video_playlist> {
 
   Widget _body(){
 
-  return (
-    Column(
-        children: [
-          Container(
-            height: 50,
-           
-            child: ListTile(
-                title: Text(
-                  'Select All',
-                  style: TextStyle(fontSize: 13),
-                ),
-                trailing: Checkbox(
-                        value: widget.Files_path.length == widget.selction_list.length,
-                        onChanged: (value) {
-                          widget.select_all_file();
-                        })
-                    ),
-          ),
+  return Container(
+    color: Theme.of(context).backgroundColor,
+    child: (
+      Column(
+          children: [
+            Container(
+              height: 50,
+             
+              child: ListTile(
+                  title: Text(
+                    'Select All',
+                    style: TextStyle(fontSize: 13,color: Theme.of(context).primaryColor,),
+                  ),
+                  trailing: Checkbox(
+                          value: widget.Files_path.length == widget.selction_list.length,
+                          onChanged: (value) {
+                            widget.select_all_file();
+                          })
+                      ),
+            ),
 
-          Flexible(
-            child: 
-             _listViewbulder(),
-          )
-        ],
-      )
+            Flexible(
+              child: 
+               _listViewbulder(),
+            )
+          ],
+        )
+    ),
   );
 }
 

@@ -34,7 +34,7 @@ class _Bottom_modelState extends State<Bottom_model> {
 
 Map<int,int>delete={};
 Widget text(String text){
-  return Text(text ,  style: TextStyle(
+  return Text(text , maxLines: 1,overflow: TextOverflow.ellipsis,  style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ),);
 }
@@ -58,6 +58,13 @@ Widget icons(IconData icon){
    
     return Wrap(
       children: <Widget>[
+
+        Container(child: Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20,bottom: 10),
+          child: text(videos.v_title),
+        )),
+        Divider(),
+
          ListTile(
           leading: icons(Icons.play_arrow_outlined),
           title: text("Play Next",),

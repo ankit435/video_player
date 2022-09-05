@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -17,8 +18,8 @@ import '../helper/file.dart';
 import '../helper/files.dart';
 
 class Play_video extends StatefulWidget {
-  final int f_id;
-  const Play_video({Key? key, required this.f_id}) : super(key: key);
+
+  const Play_video({Key? key}) : super(key: key);
   static const routeName = '/video_played';
 
   @override
@@ -27,8 +28,10 @@ class Play_video extends StatefulWidget {
 
 class _Play_videoState extends State<Play_video> {
   @override
-  bool show = false;
+  bool show = true;
   late int currentDuration;
+  
+  late double volume;
 
   VideoPlayerController? _controller;
   var f;
@@ -40,8 +43,12 @@ class _Play_videoState extends State<Play_video> {
   int newCurrentPosition = 0;
   var queue_player;
   double speed = 1.0;
-  //Future<void>screen_display;
+    late Timer _timer;
+  int _start = 3;
+  int? f_id,p_id;
 
+
+  //Future<void>screen_display;
 
   void _load_video(video v) {
     if (mounted) {
@@ -63,10 +70,19 @@ class _Play_videoState extends State<Play_video> {
       _controller!.addListener(() {
         setlistenerseeker();
       });
+
       _controller!.play();
     }
   }
 
+
+void setfolderplylist(){
+  
+  f_id= Provider.of<queue_playerss>(context, listen: false).getf_id();
+  p_id= Provider.of<queue_playerss>(context, listen: false).getp_id();
+
+  
+}
   Future<void> _onControllerChange(video link) async {
     if (mounted) {
       if (_controller == null) {
@@ -86,18 +102,22 @@ class _Play_videoState extends State<Play_video> {
     //   //  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     //   index = widget.index;
     // });
-
+startTimer();
     defaultsorenatation();
     if (mounted) {
+      setfolderplylist();
       video v = getvideo();
       _onControllerChange(v);
-
       _controller!.addListener(() {
         setlistenerseeker();
       });
+      // _controller!.addListener(() {
+      //   volume_listener();
+      // });
     }
     super.initState();
   }
+
 
   void setlistenerseeker() {
     if (mounted) {
@@ -113,6 +133,16 @@ class _Play_videoState extends State<Play_video> {
       _controller!.setPlaybackSpeed(speed);
     });
   }
+
+  // void volume_listener(){
+
+  //   if(mounted){
+  //     setState(() {
+  //       volume=_controller!.value.
+  //     });
+  //   }
+
+  // }
 
   void updateseeker(double value) {
     _controller!.seekTo(Duration(milliseconds: value.round()));
@@ -133,12 +163,19 @@ class _Play_videoState extends State<Play_video> {
     super.didChangeDependencies();
   }
 
+
+void exitfullscreen(){
+ SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+}
   @override
   void dispose() {
     super.dispose();
+    _timer.cancel();
+        exitfullscreen();
 
     mounted = false;
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+   
     defaultsorenatation();
 
     if (_controller!.value.isPlaying || _controller != null) {
@@ -183,7 +220,7 @@ class _Play_videoState extends State<Play_video> {
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
             child: video_bottom_sheet(
-                playfolder_video: playfolder_video, f_id: widget.f_id));
+                playfolder_video: playfolder_video, f_id:f_id, p_id: p_id));
       },
     );
   }
@@ -208,19 +245,16 @@ class _Play_videoState extends State<Play_video> {
   }
 
   void playfolder_video(int index) {
-      update_curent_watch_time();
+    update_curent_watch_time();
     if (Provider.of<queue_playerss>(context, listen: false)
         .set_current_index(index)) {
-    
       _onControllerChange(getvideo());
     } else {
       print("somthing went wrong");
     }
   }
 
-  void icon_button_press(int val){
-    
-  }
+  void icon_button_press(int val) {}
 
   void _bottoslider(BuildContext context) {
     showModalBottomSheet(
@@ -316,10 +350,6 @@ class _Play_videoState extends State<Play_video> {
     return Provider.of<queue_playerss>(context, listen: false)
         .getcurrent_index();
   }
-  
-
-
-
 
   List<Widget> Bottom_button() {
     return [
@@ -355,7 +385,7 @@ class _Play_videoState extends State<Play_video> {
         play_next() ? _onControllerChange(getvideo()) : null;
       }),
       iconbutton(Icons.fullscreen, () {
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          !show? SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky):exitfullscreen();
       }),
     ];
   }
@@ -429,6 +459,8 @@ class _Play_videoState extends State<Play_video> {
             _bottombutton(context);
           },
           icon: Icon(Icons.closed_caption_outlined)),
+
+      if(p_id!=null||f_id!=null)    
       IconButton(
         onPressed: () {
           _bottofolder_queue_list(context);
@@ -445,8 +477,8 @@ class _Play_videoState extends State<Play_video> {
 
   List<Widget> topbaar() {
     return [
-      AppBar( 
-      //  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      AppBar(
+        //  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: AutoSizeText(
           Provider.of<queue_playerss>(context, listen: false).video_title(),
           maxLines: 2,
@@ -490,6 +522,32 @@ class _Play_videoState extends State<Play_video> {
     ];
   }
 
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+
+         if(show&&_controller!.value.isPlaying){
+           
+          if (_start < 1) {
+            setState(() {
+              show = false;
+              _start=3;
+            });
+            timer.cancel();
+          } else {
+            _start = _start - 1;
+          }
+         }
+        },
+        
+      ),
+    );
+  }
+
+
   List<Widget> bottobar() {
     return [
       Padding(
@@ -520,7 +578,7 @@ class _Play_videoState extends State<Play_video> {
                       _controller!.value.duration.inMilliseconds.toDouble() -
                           currentDuration.toDouble()),
                   style: TextStyle(
-                     color:Theme.of(context).sliderTheme.inactiveTrackColor,
+                      color: Theme.of(context).sliderTheme.inactiveTrackColor,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w500)),
             ],
@@ -562,102 +620,167 @@ class _Play_videoState extends State<Play_video> {
         .join(':');
   }
 
-
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(
-      height: double.infinity,
-      width: double.infinity,
-      color: Colors.black,
-      child: Stack(
-        children: [
-          video_played(),
-          !lock
-              ? GestureDetector(
+          height: double.infinity,
+          width: double.infinity,
+          color: Colors.black,
+          child: Stack(
+            children: [
+              video_played(),
+        //  Padding(
+        //   padding: EdgeInsets.only(left: 20),
+        //   child:
+        //      Align (
+        //       alignment: Alignment.centerLeft,
+        //         child: SizedBox(
+        //           height: 200,
+        //           child: RotatedBox (
+        //             quarterTurns: -1,
+        //             child: LinearProgressIndicator(
+        //               minHeight: 20,
+        //               value: 0.89,
+        //               valueColor: AlwaysStoppedAnimation(Colors.purple),
+        //               backgroundColor: Colors.lime,
+        //             ),
+        //           ),
+        //         ),
+        //       )
+        // ),
+        // Padding(
+        //   padding: EdgeInsets.only(right: 20),
+        //   child:
+        //      Align (
+        //       alignment: Alignment.centerRight,
+        //         child: SizedBox(
+        //           height: 200,
+        //           child: RotatedBox (
+        //            quarterTurns: -1,
+        //            child: LinearProgressIndicator(
+        //              minHeight: 20,
+        //              value: 0.89,
+        //              valueColor: AlwaysStoppedAnimation(Colors.purple),
+        //              backgroundColor: Colors.lime,
+        //            ),
+        //               ),
+        //         ),
+        //       )
+        // ),
+              !lock
+                  ? GestureDetector(
+                      child: Container(
+                        height: double.infinity,
+                        width: double.infinity,
+                        color: Colors.transparent,
+                      ),
+                      onTap: () {
+                        show_content();
+                      },
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              iconbutton(Icons.lock, () {
+                                setState(() {
+                                  defaultsorenatation();
+                                  lock = !lock;
+                                });
+                              }),
+                              iconbutton(Icons.lock, () {
+                                setState(() {
+                                  defaultsorenatation();
+                                  lock = !lock;
+                                });
+                              })
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+
+
+              GestureDetector(
+                onHorizontalDragEnd: (details) => fastforward(),
+                onTap: show_content,
+                onDoubleTap: () {
+                  fastforward();
+                },
+                onVerticalDragUpdate: (details) {
+                  int sensitivity = 1;
+                  if (details.delta.dy > sensitivity) {
+                     print("swipe down + "+details.delta.dy .toString() );
+                  } else if (details.delta.dy < -sensitivity) {
+                      print("swipe up + "+details.delta.dy .toString() );
+                  }
+                },
+                child: ClipPath(
+                  clipper: OvalLeftBorderClipper(
+                      curveHeight: MediaQuery.of(context).size.width),
                   child: Container(
-                    height: double.infinity,
-                    width: double.infinity,
-                    color: Colors.transparent,
-                  ),
-                  onTap: () {
-                    show_content();
-                  },
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
+                      color: Colors.transparent,
+                      height: double.infinity,
+                      width: double.infinity,
+                      
+
+        //               child: RotatedBox(quarterTurns: -1,
+        // child: LinearProgressIndicator(
+        //   value: 0.12,
+        // ),),
+
+                      ),
+                ),
+              ),
+              GestureDetector(
+                onTap: show_content,
+                onDoubleTap: () {
+                  print("left");
+                  backward();
+                },
+                onVerticalDragUpdate: (details) {
+                  int sensitivity = 0;
+                  if (details.delta.dy > sensitivity) {
+                  print("swipe down");
+                  } else if (details.delta.dy < -sensitivity) {
+                  print("swipe up");
+                  }
+                },
+                child: ClipPath(
+                  clipper: OvalRightBorderClipper(
+                      curveHeight: MediaQuery.of(context).size.height),
+                  child: Container(
+                      color: Colors.transparent,
+                      height: double.infinity,
+                      width: double.infinity,
+                     // child: LinearProgressIndicator(value: 0.3),
+                      ),
+                ),
+              ),
+              show && !lock
+                  ? Container(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          iconbutton(Icons.lock, () {
-                            setState(() {
-                              defaultsorenatation();
-                              lock = !lock;
-                            });
-                          }),
-                          iconbutton(Icons.lock, () {
-                            setState(() {
-                              defaultsorenatation();
-                              lock = !lock;
-                            });
-                          })
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: topbaar(),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: bottobar(),
+                          ),
                         ],
                       ),
                     )
-                  ],
-                ),
-          GestureDetector(
-            onHorizontalDragEnd: (details) => fastforward(),
-            onTap: show_content,
-            onDoubleTap: () {
-              fastforward();
-            },
-            child: ClipPath(
-              clipper: OvalLeftBorderClipper(
-                  curveHeight: MediaQuery.of(context).size.width),
-              child: Container(
-                  color: Colors.transparent,
-                  height: double.infinity,
-                  width: double.infinity),
-            ),
+                  : Container(),
+            ],
           ),
-          GestureDetector(
-            onTap: show_content,
-            onDoubleTap: () {
-              print("left");
-              backward();
-            },
-            child: ClipPath(
-              clipper: OvalRightBorderClipper(
-                  curveHeight: MediaQuery.of(context).size.height),
-              child: Container(
-                  color: Colors.transparent,
-                  height: double.infinity,
-                  width: double.infinity),
-            ),
-          ),
-          show && !lock
-              ? Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: topbaar(),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: bottobar(),
-                      ),
-                    ],
-                  ),
-                )
-              : Container(),
-        ],
-      ),
-    ));
+        ));
   }
 }

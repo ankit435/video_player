@@ -96,12 +96,12 @@ List<Widget> action(){
     return DefaultTabController (
       length: 2,
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+       
         body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar( 
-       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            backgroundColor: Theme.of(context).primaryColor,
             pinned: true,
             floating: true,
             snap: true,

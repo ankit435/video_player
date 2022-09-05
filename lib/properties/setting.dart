@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:video/helper/files.dart';
 
 class Setting extends StatefulWidget {
-  const Setting({Key? key}) : super(key: key);
+  Future<void> Function() loaddata;
+   Setting({Key? key, required this.loaddata }) : super(key: key);
   static const routeName = '/setting';
 
   @override
@@ -57,7 +58,6 @@ class _SettingState extends State<Setting> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-     
         appBar: AppBar( 
           backgroundColor: Theme.of(context).primaryColor,
        title: text("Setting")),
@@ -77,6 +77,7 @@ class _SettingState extends State<Setting> {
                     children: [
                       listiles("Theme", subtitle: Theme.of(context).toString(),param1:(){
                         Navigator.pushNamed(context, '/theme_screen');
+                        widget.loaddata();
                       }),
                       listiles("Language",subtitle:  "Auto", param1:(){
                       Provider.of<themes>(context,listen: false).update_curr_theme_id(2);

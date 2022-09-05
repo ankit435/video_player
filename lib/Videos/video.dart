@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 
 import '../file/files_detail.dart';
+import '../file/grid_view.dart';
 import '../helper/files.dart';
 import '../helper/storage.dart';
 import '../properties/file_bootom_sheet.dart';
@@ -252,17 +253,30 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
         });
   }
 
-  Widget _gridviewbuilder(List<video> file_detail) {
+Widget _gridviewbuilder(List<video> File_path) {
+    print(MediaQuery.of(context).size.width);
     return GridView.builder(
-        itemCount: file_detail.length,
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) {
-          return GridTile(
-              child: Container(
-                  color: Colors.red,
-                  child: Center(child: text(file_detail[index].v_title))));
-        });
+      itemCount: File_path.length,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: (MediaQuery.of(context).size.width/125.0).toInt(), childAspectRatio: 1/1.2,),
+      itemBuilder: (context, index) {
+        return GridTile(
+            child: Grid_view_file( file_path: File_path,
+            index: index,
+            value: icons_value,
+            onPressed: toggleselction,
+            selection: selection,
+            selction_list: selction_list,
+            onPressed1: toggleselctionlist,
+            bottommodel: _videoproprties,));
+            
+            // Container(
+            //     color: Colors.red,
+            //     child: Center(child: text(File_path[index].v_title)))
+                
+                
+      },
+    );
   }
 
 @override
@@ -283,6 +297,19 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
      
     });
   }
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Theme.of(context).colorScheme.primary.withOpacity(0.12);
+      }
+      return  Theme.of(context).primaryColor.withOpacity(0.9);
+    }
+
+
 Widget _body(){
   file_detail=Provider.of<folder_details>(context, listen: true).getAllvideo();
   size=Provider.of<folder_details>(context, listen: false).gettotalvideosize();
@@ -297,6 +324,8 @@ Widget _body(){
               ),
               trailing: selection
                   ? Checkbox(
+                     checkColor: Theme.of(context).textTheme.bodyText1!.color,
+                      fillColor: MaterialStateProperty.resolveWith(getColor),
                       value: file_detail.length == selction_list.length,
                       onChanged: (value) {
                         _select_all_file(file_detail, size);

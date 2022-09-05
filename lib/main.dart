@@ -19,6 +19,7 @@ import 'helper/files.dart';
 import 'permission/permission.dart';
 import 'theme/theme_manager.dart';
 import 'theme/theme_screen.dart';
+import 'video_player/video_play.dart';
 ThemeManager _themeManager = ThemeManager();
 
 void main() {
@@ -103,12 +104,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       routes: {
         Search.routeName: (ctx) => const Search(),
         Files.routeName:(ctx)=> Files(),
-        Setting.routeName:(ctx)=>const Setting(),
+        //Setting.routeName:(ctx)=>const Setting(),
         Playlist_file.routeName:(context) => const Playlist_file(),
         Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
         theme_screen.routeName:(context) => theme_screen(),
         Create_theme.routeName:(context) => Create_theme(),
-        //Play_video.routeName:(context) => Play_video(),
+        Play_video.routeName:(context) => Play_video(),
 
       },
     ),);

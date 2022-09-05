@@ -43,6 +43,35 @@ class _queue_listState extends State<queue_list> {
     );
   }
 
+  Widget iconanimation() {
+    return SizedBox.fromSize(
+      size: Size(56, 56), // button width and height
+      child: ClipOval(
+        child: Material(
+          color: Colors.transparent, // button color
+          child: InkWell(
+            splashColor: Colors.green, // splash color
+            onTap: () {
+              // param1();
+            }, // button pressed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+               Image.asset("assets/video/12730-sound-wave.gif",height: 30,width: 30,), // icon");
+                // text
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  
+Widget text(String text){
+  return Text(text , style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+           ));
+}
   Widget build(BuildContext context) {
     var currqueuelist =
         Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
@@ -53,7 +82,9 @@ class _queue_listState extends State<queue_list> {
                 children: [
                   SizedBox(height: 10),
                   Align(
+                    alignment: Alignment.topCenter,
                     child: Container(
+
                       height: 5,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -64,31 +95,37 @@ class _queue_listState extends State<queue_list> {
                       width: 60,
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Card(
-                    child: Container(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(0),
-                        leading: iconbutton(
-                          Icons.close,
-                          () {
-                            Navigator.pop(context);
-                          },
+                  
+
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     // mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              iconbutton(Icons.close, () {
+                                Navigator.of(context).pop();
+                              }),
+                               text("playing queue  ${currqueuelist[3].length}"),
+                            ]
                         ),
-                        title:
-                            Text("playing queue  ${currqueuelist[3].length}"),
-                        trailing: Row(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text("Order"),
                             iconbutton(Icons.sort_by_alpha_outlined, () {})
                           ],
                         ),
-                      ),
+                      ],
                     ),
-                  ),
+
+
+                  
                   Flexible(
                     child: ReorderableListView.builder(
+                      
                       shrinkWrap: true,
                       onReorder: (int oldIndex, int newIndex) {
                         Provider.of<queue_playerss>(context, listen: false)
@@ -96,36 +133,35 @@ class _queue_listState extends State<queue_list> {
                       },
                       itemCount: widget.queue_list_video.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                            key: ValueKey(widget.queue_list_video[index].v_id),
-                            child: ListTile(
-                              contentPadding:
-                                  EdgeInsets.only(left: 12, right: 0),
-                              leading: const Icon(Icons.drag_handle),
-                              title: Text(
-                                widget.queue_list_video[index].v_title,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: TextStyle(
-                                    color: currqueuelist[2] == index
-                                        ?Theme.of(context).primaryColor
-                                        :  Theme.of(context).textTheme.bodyText1!.color,),
-                              ),
-                              trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    currqueuelist[2] == index
-                                        ? iconbutton(Icons.play_arrow, () {})
-                                        : Container(),
-                                    iconbutton(Icons.close, () {
-                                      Provider.of<queue_playerss>(context,
-                                              listen: false)
-                                          .remove_from_queue(widget
-                                              .queue_list_video[index].v_id);
-                                    }),
-                                  ]),
-                            ));
+                        return ListTile(
+                          key: ValueKey(widget.queue_list_video[index].v_id),
+                          contentPadding:
+                              EdgeInsets.only(left: 12, right: 0),
+                          leading: iconbutton(Icons.drag_handle,(){}),
+                          title: Text(
+                            widget.queue_list_video[index].v_title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                color: currqueuelist[2] == index
+                                    ?Theme.of(context).primaryColor
+                                    :  Theme.of(context).textTheme.bodyText1!.color,),
+                          ),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                currqueuelist[2] == index
+                                    ? iconanimation()
+                                    : Container(),
+                                iconbutton(Icons.close, () {
+                                  Provider.of<queue_playerss>(context,
+                                          listen: false)
+                                      .remove_from_queue(widget
+                                          .queue_list_video[index].v_id);
+                                }),
+                              ]),
+                        );
                       },
                     ),
                   ),

@@ -94,10 +94,15 @@ class themes with ChangeNotifier {
           // textTheme: TextTheme(
           //   bodyText1: TextStyle(color: Colors.red), //<-- SEE HERE
           // ),
+
+          checkboxTheme: CheckboxThemeData(
+            fillColor: MaterialStateProperty.all(Colors.red),
+            checkColor: MaterialStateProperty.all(Colors.white),
+          ),
         )),
     theme(
         theme_id: 4,
-        brightness: Brightness.light,
+        brightness: Brightness.values[Random().nextInt(2)],
         themeData: ThemeData(
             primarySwatch: Colors.blue,
             primaryColor: Colors.blue,
@@ -420,7 +425,8 @@ class folder_details with ChangeNotifier {
     return videos;
   }
 
-  String folder_name(int f_id) {
+  String folder_name(int? f_id) {
+    if(f_id==null)return "";
     return _folder_item[folder_index(f_id)].f_title;
   }
 
@@ -722,6 +728,10 @@ class PlayList_detail with ChangeNotifier {
     });
     notifyListeners();
   }
+
+  playlis_title(int? p_id) {
+    return _playlist_item.firstWhere((element) => element.p_id == p_id).p_title;
+  }
 }
 
 // class queue_playerss with ChangeNotifier{
@@ -763,6 +773,8 @@ class PlayList_detail with ChangeNotifier {
 
 class queue_playerss with ChangeNotifier {
   VideoPlayerController? controller;
+  int? f_id=null;
+  int? p_id=null;
   static int curentindex = -1;
   List<video> queue_video_list = [];
   static bool b_play = false;
@@ -789,13 +801,25 @@ class queue_playerss with ChangeNotifier {
     notifyListeners();
   }
 
-  void add_video_list_in_queue(int currindex, List<video> videos) {
+  void add_video_list_in_queue(int currindex, List<video> videos,{int? f_id,int? p_id}) {
     //q.controller=controllers;
 
     curentindex = currindex;
     queue_video_list = videos.toList();
+    this.f_id=f_id;
+    this.p_id=p_id;
+    
     // videos.forEach((element) => {queue_video_list.add(element)});
     notifyListeners();
+  }
+
+  int? getf_id(){
+
+    return f_id;
+  }
+  int? getp_id(){
+
+    return p_id;
   }
 
   void add_to_queue(List<video> videos) {

@@ -13,6 +13,8 @@ import '../showdialogbox/file_delete.dart';
 import '../video_player/video_play.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'grid_view.dart';
+
 class Files extends StatefulWidget {
    Files({Key? key}) : super(key: key);
   static const  routeName = '/file_video';
@@ -328,17 +330,36 @@ Widget text(String text){
           );
         });
   }
+  
 
   Widget _gridviewbuilder(List<video> File_path) {
+    print(MediaQuery.of(context).size.width);
     return GridView.builder(
       itemCount: File_path.length,
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: (MediaQuery.of(context).size.width/125.0).toInt(),
+          //childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height/2.5),
+          childAspectRatio: 1/1.2,
+          ),
+                      
       itemBuilder: (context, index) {
         return GridTile(
-            child: Container(
-                color: Colors.red,
-                child: Center(child: text(File_path[index].v_title))));
+
+            child: Grid_view_file(file_path: File_path,
+            index: index,
+            value: icons_value,
+            onPressed: toggleselction,
+            selection: selection,
+            selction_list: selction_list,
+            onPressed1: toggleselctionlist,
+            bottommodel: _videoproprties,));
+            
+            // Container(
+            //     color: Colors.red,
+            //     child: Center(child: text(File_path[index].v_title)))
+                
+                
       },
     );
   }
@@ -418,7 +439,7 @@ Widget text(String text){
                     child: Container(
                       child: ListTile(
                         onTap: () {
-                          Navigator.of(context).pushNamed(Play_video.routeName);
+                           Navigator.of(context).pushNamed(Play_video.routeName);
                         },
                         tileColor: Colors.black,
                         leading: Row(
@@ -428,7 +449,7 @@ Widget text(String text){
                               Provider.of<queue_playerss>(context, listen: false)
                                   .togle_bacground_play();
                             }),
-                           iconbutton(Icons.disc_full, (){})
+                           iconbutton(Icons.disc_full, (){Navigator.of(context).pushNamed(Play_video.routeName);})
                           ],
                         ),
                         title: AutoSizeText(

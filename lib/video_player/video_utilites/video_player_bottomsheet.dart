@@ -7,11 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:video/helper/file.dart';
 import '../../helper/files.dart';
 
-
 class video_bottom_sheet extends StatefulWidget {
-  final int f_id;
+  final int? f_id;
+  final int? p_id;
   void Function(int index) playfolder_video;
-  video_bottom_sheet({Key? key, required this.f_id, required this.playfolder_video })
+  video_bottom_sheet(
+      {Key? key,
+      this.f_id = null,
+      required this.playfolder_video,
+      this.p_id = null})
       : super(key: key);
 
   @override
@@ -20,7 +24,7 @@ class video_bottom_sheet extends StatefulWidget {
 
 class _video_bottom_sheetState extends State<video_bottom_sheet> {
   @override
-  Widget iconbutton(IconData icon, Function param1) {
+   Widget iconbutton(IconData icon, Function param1) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -34,7 +38,7 @@ class _video_bottom_sheetState extends State<video_bottom_sheet> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon), // icon
+                Icon(icon, color:IconTheme.of(context).color,), // icon
                 // text
               ],
             ),
@@ -42,98 +46,116 @@ class _video_bottom_sheetState extends State<video_bottom_sheet> {
         ),
       ),
     );
-  }
 
+  }
+  Widget text(String text){
+  return Text(text ,maxLines: 1, style: TextStyle(
+              color:  Theme.of(context).textTheme.bodyText1!.color,
+               overflow: TextOverflow.ellipsis,
+                              
+           ));
+}
   Widget build(BuildContext context) {
     var currqueuelist =
         Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: FractionallySizedBox(
-          heightFactor: 0.45,
-          child: currqueuelist[3].length > 0
-              ? Column(
-                  children: [
-                     SizedBox(height:10),
-
-        
-        Align(child:Container(height: 5,decoration: BoxDecoration(
-          color: Colors.red,
-      borderRadius: BorderRadius.all(
-      Radius.circular(5),
-      ),
-        ),width: 60,)),
-                   Card (
-                      child: Container(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                            leading: iconbutton(Icons.close, () {
-                          Navigator.pop(context);
-                        },),
-                        //Provider.of<folder_details>(context, listen: false).getfolder_name(int )
-                        title: Text( Provider.of<folder_details>(context, listen: false).folder_name(widget.f_id), overflow: TextOverflow.ellipsis,maxLines: 1, ),
-                        trailing: Row( mainAxisSize: MainAxisSize.min,children: [
-                          const Text("Order"),
-                          iconbutton(Icons.sort_by_alpha_outlined, (){
-                    
-                          })
-                        ],),
-                    
-                    
-                        ),
+    String? title = widget.f_id != null
+        ? Provider.of<folder_details>(context, listen: false)
+            .folder_name(widget.f_id)
+        : Provider.of<PlayList_detail>(context, listen: false)
+            .playlis_title(widget.p_id);
+    return FractionallySizedBox(
+        heightFactor: 0.45,
+        child: currqueuelist[3].length > 0
+            ? Column(
+                children: [
+                   SizedBox(height: 10),
+                Align(
+                   alignment: Alignment.topCenter,
+                  child: Container(
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
                       ),
                     ),
-                    Flexible(
-                      child: ReorderableListView.builder(
-                        shrinkWrap: true,
-                        onReorder: (int oldIndex, int newIndex) {
-                          Provider.of<queue_playerss>(context, listen: false)
-                              .reorederd_quelist(oldIndex, newIndex);
-                        },
-                        itemCount: currqueuelist[3].length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            
-                              key:
-                                  ValueKey(currqueuelist[3][index].v_id),
-                              child: ListTile(
-                                contentPadding: EdgeInsets.only(left: 12,right: 0),
-                                leading: const Icon(Icons.drag_handle),
-                                title: Text(
-                                  currqueuelist[3][index].v_title,
-                                   overflow: TextOverflow.ellipsis,
-                                   maxLines: 2,
-                                  style: TextStyle(
-                                      color: currqueuelist[2] == index
-                                          ? Colors.green
-                                          : Colors.white),
-                                ),
-                                trailing:Row (
-                                  mainAxisSize: MainAxisSize.min,
-                                  
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children :[ 
-                                    currqueuelist[2] == index?iconbutton(Icons.play_arrow, () { }):Container(),
-                                    iconbutton(Icons.close, () {
-                                    Provider.of<queue_playerss>(context,
-                                            listen: false)
-                                        .remove_from_queue(
-                                            currqueuelist[3][index].v_id);
-                                  }),
-                                  ]
-                                ),
-                                onTap: (){
-                                  widget.playfolder_video(index);
-                                  Navigator.of(context).pop();
-
-                                },
-                              ),);
-                        },
+                    width: 60,
+                  ),
+                ),
+                
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            iconbutton(Icons.close, () {
+                              Navigator.of(context).pop();
+                            }),
+                            text(
+                              title == null ? "Queue" : title,
+                             
+                            )
+                          ]
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                         text("Order"),
+                          iconbutton(Icons.sort_by_alpha_outlined, () {})
+                        ],
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: ReorderableListView.builder(
+                      shrinkWrap: true,
+                      onReorder: (int oldIndex, int newIndex) {
+                        Provider.of<queue_playerss>(context, listen: false)
+                            .reorederd_quelist(oldIndex, newIndex);
+                      },
+                      itemCount: currqueuelist[3].length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          key: ValueKey(currqueuelist[3][index].v_id),
+                          contentPadding:
+                              EdgeInsets.only(left: 12, right: 0),
+                          leading: iconbutton(Icons.drag_handle,(){}),
+                          title: Text(
+                            currqueuelist[3][index].v_title,
+                           overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: TextStyle(
+                                  color: currqueuelist[2] == index
+                                      ?Theme.of(context).primaryColor
+                                      :  Theme.of(context).textTheme.bodyText1!.color,),
+                            ),
+                          trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                currqueuelist[2] == index
+                                    ? iconbutton(Icons.play_arrow, () {})
+                                    : Container(),
+                                iconbutton(Icons.close, () {
+                                  Provider.of<queue_playerss>(context,
+                                          listen: false)
+                                      .remove_from_queue(
+                                          currqueuelist[3][index].v_id);
+                                }),
+                              ]),
+                          onTap: () {
+                            widget.playfolder_video(index);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
                     ),
-                  ],
-                )
-              : Container()),
-    );
+                  ),
+                ],
+              )
+            : Container());
   }
 }

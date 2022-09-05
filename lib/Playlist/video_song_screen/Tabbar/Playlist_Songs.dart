@@ -14,6 +14,6 @@ class Song_playlist extends StatefulWidget {
 class _Song_playlistState extends State<Song_playlist> {
   @override
   Widget build(BuildContext context) {
-    return Container(color:Colors.blueGrey,height: double.infinity,);
+    return Container(color: Theme.of(context).backgroundColor,height: double.infinity,);
   }
 }

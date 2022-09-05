@@ -2,6 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:video/helper/theme_model.dart';
 import 'package:video_player/video_player.dart';
 
+final String folder_databasename  = 'folder_databasename';
+final String playlist_databasename = 'Playlists';
+final String Video_databasename = 'Videos_database';
+
+class folder_database{
+  static final  List<String> values = [
+    
+  id,folder_name,folder_size,folder_date,folder_path
+
+  ];
+  static final String id = '_id';
+  static final String folder_name = 'folder_name';
+  static final String folder_path = 'folder_path';
+  static final String folder_size = 'folder_size';
+  static final String folder_date = 'folder_date';
+}
+
+class playlist_database{
+  static final  List<String> values = [
+    
+  id,playlist_name,playlist_thumbnail_path
+
+  ];
+  static final String id = '_id';
+  static final String playlist_name = 'playlist_name';
+  static final String playlist_thumbnail_path = 'playlist_thumbnail_path';
+  
+}
+
+class video_database{
+  static final  List<dynamic> values = [
+  id,Video_name,Video_path,Video_size,Video_date,Video_duration, Video_type,Video_folder_id, Video_playlist_id, Video_thumbnail_path,Video_open,Video_lastmodified,Video_favourite
+  ]; 
+
+  static final String id = '_id';
+  static final String Video_name = 'Video_name';
+  static final String Video_path = 'Video_path';
+  static final String Video_size = 'Video_size';
+  static final String Video_date = 'Video_date';
+  static final String Video_duration = 'Video_duration';
+  static final String Video_watched = 'Video_watched';
+  static final String Video_type = 'Video_type';
+  static final String Video_folder_id = 'Video_folder';
+  static final String Video_playlist_id = 'Video_playlist';
+  static final String Video_thumbnail_path = 'Video_thumbnail_path';
+  static final int Video_open = 0;
+  static final int Video_favourite = 0;
+  static final String Video_lastmodified="Video_lastmodified";
+
+
+}
+
+
+
+
 class folder with ChangeNotifier {
   final int f_id;
   String f_title;
@@ -21,7 +76,6 @@ class folder with ChangeNotifier {
   });
 }
 
-// ignore: non_constant_identifier_names
 
 class video with ChangeNotifier {
   final int v_id;

@@ -58,8 +58,23 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
       ),
     );
   }
-  Widget checbox(){
+  Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Theme.of(context).colorScheme.primary.withOpacity(0.12);
+      }
+      return  Theme.of(context).primaryColor.withOpacity(0.9);
+    }
+
+  Widget checkbox() {
     return Checkbox(
+    
+     checkColor: Theme.of(context).textTheme.bodyText1!.color,
+     fillColor: MaterialStateProperty.resolveWith(getColor),
               value: widget.selction_list.contains(widget.folder_detail.f_id),
               onChanged: (value) {
                widget.toggleselctionlist(widget.folder_detail.f_id,widget.folder_detail.f_size);
@@ -108,7 +123,7 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
         }
         );
       },
-      trailing: widget.selection?checbox():iconbutoon(),
+      trailing: widget.selection?checkbox():iconbutoon(),
       onLongPress: (){
         widget.toggleselction!();
         widget.toggleselctionlist(widget.folder_detail.f_id,widget.folder_detail.f_size);

@@ -76,11 +76,12 @@ Widget text(String text){
         height: 50,
         child: ListTile(
             title: Text(
+
               '  ${playLists.length} Playlists',
-              style: TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13,color: Theme.of(context).primaryColor,),
             ),
             trailing: IconButton(
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
               onPressed: () {
                 showDialog(
                     context: context,

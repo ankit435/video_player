@@ -51,6 +51,8 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
       }
     });
   }
+  late AnimationController _animationController;
+bool isPlaying = false;
 
   void initState() {
     // TODO: implement initState
@@ -70,6 +72,18 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ));
 }
+
+
+Widget animatedIcon(){
+  return AnimatedIcon(
+    icon: AnimatedIcons.play_pause,
+    progress: _animationController,
+    size: 50,
+    color: Colors.white,
+  );
+
+}
+
 
   Widget _Popups() {
     return selection == false
@@ -120,7 +134,11 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                 _isInit = true;
                 _fetching_data();
               } else if (value == 3) {
-                Navigator.of(context).pushNamed(Setting.routeName);
+                //Navigator.of(context).pushNamed(Setting.routeName);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Setting(
+                          loaddata:loaddata
+                        )));
               } else if (value == 4) {
                 getAllvideos();
                 print("ads");
@@ -263,6 +281,12 @@ Widget icons(IconData icon){
     selction_list.clear();
   }
 
+ Future< void> loaddata() async{
+  setState(() {
+    _isInit = true;
+
+  });
+}
 // ignore: non_constant_identifier_names
   Future<void> _fetching_data() async {
     //print(_isInit);
@@ -328,6 +352,8 @@ Widget icons(IconData icon){
     _fetching_data();
     return Future.delayed(Duration(seconds: 1));
   }
+
+
 
   void didChangeDependencies() {
     _fetching_data();
@@ -485,7 +511,8 @@ Widget icons(IconData icon){
                           Provider.of<queue_playerss>(context, listen: false)
                               .togle_bacground_play();
                         }),
-                        Icon(Icons.disc_full),
+                        iconbutton(Icons.disc_full,(){
+                          Navigator.of(context).pushNamed(Play_video.routeName);}),
                       ],
                     ),
                     title: AutoSizeText(
@@ -511,9 +538,7 @@ Widget icons(IconData icon){
                               .updatecontoler_play_pause();
                         }),
                         iconbutton(Icons.skip_next, () {
-                          print(Provider.of<queue_playerss>(context,
-                                  listen: false)
-                              .getskipnextvideo());
+                         
 
                           // print(queue[0]);
                         }),
