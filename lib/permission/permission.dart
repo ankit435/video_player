@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 
 import '../properties/bottom_navigation.dart';
-import 'imge.dart';
+import 'permission_model.dart';
 
 class ImageScreen extends StatefulWidget {
   const ImageScreen({Key? key}) : super(key: key);
