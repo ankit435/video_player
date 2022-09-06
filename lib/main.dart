@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video/file/file.dart';
+import 'package:video/home/home.dart';
 
 
 
@@ -102,6 +103,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       home:ImageScreen(),
       // FlutterDemo(title:"Lol",storage: Storage()),
       routes: {
+        FlutterDemo.routeName: (ctx) => FlutterDemo(),
         Search.routeName: (ctx) => const Search(),
         Files.routeName:(ctx)=> Files(),
         //Setting.routeName:(ctx)=>const Setting(),

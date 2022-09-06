@@ -1,9 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:video/helper/file.dart';
-import 'package:video_player/video_player.dart';
-
 class Storage {
   static Set<String>ext={'MP4','FLV','MOV','MKV','AVI','WMV'};
    int v_id=0;
@@ -48,6 +45,19 @@ try {
   return e.toString();
  }
 }
+
+
+  // Future<int> getVideowatchduration( String path) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int? v_id = prefs.getInt(path);
+  //   if(v_id ==null)
+  //   {
+  //     await prefs.setInt(path, 0);
+  //     return 0;
+  //   }
+  //   return v_id;
+  // }
+
   void getfolder(List root, List<folder> folders, String parent,dynamic size,int t_id,int z_id) {
     List<video> file = [];
     
@@ -73,7 +83,7 @@ try {
               v_size: i.lengthSync(),
               v_lastmodified: i.lastModifiedSync(),
               ),
-              );
+            );
           }
         }
       }

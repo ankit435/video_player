@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/files.dart';
 
+import '../home/home.dart';
+
 
 
 class theme_screen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _theme_screenState extends State<theme_screen> {
      
       onTap: (){
         Provider.of<themes>(context,listen: false).update_curr_theme_id(themes_data[index].theme_id);
+          Navigator.of(context).pop();
       },
       child: Container(
           key: ValueKey(index),

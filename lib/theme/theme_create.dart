@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/files.dart';
 
+import '../home/home.dart';
 import '../properties/color_picker_bottomsheett.dart';
 import '../showdialogbox/file_delete.dart';
 
@@ -72,6 +74,7 @@ class _Create_themeState extends State<Create_theme> {
     Provider.of<themes>(context, listen: false)
         .addTheme(Brightness.dark, themeData);
     Navigator.of(context).pop();
+   
   }
 
   void setwidgetcolur(int value) {

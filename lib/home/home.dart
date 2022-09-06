@@ -18,7 +18,7 @@ import '../video_player/video_play.dart';
 
 class FlutterDemo extends StatefulWidget {
   const FlutterDemo({super.key});
-
+  static const routeName = '/home';
   @override
   State<FlutterDemo> createState() => _FlutterDemoState();
 }

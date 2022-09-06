@@ -5,6 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
 import 'package:video/helper/theme_model.dart';
@@ -100,6 +101,8 @@ class _CharacteristListItemState extends State<Files_path> {
   }
 
   Widget linearprogress() {
+    // SharedPreferences prefs = SharedPreferences.getInstance() as SharedPreferences;
+    // print(prefs.getInt(widget.file_path[widget.index].v_videoPath));
     return LinearProgressIndicator(
       backgroundColor: Colors.red,
       valueColor: AlwaysStoppedAnimation<Color>(
@@ -107,7 +110,7 @@ class _CharacteristListItemState extends State<Files_path> {
       ),
       value: widget.file_path[widget.index].v_duration == 0
           ? 0
-          : widget.file_path[widget.index].v_watched /
+          : widget.file_path[widget.index].v_watched/
               widget.file_path[widget.index].v_duration,
     );
   }

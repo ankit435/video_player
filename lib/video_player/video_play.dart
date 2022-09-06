@@ -304,6 +304,7 @@ void exitfullscreen(){
             splashColor: Colors.green, // splash color
             onTap: () {
               param1();
+              
             }, // button pressed
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
