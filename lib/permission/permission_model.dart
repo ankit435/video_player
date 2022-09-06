@@ -6,7 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 // This enum will manage the overall state of the app
 enum VideoSection {
-  noStoragePermission, // Permission denied, but not forever
+  noStoragePermission,
+  Nofullpermission, // Permission denied, but not forever
   noStoragePermissionPermanent, // Permission denied forever
   browseFiles,
   loadeVideo, // The UI shows the button to pick files
@@ -50,21 +51,22 @@ class ImageModel extends ChangeNotifier {
    result= await Permission.storage.request();
   var androidInfo = await DeviceInfoPlugin().androidInfo;
   var sdkInt = androidInfo.version.sdkInt;
-  
+    print("result= "+ result.toString());
     
     if (result.isGranted) {
+
       if(sdkInt!>=30){
-       if(await Permission.manageExternalStorage.request().isGranted){
+        var result2= await Permission.manageExternalStorage.request();
+        print("result2= "+ result2.toString());
+       if(result2.isGranted){
          videoSection = VideoSection.browseFiles;
          return true;
        }
-       else{
-          videoSection =  VideoSection.noStoragePermission;
-
+       else if(result2.isDenied){
+          videoSection =  VideoSection.Nofullpermission;
           return false;
        }
        
-
       }
       videoSection = VideoSection.browseFiles;
       return true;

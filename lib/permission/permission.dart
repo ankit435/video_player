@@ -76,11 +76,15 @@ Future<void> didChangeDependencies() async {
           switch (model.videoSection) {
             case VideoSection.noStoragePermission:
               widget = ImagePermissions(
-                  isPermanent: false, onPressed: _checkPermissionsAndPick);
+                  isPermanent: 0, onPressed: _checkPermissionsAndPick);
               break;
             case VideoSection.noStoragePermissionPermanent:
               widget = ImagePermissions(
-                  isPermanent: true, onPressed: _checkPermissionsAndPick);
+                  isPermanent: 1, onPressed: _checkPermissionsAndPick);
+              break;
+            case VideoSection.Nofullpermission:
+              widget = ImagePermissions(
+                  isPermanent: 2, onPressed: _checkPermissionsAndPick);
               break;
             case VideoSection.browseFiles:
              widget =checkpermission(onPressed: _checkPermissionsAndPick,hasFilePermission:hasFilePermission);
@@ -131,7 +135,7 @@ void initState() {
   }
 
   Widget build(BuildContext context) {
-    return widget.hasFilePermission?Bottomnavigation():ImagePermissions(isPermanent: false, onPressed: widget.onPressed);
+    return widget.hasFilePermission?Bottomnavigation():ImagePermissions(isPermanent: 1, onPressed: widget.onPressed);
 
   }
 }
@@ -140,7 +144,7 @@ void initState() {
 
 
 class ImagePermissions extends StatelessWidget {
-  final bool isPermanent;
+  final int isPermanent;
   final VoidCallback onPressed;
 
   const ImagePermissions({
@@ -151,6 +155,7 @@ class ImagePermissions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("isPermanent=="+isPermanent.toString());
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar( 
@@ -178,13 +183,15 @@ class ImagePermissions extends StatelessWidget {
                 top: 24.0,
                 right: 16.0,
               ),
-              child: const Text(
+              child:Text(isPermanent==0?
                 'We need to request your permission to read '
-                'local files in order to load it in the app.',
+                'local files in order to load it in the app.':isPermanent==2?
+                'We need  Full permission of read and Write of'
+                'local files in order to load it in the app.':'',
                 textAlign: TextAlign.center,
               ),
             ),
-            if (isPermanent)
+            if (isPermanent==1)
               Container(
                 padding: const EdgeInsets.only(
                   left: 16.0,
@@ -192,7 +199,7 @@ class ImagePermissions extends StatelessWidget {
                   right: 16.0,
                 ),
                 child: const Text(
-                  'You need to give this permission from the system settings.',
+                    'You need to give this permission from the system settings.',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -201,12 +208,12 @@ class ImagePermissions extends StatelessWidget {
                   left: 16.0, top: 24.0, right: 16.0, bottom: 24.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
+                  shape:  RoundedRectangleBorder(
+                    borderRadius:  BorderRadius.circular(30.0),
                   ),
                 ),
-                child: Text(isPermanent ? 'Open settings' : 'Allow access'),
-                onPressed: () => isPermanent ? openAppSettings() : onPressed(),
+                child: Text(isPermanent==1? 'Open settings' : 'Allow access'),
+                onPressed: () => isPermanent ==1? openAppSettings() : onPressed(),
               ),
             ),
           ],
