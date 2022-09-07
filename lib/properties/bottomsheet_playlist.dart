@@ -10,11 +10,11 @@ import 'package:video/helper/files.dart';
 class BottomPlayList extends StatefulWidget {
 
 
-  final int v_index;
-  final int f_index;
+  final String v_id;
+  final String f_id;
   final bool condition;
   final List<video> passvideo;
-  const BottomPlayList({Key? key, required this.v_index, required this.f_index,required this.condition,required this.passvideo})
+  const BottomPlayList({Key? key, required this.v_id, required this.f_id,required this.condition,required this.passvideo})
       : super(key: key);
 
   @override
@@ -28,11 +28,11 @@ class _BottomPlayListState extends State<BottomPlayList> {
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
 }
 List<PlayList> playLists=[];
-var video;
+late video videos;
   Widget build(BuildContext context) {
     
    if(widget.condition) {
-       video=Provider.of<folder_details>(context, listen: false).getvideo(widget.f_index,widget.v_index);
+     videos=Provider.of<folder_details>(context, listen: false).gevideo(widget.f_id, widget.v_id);
    }
     playLists= Provider.of<PlayList_detail>(context, listen: false).items();
     return ConstrainedBox(
@@ -56,7 +56,7 @@ var video;
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return Create_playlist(f_index:widget.f_index,v_index: widget.v_index, condition: widget.condition,passvideo:widget.passvideo);
+                return Create_playlist(f_id:widget.f_id,v_id: widget.v_id, condition: widget.condition,passvideo:widget.passvideo);
               },
             );
            },),),
@@ -83,8 +83,9 @@ var video;
                       );
                     }
                     else{
-                       Provider.of<PlayList_detail>(context, listen: false).add_one_playlist(playLists[index].p_id, video);     
+                       Provider.of<PlayList_detail>(context, listen: false).add_one_playlist(playLists[index].p_id, videos);     
                     }
+                   Provider.of<folder_details>(context, listen: false).add_to_playlist_id(playLists[index].p_id,widget.condition?[videos]:widget.passvideo);
                } 
                );
               })

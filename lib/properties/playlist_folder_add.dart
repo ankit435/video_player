@@ -13,9 +13,9 @@ import '../showdialogbox/Rename_playlist_file_and_folder.dart';
 import '../showdialogbox/file_delete.dart';
 
 class PlayListfolder_add extends StatefulWidget {
-  final int p_id;
+  final String p_id;
   void Function(BuildContext context, int p_id) onPressed;
-  void Function(Set<int> p_id) on_delete;
+  void Function(Set<String> p_id) on_delete;
 
   PlayListfolder_add({Key? key,required this.p_id, required this.onPressed,  required this.on_delete }) : super(key: key);
 
@@ -103,7 +103,7 @@ Widget icons(IconData icon){
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return Rename_playlist_file_and_folder(v_id: 0, condition: true,p_id: widget.p_id,);
+                return Rename_playlist_file_and_folder(v_id: "0", condition: true,p_id: widget.p_id,);
               },
             );
           }

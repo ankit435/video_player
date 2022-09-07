@@ -10,13 +10,11 @@ import '../home/home.dart';
 
 
 class theme_screen extends StatefulWidget {
- 
   const theme_screen({Key? key}) : super(key: key);
   static const routeName = '/theme_screen';
   @override
   State<theme_screen> createState() => _theme_screenState();
 }
-
 class _theme_screenState extends State<theme_screen> {
   @override
   var height;
@@ -24,13 +22,11 @@ class _theme_screenState extends State<theme_screen> {
   var themes_data;
   var loading=false;
  Future<void> getloaddata() async {
-    print("load data");
     var pref=await SharedPreferences.getInstance();
     await pref.setBool('init_data', true);
     await Future.delayed(Duration(seconds: 1));
     setState(() {
       loading=false;
-  
     });
 }
   Widget Containers(int index) {

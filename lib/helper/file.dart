@@ -58,9 +58,9 @@ import 'package:video_player/video_player.dart';
 
 
 class folder with ChangeNotifier {
-  final int f_id;
+  final String f_id;
   String f_title;
-  final String f_path;
+   String f_path;
   // ignore: non_constant_identifier_names
   List<video> f_detail = [];
   final DateTime f_timestamp;
@@ -78,10 +78,10 @@ class folder with ChangeNotifier {
 
 
 class video with ChangeNotifier {
-  final int v_id;
-  final int parent_folder_id;
+  final String v_id;
+  final String parent_folder_id;
   String v_title;
-  final String v_videoPath;
+   String v_videoPath;
   final String v_thumbnailPath;
   int v_duration;
   final DateTime v_timestamp;
@@ -90,6 +90,7 @@ class video with ChangeNotifier {
   final DateTime v_lastmodified;
   bool v_favourite;
   bool v_open;
+  Set<String> playlist_id = {};
 
   video({
     required this.v_id,
@@ -104,6 +105,8 @@ class video with ChangeNotifier {
     required this.v_size,
     this.v_favourite = false,
     this.v_open = false,
+    // ignore: non_constant_identifier_names
+    
   });
   void toggleBoostStatus() {
     v_open = true;
@@ -174,7 +177,7 @@ class Hide_list with ChangeNotifier {
 }
 
 class PlayList with ChangeNotifier {
-  final int p_id;
+  final String p_id;
   String p_title;
   List<video> p_detail = [];
 

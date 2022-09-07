@@ -13,11 +13,11 @@ import '../showdialogbox/file_delete.dart';
 
 class playlistbootoomshet extends StatefulWidget {
   final String p_title;
-  final int v_id;
-  final int f_id;
-  final int p_id;
-  void Function(BuildContext context, int id, int f_id) onPressed;
-  void Function(Map<int, int> delete) on_delete;
+  final String v_id;
+  final String f_id;
+  final String p_id;
+  void Function(BuildContext context, String v_id, String f_id) onPressed;
+  void Function(Map<String, String> delete) on_delete;
   playlistbootoomshet(
       {Key? key,
       required this.p_id,
@@ -44,11 +44,8 @@ Widget icons(IconData icon){
 
 
   Widget build(BuildContext context) {
-    int f_index = Provider.of<folder_details>(context, listen: false)
-        .folder_index(widget.f_id);
-    int v_index = Provider.of<folder_details>(context, listen: false)
-        .folder_video_index(f_index, widget.v_id);
-    var videos=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
+ 
+    var videos=Provider.of<folder_details>(context, listen: false).gevideo(widget.f_id,widget.v_id);
 
   
     return Wrap(
@@ -69,7 +66,7 @@ Widget icons(IconData icon){
           title:  text("Add to PlayList"),
           onTap: () {
             Navigator.pop(context);
-            widget.onPressed(context, v_index, f_index);
+            widget.onPressed(context, widget.v_id, widget.f_id);
           },
         ),
          ListTile(
@@ -88,7 +85,7 @@ Widget icons(IconData icon){
           title: text("Remove"),
           onTap: () {
             Navigator.pop(context);
-            Map<int,int> delete={widget.p_id:widget.f_id};
+            Map<String,String> delete={widget.p_id:widget.v_id};
           
             showDialog(
                     context: context,
@@ -126,7 +123,7 @@ Widget icons(IconData icon){
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return video_property(v_index: v_index, f_index: f_index);
+                return video_property(v_id: widget.v_id, f_id: widget.f_id);
               },
             );
           },

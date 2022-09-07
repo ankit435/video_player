@@ -8,15 +8,16 @@ import '../Videos/video.dart';
 import '../helper/files.dart';
 
 class Rename_file_folder extends StatefulWidget {
-  final int v_id;
+  final String v_id;
   final bool condition;
-  final int f_id;
+  final String f_id;
+  String rename_name;
 
-  const Rename_file_folder(
+   Rename_file_folder(
       {Key? key,
       required this.f_id,
       required this.v_id,
-      required this.condition})
+      required this.condition,required this. rename_name })
       : super(key: key);
   @override
   State<Rename_file_folder> createState() => _Rename_file_folderState();
@@ -32,7 +33,18 @@ class _Rename_file_folderState extends State<Rename_file_folder> {
     _inputController.dispose();
     super.dispose();
   }
-
+  void initState() {
+    super.initState();
+    
+     
+      _inputController.value = _inputController.value.copyWith(
+        text: widget.rename_name,
+        selection:
+            TextSelection(baseOffset: widget.rename_name.length, extentOffset: widget.rename_name.length),
+        composing: TextRange.empty,
+      );
+    
+  }
   bool isEmpty() {
     setState(() {
       if ((_inputController.text.trim().isNotEmpty) &&

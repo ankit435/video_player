@@ -27,7 +27,7 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
 
   List<video> file_detail=[];
   int size=0;
-  Map<int,int> selction_list = {};
+  Map<String,String> selction_list = {};
   int selcted_size = 0;
   String p_title="";
 
@@ -50,7 +50,7 @@ List<Widget> action(){
          });
          
   }
-  void toggleselctionlist(int value, int size,int p_id) {
+  void toggleselctionlist(String value, int size,String p_id) {
     setState(() {
       if(selction_list.containsKey(value)) {
          selction_list.remove(value);

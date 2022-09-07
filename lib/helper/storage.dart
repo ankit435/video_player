@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:video/helper/file.dart';
 class Storage {
   static Set<String>ext={'MP4','FLV','MOV','MKV','AVI','WMV'};
+  
    int v_id=0;
    int f_id=0;
   Future<File> changeFileNameOnly(File file, String newFileName) {
@@ -27,6 +28,11 @@ static String getFileExtensions(FileSystemEntity file) {
     }
   }
 
+
+String idGenerator() {
+    final now = DateTime.now();
+    return now.microsecondsSinceEpoch.toString();
+  }
   getFileSize(int bytes, int decimals)  {
    
     if (bytes <= 0) return "0 B";
@@ -60,6 +66,7 @@ try {
 
   void getfolder(List root, List<folder> folders, String parent,dynamic size,int t_id,int z_id) {
     List<video> file = [];
+    String f_id=idGenerator();
     
     for (var i in root) {
      // if (check(i.absolute.path)) 
@@ -73,7 +80,7 @@ try {
           size+=i.lengthSync();
           file.add(video(
               parent_folder_id: f_id,
-              v_id: v_id++,
+              v_id: idGenerator(),
               v_title: folder_name(i.absolute.path),
               v_thumbnailPath: i.absolute.path,
               v_videoPath: i.path,
@@ -92,7 +99,7 @@ try {
     if (file.isNotEmpty) {
       // print("f_id == "+f_id.toString()+"  ,  v_id== "+v_id.toString()+" , file len == "+file.length.toString());
       folder newfolder = folder(
-          f_id: f_id++,
+          f_id: f_id,
           f_title: folder_name(parent),
           f_path: parent,
           f_detail: file,
@@ -141,6 +148,57 @@ try {
 
   //   return false;
   // }
+
+  
+  bool deleteFolder(String path) {
+    try {
+      Directory(path).deleteSync(recursive: true);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  bool renameFolder(String f_path, String newftitle) {
+      try {
+        Directory(f_path).renameSync(f_path.substring(0,f_path.lastIndexOf(Platform.pathSeparator)+1)+newftitle);
+        return true;
+        
+      } catch (e) {
+        print(e);
+        return false;
+      }
+        
+}
+
+
+
+ bool deleteFile(String path) {
+    try {
+     // File(path).deleteSync(recursive: false);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  bool renamefile(String f_path, String newftitle) {
+      try {
+        File(f_path).renameSync(f_path.substring(0,f_path.lastIndexOf(Platform.pathSeparator)+1)+newftitle);
+        return true;
+        
+      } catch (e) {
+        print(e);
+        return false;
+      }   
+}
+
+    
+  
+   
+
 }
 
 

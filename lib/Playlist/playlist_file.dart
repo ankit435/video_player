@@ -14,7 +14,8 @@ import '../video_player/video_play.dart';
 import 'create_playList.dart';
 
 class Playlist_file extends StatefulWidget {
-  const Playlist_file({Key? key}) : super(key: key);
+  final String p_id;
+  const Playlist_file({Key? key,required this.p_id}) : super(key: key);
   static const routeName = '/Playlist_video';
   @override
   State<Playlist_file> createState() => _Playlist_fileState();
@@ -25,9 +26,9 @@ class _Playlist_fileState extends State<Playlist_file> {
 
     List<video> playLists=[];
     String p_title="";
-    var p_id;
+  
 
-  void _playlistbootomsheet(BuildContext context, int id,int f_id) {
+  void _playlistbootomsheet(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -38,17 +39,17 @@ class _Playlist_fileState extends State<Playlist_file> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child:playlistbootoomshet(v_id:id,p_title: p_title,f_id:f_id,onPressed:_bottoplaylist,p_id:p_id,on_delete:ondelete),
+          child:playlistbootoomshet(v_id:v_id,p_title: p_title,f_id:f_id,onPressed:_bottoplaylist,p_id:widget. p_id,on_delete:ondelete),
         );
       },
     );
   }
 
-  Future<void> ondelete(Map<int,int>delete) async {
+  Future<void> ondelete(Map<String,String>delete) async {
     Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist(delete);
   }
 
-void _bottoplaylist(BuildContext context, int v_index,int f_index) {
+void _bottoplaylist(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -58,7 +59,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child:BottomPlayList(v_index:v_index,f_index:f_index,condition: true,passvideo: []),
+          child:BottomPlayList(v_id:v_id,f_id:f_id,condition: true,passvideo: []),
         );
       },
     );
@@ -115,7 +116,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
         Flexible(
           child: ReorderableListView.builder(
             onReorder: (oldIndex, newIndex) {
-              Provider.of<PlayList_detail>(context, listen: false).reorederd_playlist_video(oldIndex, newIndex, p_id);
+             // Provider.of<PlayList_detail>(context, listen: false).reorederd_playlist_video(oldIndex, newIndex, widget.p_id);
             },
               itemCount: playLists.length,
               itemBuilder: (context, index) {
@@ -125,16 +126,8 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
                   title: text(playLists[index].v_title),
                   onTap: (){
                      Provider.of<queue_playerss>(context, listen: false)
-                  .add_video_list_in_queue(index, playLists,p_id: p_id);
-                  
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => Play_video(
-              //         f_id: playLists[index].parent_folder_id),
-              //   ),
-              // );
-               Navigator.of(context).pushNamed(Play_video.routeName);
+                    .add_video_list_in_queue(index, playLists,p_id:widget. p_id);
+                      Navigator.of(context).pushNamed(Play_video.routeName);
               
                   },
                   trailing: iconbutton(Icons.more_vert,(){_playlistbootomsheet(context,playLists[index].v_id,playLists[index].parent_folder_id);})
@@ -151,10 +144,10 @@ Widget text(String text){
            ));
 }
   Widget build(BuildContext context) {
-    var arg=ModalRoute.of(context)!.settings.arguments as Map;
-    p_id=arg['v2'];
-    p_title = arg['v1'];
-    playLists=Provider.of<PlayList_detail>(context, listen: true).getPlayListWithplay_id(p_id);
+   
+    p_title=Provider.of<PlayList_detail>(context, listen: true).getplaylisttitle(widget.p_id);
+    playLists=Provider.of<PlayList_detail>(context, listen: true).getPlayListWithplay_id(widget.p_id);
+
 
 
     return Scaffold(

@@ -16,9 +16,9 @@ import '../showdialogbox/rename_folder_file.dart';
 class Floder_bottomsheet extends StatefulWidget {
   void Function(BuildContext context, List<video>folders) bottoplaylist;
 
-  final int f_Id;
-  final int v_id;
-  Future<void> Function(Set<int> delete) onsinglefolderdelete;
+  final String f_Id;
+  final String v_id;
+  Future<void> Function(Set<String> delete) onsinglefolderdelete;
 
    Floder_bottomsheet({Key? key, required this.bottoplaylist, required this.f_Id ,required this.v_id, required this.onsinglefolderdelete }) : super(key: key);
 
@@ -48,17 +48,10 @@ Widget icons(IconData icon){
   Widget build(BuildContext context) {
     var f_videos=Provider.of<folder_details>(context, listen: false).getfoldertotalvideo(widget.f_Id,"Name",false);
     var f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_Id);
+    
   // f_videos.forEach((element) => print(element.v_id));
     return Wrap(
       children: <Widget>[
-      //   SizedBox(height:10),
-      //   Align(child:Container(height: 5,decoration: BoxDecoration(
-      //     color: Colors.red,
-      // borderRadius: BorderRadius.all(
-      // Radius.circular(5),
-      // ),
-        // ),
-        // width: 60,),),
          ListTile(
           leading: icons(Icons.play_arrow_outlined),
           title: text("Play Next"),
@@ -113,7 +106,7 @@ Widget icons(IconData icon){
               context: context,
               builder: (BuildContext context) {
                 //rename folder
-                return Rename_file_folder(condition: true,f_id:widget.f_Id ,v_id:widget.f_Id);
+                return Rename_file_folder(condition: true,f_id:widget.f_Id ,v_id:widget.f_Id,rename_name: Provider.of<folder_details>(context, listen: false).getfoldername(widget.f_Id),);
               },
             );
 

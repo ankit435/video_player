@@ -19,7 +19,7 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
   @override
   List<PlayList> playLists = [];
 
-  void _bottomsheetdetail(BuildContext context, int p_id) {
+  void _bottomsheetdetail(BuildContext context, String p_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -51,8 +51,8 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
           behavior: HitTestBehavior.opaque,
           // passed playlist id videos
           child: BottomPlayList(
-              v_index: -1,
-              f_index: -1,
+              v_id: "-1",
+              f_id: "-1",
               passvideo: playLists[p_index].p_detail,
               condition: false),
         );
@@ -61,7 +61,7 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
   }
 
 
-  Future<void> ondelete(Set<int>p_id) async {
+  Future<void> ondelete(Set<String>p_id) async {
     Provider.of<PlayList_detail>(context, listen: false).remove_playlist_folder(p_id);
 }
 
@@ -87,8 +87,8 @@ Widget text(String text){
                     context: context,
                     builder: (BuildContext context) {
                       return Create_playlist(
-                        f_index: -1,
-                        v_index: -1,
+                        f_id: "-1",
+                        v_id: "-1",
                         condition: false,
                        passvideo: [],
                       );
@@ -97,17 +97,16 @@ Widget text(String text){
             )),
       ),
       Flexible(
-        child: ReorderableListView.builder(
-          onReorder: ((oldIndex, newIndex) => {
+        child: ListView.builder(
+          // onReorder: ((oldIndex, newIndex) => {
             
-          }),
+          // }),
             itemCount: playLists.length,
             itemBuilder: (context, index) {
 
               return PlayList_details(
-                  key:ValueKey(playLists[index].p_id) ,
-                  index: index,
-                  playLists: playLists[index],
+                  
+                  p_id: playLists[index].p_id,
                   bottmplaysheet: _bottomsheetdetail);
             }),
       )

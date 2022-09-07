@@ -32,7 +32,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   int selcted_size = 0;
   var queue;
 
-  Set<int> selction_list = {};
+  Set<String> selction_list = {};
   void toggleselction() {
     print("hi");
     setState(() {
@@ -41,7 +41,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     });
   }
 
-  void toggleselctionlist(int value, int size) {
+  void toggleselctionlist(String value, int size) {
     setState(() {
       if (selction_list.contains(value)) {
         selction_list.remove(value);
@@ -264,7 +264,7 @@ Widget icons(IconData icon){
       //file_detail=video;
     });
   }
-  Future<void> onsinglefolderdelete(Set<int>delete) async {
+  Future<void> onsinglefolderdelete(Set<String>delete) async {
    
     if (delete.isNotEmpty) {
       await Provider.of<folder_details>(context, listen: false)
@@ -366,7 +366,7 @@ Widget icons(IconData icon){
     super.didChangeDependencies();
   }
 
-  void _videoproprties(BuildContext context, int f_Id) {
+  void _videoproprties(BuildContext context, String f_Id) {
     // print(f_Id);
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -380,7 +380,7 @@ Widget icons(IconData icon){
           behavior: HitTestBehavior.opaque,
           child: Floder_bottomsheet(
             onsinglefolderdelete:onsinglefolderdelete,
-              bottoplaylist: _bottoplaylist, f_Id: f_Id, v_id: -1),
+              bottoplaylist: _bottoplaylist, f_Id: f_Id, v_id:" -1"),
         );
       },
     );
@@ -429,7 +429,7 @@ Widget icons(IconData icon){
           // folder directory plylist and pass folder video
 
           child: BottomPlayList(
-              v_index: -1, f_index: -1, condition: false, passvideo: f_videos),
+              v_id: "-1", f_id: "-1", condition: false, passvideo: f_videos),
         );
       },
     );

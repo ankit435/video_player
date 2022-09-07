@@ -9,10 +9,10 @@ import '../../../helper/file.dart';
 
 
 class Video_playlist extends StatefulWidget {
-   Map<int, int> selction_list;
+   Map<String, String> selction_list;
   List<video> Files_path;
   final VoidCallback select_all_file;
-  void Function(int, int, int) toggleselctionlist;
+  void Function(String, int, String) toggleselctionlist;
   Video_playlist({Key? key,required this.Files_path,required this.toggleselctionlist,required this.selction_list,required this.select_all_file}) : super(key: key);
 
   @override

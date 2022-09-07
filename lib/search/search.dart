@@ -39,7 +39,7 @@ class _SearchState extends State<Search> {
     searchController.dispose();
     super.dispose();
   }
-   Future<void> onsinglefiledelete(Map<int,int>single_video_list) async {
+   Future<void> onsinglefiledelete(Map<String,String>single_video_list) async {
    
     if (single_video_list.isNotEmpty) {
       await Provider.of<folder_details>(context, listen: false)
@@ -47,7 +47,7 @@ class _SearchState extends State<Search> {
     }
   }
   
-void _videoproprties(BuildContext context, int id,int f_id) {
+void _videoproprties(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -58,14 +58,14 @@ void _videoproprties(BuildContext context, int id,int f_id) {
           onTap: () {},
           behavior: HitTestBehavior.opaque,
 
-          child:Bottom_model(v_id:id,file_detail: values,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
+          child:Bottom_model(v_id:v_id,file_detail: values,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
         );
       },
     );
   }
 
 
-void _bottoplaylist(BuildContext context, int v_index,int f_index) {
+void _bottoplaylist(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -77,7 +77,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
-          child:BottomPlayList(v_index:v_index,passvideo: const [],f_index: f_index,condition: true),
+          child:BottomPlayList(v_id:v_id,passvideo: const [],f_id: f_id,condition: true),
         );
       },
     );

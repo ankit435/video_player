@@ -13,9 +13,9 @@ class Grid_view_file extends StatefulWidget {
   List<video> file_path;
   final VoidCallback? onPressed;
   final bool selection;
-  Map<int, int> selction_list;
-  void Function(int, int, int)? onPressed1;
-  void Function(BuildContext context, int id, int p_id)? bottommodel;
+  Map<String, String> selction_list;
+  void Function(String, int, String)? onPressed1;
+  void Function(BuildContext context, String id, String p_id)? bottommodel;
   final int index;
   Grid_view_file(
       {Key? key,

@@ -30,12 +30,12 @@ class _Video_HomeState extends State<Video_Home> {
   String title ="Video";
   int size=0;
 
-  Map<int,int> selction_list = {};
+  Map<String,String> selction_list = {};
   int selcted_size = 0;
 
 
 
-  void _videoproprties(BuildContext context, int id,int f_id) {
+  void _videoproprties(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -46,7 +46,7 @@ class _Video_HomeState extends State<Video_Home> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child:Bottom_model(v_id:id,file_detail: file_detail,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
+          child:Bottom_model(v_id:v_id,file_detail: file_detail,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
         );
       },
     );
@@ -58,14 +58,38 @@ Widget text(String text){
            ));
 }
 
- Future<void> onsinglefiledelete(Map<int,int>single_video_list) async {
-   
+void remove_playlist(Map<String,Set<String>> removeList){
+
+  removeList.forEach((key, value) { 
+    value.forEach((element) { 
+      Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist({key:element});
+    });
+  });
+  
+}
+
+  Future<void> ondelete() async {
+    if (selction_list.isNotEmpty) {
+     Map<String,Set<String>> removeList=await Provider.of<folder_details>(context, listen: false)
+          .delete_file(selction_list);
+          remove_playlist(removeList);
+    }
+    toggleselction();
+    selction_list.clear();
+  }
+
+
+ Future<void> onsinglefiledelete(Map<String,String>single_video_list) async {
+
     if (single_video_list.isNotEmpty) {
-      await Provider.of<folder_details>(context, listen: false)
-          .delete_file(single_video_list);
+        Map<String,Set<String>> removeList=await Provider.of<folder_details>(context, listen: false)
+          .delete_file(selction_list);
+        remove_playlist(removeList);
+        
+     
     }
   }
-void _bottoplaylist(BuildContext context, int v_index,int f_index) {
+void _bottoplaylist(BuildContext context, String v_id,String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -77,7 +101,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           // contdition to be ture for one video
-          child:BottomPlayList(v_index:v_index, passvideo: [],f_index:f_index,condition: true),
+          child:BottomPlayList(v_id:v_id, passvideo: [],f_id:f_id,condition: true),
         );
       },
     );
@@ -90,7 +114,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
     });
   }
 
-  void toggleselctionlist(int value, int size,int p_id) {
+  void toggleselctionlist(String value, int size,String p_id) {
     setState(() {
       if(selction_list.containsKey(value)) {
          selction_list.remove(value);
@@ -102,14 +126,7 @@ void _bottoplaylist(BuildContext context, int v_index,int f_index) {
     });
   }
 
-  Future<void> ondelete() async {
-    toggleselction();
-    if(selction_list.isNotEmpty) {
-      await Provider.of<folder_details>(context,listen: false).delete_file(selction_list);
-    }
-
-    selction_list.clear();
-  }
+  
   void _select_all_file(List<video> file_path, int size) {
     setState(() {
       if (file_path.length == selction_list.length) {

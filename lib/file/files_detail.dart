@@ -5,12 +5,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
 import 'package:video/helper/theme_model.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-
 import '../helper/files.dart';
 import '../video_player/video_play.dart';
 
@@ -19,12 +17,10 @@ class Files_path extends StatefulWidget {
   List<video> file_path;
   final VoidCallback? onPressed;
   final bool selection;
-  Map<int, int> selction_list;
-  void Function(int, int, int)? onPressed1;
-  void Function(BuildContext context, int id, int p_id)? bottommodel;
+  Map<String, String> selction_list;
+  void Function(String, int, String)? onPressed1;
+  void Function(BuildContext context, String f_id, String p_id)? bottommodel;
   final int index;
-
-  // List<String> folder_file_path = [];
   Files_path(
       {Key? key,
       required this.index,
@@ -58,7 +54,6 @@ class _CharacteristListItemState extends State<Files_path> {
 
   Widget checkbox() {
     return Checkbox(
-    
      checkColor: Theme.of(context).textTheme.bodyText1!.color,
      fillColor: MaterialStateProperty.resolveWith(getColor),
       value:

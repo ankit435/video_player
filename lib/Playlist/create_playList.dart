@@ -8,15 +8,15 @@ import '../Videos/video.dart';
 import '../helper/files.dart';
 
 class Create_playlist extends StatefulWidget {
-  final int f_index;
-  final int v_index;
+  final String f_id;
+  final String v_id;
   final bool condition;
   final List<video> passvideo;
   const Create_playlist(
       {Key? key,
       required this.passvideo,
-      required this.f_index,
-      required this.v_index,
+      required this.f_id,
+      required this.v_id,
       required this.condition})
       : super(key: key);
   @override
@@ -54,7 +54,7 @@ Widget text(String text){
   Widget build(BuildContext context) {
     if (widget.condition)
       video = Provider.of<folder_details>(context, listen: true)
-          .getvideo(widget.f_index, widget.v_index);
+          .gevideo(widget.f_id, widget.v_id);
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: AlertDialog(
@@ -91,14 +91,19 @@ Widget text(String text){
                           Provider.of<PlayList_detail>(context, listen: false)
                               .create_one_copy_playList(
                                   _inputController.text, widget.passvideo);
+                           // Provider.of<folder_details>(context, listen: false).add_to_playlist_id(playLists[index].p_id,widget.condition?[videos]:widget.passvideo);
+                          
                         }
                       : widget.condition
                           ? () {
                               Navigator.pop(context);
-                              Provider.of<PlayList_detail>(context,
+                              if(Provider.of<PlayList_detail>(context,
                                       listen: false)
                                   .create_add_one_playlist(
-                                      _inputController.text, video);
+                                      _inputController.text, video)){
+                                        print("add one to playlist");
+                                      }
+                                      
                             }
                           : () {
                               Navigator.pop(context);

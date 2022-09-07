@@ -26,14 +26,19 @@ import 'video_player/video_play.dart';
 
 Future<void> main() async {
 
+
 WidgetsFlutterBinding.ensureInitialized();
   var pref=await SharedPreferences.getInstance();
   await pref.setBool('init_data', true);
-  await pref.setBool('is_loading', true);
-  
+  var theme_id;
+  if(pref.containsKey('theme_id')){
+    theme_id=pref.getInt('theme_id');
+  }
+  else{
+    theme_id=1;
+  }
 
-
-  runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(),)], child: MyApp()));
+  runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(theme_id),)], child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -114,7 +119,7 @@ Future<void> loaddata() async {
     child :MaterialApp(
       title: 'Video',
       //theme: _brightness == Brightness.dark ?  darkTheme :lightTheme,
-      theme:Provider.of<themes>(context).getThemeById(2).themeData,
+      theme:Provider.of<themes>(context).getThemeById().themeData,
       darkTheme: _brightness == Brightness.dark ?   ThemeData.dark() : ThemeData.light(),
      
      /// themeMode: _themeManager.themeMode,
@@ -124,8 +129,8 @@ Future<void> loaddata() async {
         FlutterDemo.routeName: (ctx) => FlutterDemo(),
         Search.routeName: (ctx) => const Search(),
         Files.routeName:(ctx)=> Files(),
-       Setting.routeName:(ctx)=> Setting(),
-        Playlist_file.routeName:(context) => const Playlist_file(),
+        Setting.routeName:(ctx)=> Setting(),
+        //Playlist_file.routeName:(context) => const Playlist_file(),
         Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
         theme_screen.routeName:(context) => theme_screen(),
         Create_theme.routeName:(context) => Create_theme(),

@@ -11,9 +11,9 @@ class CharacteristListItem extends StatefulWidget {
   final folder folder_detail;
   final VoidCallback? toggleselction;
   final bool selection;
-  Set<int> selction_list;
-  void Function(int, int) toggleselctionlist;
-  void Function(BuildContext context, int f_Id) bottomsheet;
+  Set<String> selction_list;
+  void Function(String, int) toggleselctionlist;
+  void Function(BuildContext context, String f_Id) bottomsheet;
  // void Function(BuildContext context) queue_list_video;
   CharacteristListItem({
     Key? key,

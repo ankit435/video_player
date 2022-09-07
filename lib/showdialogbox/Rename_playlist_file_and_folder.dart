@@ -8,9 +8,9 @@ import '../Videos/video.dart';
 import '../helper/files.dart';
 
 class Rename_playlist_file_and_folder extends StatefulWidget {
-  final int v_id;
+  final String v_id;
   final bool condition;
-  final int p_id;
+  final String p_id;
 
   const Rename_playlist_file_and_folder(
       {Key? key,

@@ -8,8 +8,8 @@ import 'package:video/helper/file.dart';
 import '../../helper/files.dart';
 
 class video_bottom_sheet extends StatefulWidget {
-  final int? f_id;
-  final int? p_id;
+  final String? f_id;
+  final String? p_id;
   void Function(int index) playfolder_video;
   video_bottom_sheet(
       {Key? key,

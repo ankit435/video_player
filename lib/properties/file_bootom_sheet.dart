@@ -14,11 +14,11 @@ import 'package:share_plus/share_plus.dart';
 class Bottom_model extends StatefulWidget {
 
   final List<video> file_detail;
-  final int v_id;
-  final int f_id;
+  final String v_id;
+  final String f_id;
   //Future<void> Function(Map<int, int> delete) ondelete;
-  void Function(BuildContext context, int id, int f_id) onPressed;
-  Future<void> Function(Map<int, int> single_video_list) onsinglefiledelete;
+  void Function(BuildContext context, String v_id, String f_id) onPressed;
+  Future<void> Function(Map<String, String> single_video_list) onsinglefiledelete;
    Bottom_model({Key? key, required this.file_detail, required this.v_id, required this.f_id, required this.onPressed, required this. onsinglefiledelete, 
    ///required this.ondelete
   })
@@ -32,7 +32,7 @@ class _Bottom_modelState extends State<Bottom_model> {
   @override
   // ignore: non_constant_identifier_names
 
-Map<int,int>delete={};
+Map<String,String>delete={};
 Widget text(String text){
   return Text(text , maxLines: 1,overflow: TextOverflow.ellipsis,  style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
@@ -51,10 +51,7 @@ Widget icons(IconData icon){
 
   Widget build(BuildContext context) {
 
-  int f_index=Provider.of<folder_details>(context, listen: false).folder_index(widget.f_id);
-
-  int v_index=Provider.of<folder_details>(context, listen: false).folder_video_index(f_index,widget.v_id);
-   var videos=Provider.of<folder_details>(context, listen: false).getvideo(f_index,v_index);
+   var videos=Provider.of<folder_details>(context, listen: false).gevideo(widget.f_id,widget.v_id);
    
     return Wrap(
       children: <Widget>[
@@ -81,16 +78,16 @@ Widget icons(IconData icon){
          ListTile(
           leading: icons(Icons.lock),
           title: text("Lock Folder"),
+          onTap: (){print("lock");},
         ),
          ListTile(leading: icons(Icons.playlist_add), title:  text("Add to PlayList"),onTap: () {
             Navigator.pop(context);
-            widget.onPressed(context,v_index,f_index);
+            widget.onPressed(context,widget.v_id,widget.f_id);
           } ,),
        ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
-          //print("hello");
-         
+          
               Navigator.pop(context);    
-              Map<int,int> delete={widget.v_id:widget.f_id};
+              Map<String,String> delete={widget.v_id:widget.f_id};
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -111,7 +108,7 @@ Widget icons(IconData icon){
               context: context,
               builder: (BuildContext context) {
                 ///rename file in list
-                return Rename_file_folder(condition: false,f_id:widget.f_id ,v_id:widget.v_id);
+                return Rename_file_folder(condition: false,f_id:widget.f_id ,v_id:widget.v_id,rename_name: videos.v_title,);
               },
             );
           }
@@ -125,8 +122,7 @@ Widget icons(IconData icon){
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return video_property(
-                    f_index: f_index,v_index: v_index,);
+                 return video_property(v_id: widget.v_id, f_id: widget.f_id);
               },
             );
           },

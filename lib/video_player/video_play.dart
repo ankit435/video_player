@@ -45,7 +45,7 @@ class _Play_videoState extends State<Play_video> {
   double speed = 1.0;
     late Timer _timer;
   int _start = 3;
-  int? f_id,p_id;
+  String? f_id, p_id;
 
 
   //Future<void>screen_display;

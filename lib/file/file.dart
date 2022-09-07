@@ -25,7 +25,7 @@ class Files extends StatefulWidget {
 class _FilesState extends State<Files> {
   @override
   bool selection = false;
-  Map<int, int> selction_list = {};
+  Map<String, String> selction_list = {};
   int icons_value = 0;
   late List<video> File_path;
   late String title;
@@ -46,7 +46,7 @@ Widget text(String text){
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ));
 }
-  void _videoproprties(BuildContext context, int id, int f_id) {
+  void _videoproprties(BuildContext context, String v_id, String f_id) {
     showModalBottomSheet(
       shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -59,7 +59,7 @@ Widget text(String text){
           behavior: HitTestBehavior.opaque,
           child: Bottom_model(
             onsinglefiledelete:onsinglefiledelete,
-              v_id: id,
+              v_id: v_id,
               file_detail: File_path,
               f_id: f_id,
               onPressed: _bottoplaylist),
@@ -68,7 +68,7 @@ Widget text(String text){
     );
   }
 
-  void _bottoplaylist(BuildContext context, int v_index, int f_index) {
+  void _bottoplaylist(BuildContext context, String v_id, String f_id) {
     showModalBottomSheet(
       shape:  RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -82,9 +82,9 @@ Widget text(String text){
           //contdition to be ture for one video
           child: BottomPlayList(
               
-              v_index: v_index,
+              v_id: v_id,
               passvideo:  [],
-              f_index: f_index,
+              f_id: f_id,
               condition: true),
         );
       },
@@ -130,7 +130,7 @@ Widget text(String text){
 
 // }
 
-  void toggleselctionlist(int value, int size, int p_id) {
+  void toggleselctionlist(String value, int size, String p_id) {
     setState(() {
       if (selction_list.containsKey(value)) {
         selction_list.remove(value);
@@ -142,22 +142,35 @@ Widget text(String text){
     });
   }
 
+void remove_playlist(Map<String,Set<String>> removeList){
+
+  removeList.forEach((key, value) { 
+    value.forEach((element) { 
+      Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist({key:element});
+    });
+  });
+  
+}
+
   Future<void> ondelete() async {
-   
     if (selction_list.isNotEmpty) {
-      await Provider.of<folder_details>(context, listen: false)
+     Map<String,Set<String>> removeList=await Provider.of<folder_details>(context, listen: false)
           .delete_file(selction_list);
+          remove_playlist(removeList);
     }
      toggleselction();
     selction_list.clear();
   }
 
 
- Future<void> onsinglefiledelete(Map<int,int>single_video_list) async {
-   
+ Future<void> onsinglefiledelete(Map<String,String>single_video_list) async {
+
     if (single_video_list.isNotEmpty) {
-      await Provider.of<folder_details>(context, listen: false)
-          .delete_file(single_video_list);
+        Map<String,Set<String>> removeList=await Provider.of<folder_details>(context, listen: false)
+          .delete_file(selction_list);
+        remove_playlist(removeList);
+        
+     
     }
   }
   void _select_all_file(List<video> file_path, int size) {
