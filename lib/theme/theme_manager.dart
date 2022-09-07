@@ -1,20 +1,20 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
 
-class ThemeManager with ChangeNotifier{
+// class ThemeManager with ChangeNotifier{
 
-  ThemeMode _themeMode = ThemeMode.light;
+//   ThemeMode _themeMode = ThemeMode.light;
 
-  get themeMode => _themeMode;
+//   get themeMode => _themeMode;
 
-  toggleTheme(bool isDark){
-    _themeMode = isDark?ThemeMode.dark:ThemeMode.light;
-    notifyListeners();
-  }
+//   toggleTheme(bool isDark){
+//     _themeMode = isDark?ThemeMode.dark:ThemeMode.light;
+//     notifyListeners();
+//   }
 
-  setappTheme(){
-    _themeMode=ThemeMode.dark;
-    notifyListeners();
-  }
+//   setappTheme(){
+//     _themeMode=ThemeMode.dark;
+//     notifyListeners();
+//   }
 
-}
+// }

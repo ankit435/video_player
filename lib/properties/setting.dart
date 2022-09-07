@@ -5,10 +5,11 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/files.dart';
+import 'package:video/theme/theme_screen.dart';
 
 class Setting extends StatefulWidget {
-  Future<void> Function() loaddata;
-   Setting({Key? key, required this.loaddata }) : super(key: key);
+//  final bool isLoading;
+   Setting( {Key? key,}) : super(key: key);
   static const routeName = '/setting';
 
   @override
@@ -49,6 +50,7 @@ class _SettingState extends State<Setting> {
         
         
   }
+  
 
   Widget text(String text){
   return Text(text , style: TextStyle(
@@ -77,7 +79,11 @@ class _SettingState extends State<Setting> {
                     children: [
                       listiles("Theme", subtitle: Theme.of(context).toString(),param1:(){
                         Navigator.pushNamed(context, '/theme_screen');
-                        widget.loaddata();
+                    //       Navigator.of(context).push(MaterialPageRoute(
+                    // builder: (context) => theme_screen(isLoading: widget.isLoading)));
+                          
+                    
+                       
                       }),
                       listiles("Language",subtitle:  "Auto", param1:(){
                       Provider.of<themes>(context,listen: false).update_curr_theme_id(2);

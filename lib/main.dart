@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/file/file.dart';
 import 'package:video/home/home.dart';
 
@@ -21,9 +22,15 @@ import 'permission/permission.dart';
 import 'theme/theme_manager.dart';
 import 'theme/theme_screen.dart';
 import 'video_player/video_play.dart';
-ThemeManager _themeManager = ThemeManager();
+//ThemeManager _themeManager = ThemeManager();
 
-void main() {
+Future<void> main() async {
+
+WidgetsFlutterBinding.ensureInitialized();
+  var pref=await SharedPreferences.getInstance();
+  await pref.setBool('init_data', true);
+  await pref.setBool('is_loading', true);
+  
 
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(),)], child: MyApp()));
@@ -42,27 +49,37 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     _brightness = WidgetsBinding.instance.window.platformBrightness;
-    _themeManager.addListener(themeListener);
+   // _themeManager.addListener(themeListener);
     super.initState();
   }
 
   @override
   void dispose() {
-    _themeManager.removeListener(themeListener);
+   // _themeManager.removeListener(themeListener);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-  themeListener(){
-    if(mounted){
-      setState(() {
+  // themeListener(){
+  //   if(mounted){
+  //     setState(() {
 
-      });
-    }
-  }
+  //     });
+  //   }
+  // }
   @override
+
+
+Future<void> loaddata() async {
+   var pref=await SharedPreferences.getInstance();
+    await pref.setBool('init_data', true);
+}
+
+
   void didChangePlatformBrightness() {
     if (mounted) {
       setState(() {
+       
+        loaddata();
         _brightness = WidgetsBinding.instance.window.platformBrightness;
       });
     }
@@ -98,15 +115,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       title: 'Video',
       //theme: _brightness == Brightness.dark ?  darkTheme :lightTheme,
       theme:Provider.of<themes>(context).getThemeById(2).themeData,
-      darkTheme: darkTheme,
-      themeMode: _themeManager.themeMode,
+      darkTheme: _brightness == Brightness.dark ?   ThemeData.dark() : ThemeData.light(),
+     
+     /// themeMode: _themeManager.themeMode,
       home:ImageScreen(),
       // FlutterDemo(title:"Lol",storage: Storage()),
       routes: {
         FlutterDemo.routeName: (ctx) => FlutterDemo(),
         Search.routeName: (ctx) => const Search(),
         Files.routeName:(ctx)=> Files(),
-        //Setting.routeName:(ctx)=>const Setting(),
+       Setting.routeName:(ctx)=> Setting(),
         Playlist_file.routeName:(context) => const Playlist_file(),
         Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
         theme_screen.routeName:(context) => theme_screen(),

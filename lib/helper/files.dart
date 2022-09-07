@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:video/Playlist/playlist_file.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/theme_model.dart';
+import 'package:video/theme/theme_constants.dart';
 import 'package:video_player/video_player.dart';
 
 class themes with ChangeNotifier {
@@ -16,37 +17,7 @@ class themes with ChangeNotifier {
     theme(
         theme_id: 1,
         brightness: Brightness.dark,
-        themeData: ThemeData(
-          primarySwatch: Colors.grey,
-          secondaryHeaderColor: Colors.red,
-          primaryColor: Colors.black,
-          brightness: Brightness.dark,
-          //backgroundColor: Color.fromARGB(255, 21, 21, 21),
-          accentColor: Colors.white,
-          accentIconTheme: IconThemeData(color: Colors.black),
-          dividerColor: Colors.white30,
-          iconTheme: IconThemeData(color: Colors.white),
-          textTheme: TextTheme(
-            bodyText1: TextStyle(color: Colors.white), //<-- SEE HERE
-          ),
-          sliderTheme: SliderThemeData(
-            activeTrackColor: Colors.white,
-            inactiveTrackColor: Colors.red,
-                   
-            thumbColor: Colors.white,
-            overlayColor: Colors.black.withAlpha(120),
-            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-            overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
-          ),
-
-          
-
-         
-
-          
-
-
-        )
+        themeData: ThemeData.dark()
         ),
 
 

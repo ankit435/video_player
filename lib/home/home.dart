@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:video/folder/directory.dart';
 import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
@@ -131,14 +132,13 @@ Widget animatedIcon(){
               if (value == 1) {
                 toggleselction();
               } else if (value == 2) {
-                _isInit = true;
-                _fetching_data();
+                  getloaddata();
               } else if (value == 3) {
-                //Navigator.of(context).pushNamed(Setting.routeName);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Setting(
-                          loaddata:loaddata
-                        )));
+               Navigator.of(context).pushNamed(Setting.routeName);
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) => Setting(isLoading: _isLoading,
+                          
+                //         )));
               } else if (value == 4) {
                 getAllvideos();
                 print("ads");
@@ -281,19 +281,24 @@ Widget icons(IconData icon){
     selction_list.clear();
   }
 
- Future< void> loaddata() async{
-  setState(() {
-    _isInit = true;
+//  Future< void> loaddata() async{
+//   setState(() {
+//     _isInit = true;
 
-  });
-}
+//   });
+// }
 // ignore: non_constant_identifier_names
   Future<void> _fetching_data() async {
+     var pref=await SharedPreferences.getInstance();
+ 
+   bool? initData= pref.getBool("init_data");
     //print(_isInit);
-    if (_isInit) {
+    if (initData!=null&&initData) {
       
       setState(() {
-        _isLoading = true;
+        // pref.setBool('is_loading', true).then((value) => _isLoading=true);
+        _isLoading=true;
+        
       });
       try {
         await Future.delayed(const Duration(milliseconds: 500));
@@ -301,7 +306,8 @@ Widget icons(IconData icon){
             .addfolder(await Storage().localPath())
             .then((_) {
           setState(() {
-            _isLoading = false;
+          //pref.setBool('is_loading', true).then((value) => _isLoading=false);
+           _isLoading=false;
           });
         });
       } catch (error) {
@@ -322,7 +328,8 @@ Widget icons(IconData icon){
         );
       }
     }
-    _isInit = false;
+     await pref.setBool('init_data', false);
+    //_isInit = false;
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -340,16 +347,14 @@ Widget icons(IconData icon){
     } else if (state == AppLifecycleState.resumed) {
       setState(() {
         detect = false;
-        _isInit = true;
-        _fetching_data();
+        getloaddata();
       });
       // widget.onPressed;
     }
   }
 
   Future<void> _pullRefresh() async {
-    _isInit = true;
-    _fetching_data();
+    getloaddata();
     return Future.delayed(Duration(seconds: 1));
   }
 
@@ -357,6 +362,7 @@ Widget icons(IconData icon){
 
   void didChangeDependencies() {
     _fetching_data();
+   // print("dependency");
     super.didChangeDependencies();
   }
 
@@ -379,6 +385,16 @@ Widget icons(IconData icon){
       },
     );
   }
+
+  Future<void> getloaddata() async {
+    print("load data");
+    var pref=await SharedPreferences.getInstance();
+    await pref.setBool('init_data', true);
+    _fetching_data();
+   
+    
+}
+
 
   void queue_list_video(BuildContext context) {
     // print(f_Id);
@@ -443,8 +459,7 @@ Widget icons(IconData icon){
                     : 
                     ElevatedButton(
                         onPressed: () {
-                          _isInit = true;
-                          _fetching_data();
+                          getloaddata();
                         },
                         child: text("Reload")),
               ),
@@ -555,3 +570,4 @@ Widget icons(IconData icon){
     );
   }
 }
+

@@ -41,6 +41,7 @@ dependencies:
   video_thumbnail: ^0.5.2
   flutter_circle_color_picker: ^0.3.0
   device_info_plus: ^4.1.2
+  shared_preferences: ^2.0.15
 
 
   

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video/helper/files.dart';
+import 'package:video/theme/theme_constants.dart';
 
 import '../home/home.dart';
 import '../properties/color_picker_bottomsheett.dart';
@@ -21,6 +22,7 @@ class _Create_themeState extends State<Create_theme> {
   @override
 
   int value = 0;
+   
 
   List<Color> colors = [
 
@@ -74,6 +76,8 @@ class _Create_themeState extends State<Create_theme> {
     Provider.of<themes>(context, listen: false)
         .addTheme(Brightness.dark, themeData);
     Navigator.of(context).pop();
+
+    
    
   }
 
