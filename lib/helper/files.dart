@@ -12,6 +12,8 @@ import 'package:video/helper/theme_model.dart';
 import 'package:video/theme/theme_constants.dart';
 import 'package:video_player/video_player.dart';
 
+import 'neo_player/player.dart';
+
 class themes with ChangeNotifier {
   final List<theme> _themes_data = [
     theme(theme_id: 0, brightness: Brightness.dark, themeData: ThemeData()),
@@ -415,7 +417,7 @@ class folder_details with ChangeNotifier {
   }
 
   void Setduration(int duration, String v_id, String f_id) {
-    print('duration==' + duration.toString());
+  
     var f_index = folder_index(f_id);
     var v_index = folder_video_index(f_index, v_id);
     _folder_item[f_index].f_detail[v_index].v_duration = duration;
@@ -527,9 +529,62 @@ class Hide_list_detail extends folder_details {
 
 class PlayList_detail with ChangeNotifier {
   // ignore: non_constant_identifier_names
+
+
+
+
+
   List<PlayList> _playlist_item = [
     PlayList(p_id: "Favourite", p_title: "Favourite", p_detail: []),
   ];
+
+
+
+ fetchdatabase() async {
+    try {
+      //addin_playlist_database();
+      final db = await playerDatabase.instance;
+      final List<PlayList> maps = (await db.readAllPlaylist());
+      _playlist_item=maps;
+      
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+void addin_playlist_database() {
+ 
+  _playlist_item.forEach((element)  {
+    addtodatabase(element);
+  });
+}
+
+void addtodatabase(PlayList playList)async{
+
+ final db = await playerDatabase.instance;
+ await db.create(playList);
+
+}
+
+void updateindatabase(PlayList playList)async{
+
+ final db = await playerDatabase.instance;
+ await db.update(playList);
+
+
+
+}
+
+void deleteindatabase(String p_id)async{
+   final db = await playerDatabase.instance;
+ await db.delete_playlist(p_id);
+}
+
+
+
+
   List<PlayList> items() {
     return _playlist_item;
   }
@@ -548,15 +603,7 @@ class PlayList_detail with ChangeNotifier {
     return _playlist_item[getplayList_index_id(p_id)].p_detail;
   }
 
-  bool add_to_palylist(video v, String pTitle) {
-    try {
-      int index = getplayList_index(pTitle);
-      _playlist_item[index].p_detail.add(v);
-      notifyListeners();
-      return true;
-    } catch (e) {}
-    return false;
-  }
+
 
   Map<String, List<video>>? playlist_adds(List<video> video_details,
       String? pTitle, String? p_id, Map<String, String> selctionList) {
@@ -569,10 +616,15 @@ class PlayList_detail with ChangeNotifier {
      if(index==-1){
       selctionList.forEach((v_id, f_id) {
         temp.add(video_details[video_details.indexWhere((video) => video.v_id == v_id)]);
+
       });
       
 
       _playlist_item.add(PlayList(
+          p_id: P_id,
+          p_title: pTitle != null ? pTitle : "New Playlist",
+          p_detail: temp));
+      updateindatabase(PlayList(
           p_id: P_id,
           p_title: pTitle != null ? pTitle : "New Playlist",
           p_detail: temp));
@@ -584,6 +636,7 @@ class PlayList_detail with ChangeNotifier {
           }
         });
          _playlist_item[index].p_detail.addAll(temp);
+         updateindatabase(_playlist_item[index]);
         }
       
        
@@ -604,6 +657,8 @@ class PlayList_detail with ChangeNotifier {
               .indexWhere((pv) => pv.v_id == video_detail.v_id) ==
           -1) {
         _playlist_item[index].p_detail.add(video_detail);
+        updateindatabase(_playlist_item[index]);
+
       }
 
       notifyListeners();
@@ -625,8 +680,12 @@ class PlayList_detail with ChangeNotifier {
             _playlist_item[index]
                 .p_detail
                 .removeWhere((element) => element.v_id == key);
+            updateindatabase(_playlist_item[index]);
+            
           }
+
         });
+        
         notifyListeners();
         return true;
       }
@@ -684,8 +743,9 @@ class PlayList_detail with ChangeNotifier {
     try {
       String id = idGenerator();
       List<video> passvideo = [videos];
-      _playlist_item
-          .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
+      // _playlist_item
+      //     .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
+      addtodatabase(PlayList(p_detail: passvideo, p_id: id, p_title: title));
       notifyListeners();
       return id;
     } catch (e) {}
@@ -719,6 +779,7 @@ class PlayList_detail with ChangeNotifier {
     try {
       p_id.forEach((p_id) {
         _playlist_item.removeWhere((plylist) => plylist.p_id == p_id);
+        deleteindatabase(p_id);
       });
       notifyListeners();
       return true;
@@ -768,6 +829,7 @@ class PlayList_detail with ChangeNotifier {
         _playlist_item[p_index]
             .p_detail
             .removeWhere((element) => element.v_id == value);
+        updateindatabase(_playlist_item[p_index]);
       }
     });
     notifyListeners();

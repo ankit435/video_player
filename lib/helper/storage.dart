@@ -66,7 +66,7 @@ try {
 
   void getfolder(List root, List<folder> folders, String parent,dynamic size,int t_id,int z_id) {
     List<video> file = [];
-    String f_id=idGenerator();
+    String f_id=parent;
     
     for (var i in root) {
      // if (check(i.absolute.path)) 
@@ -80,7 +80,7 @@ try {
           size+=i.lengthSync();
           file.add(video(
               parent_folder_id: f_id,
-              v_id: idGenerator(),
+              v_id: i.absolute.path,
               v_title: folder_name(i.absolute.path),
               v_thumbnailPath: i.absolute.path,
               v_videoPath: i.path,

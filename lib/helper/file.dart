@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:video/helper/theme_model.dart';
 import 'package:video_player/video_player.dart';
@@ -104,7 +106,8 @@ class video with ChangeNotifier {
     required this.v_lastmodified,
     required this.v_size,
     this.v_favourite = false,
-    this.v_open = false,
+    this.v_open = false, 
+    
     // ignore: non_constant_identifier_names
     
   });
@@ -117,21 +120,51 @@ class video with ChangeNotifier {
     v_favourite = !v_favourite;
     notifyListeners();
   }
+  
+ toJson() {
+    return {
+      'v_id':   v_id ,
+      'parent_folder_id': parent_folder_id,
+      'v_title': v_title,
+      'v_videoPath': v_videoPath,
+      'v_thumbnailPath': v_thumbnailPath,
+      'v_duration': v_duration,
+      'v_timestamp': v_timestamp.toIso8601String(),
+      'v_watched': v_watched,
+      'v_lastmodified': v_lastmodified.toIso8601String(),
+      'v_size': v_size,
+      'v_favourite': v_favourite ,
+      'v_open': v_open,
+      'playlist_id': playlist_id.toString(),
+    };
+  }
+  
+  factory video.fromJson( e) {
+   
+     
+   
+    return  video(
+      v_id: e['v_id'],
+      parent_folder_id: e['parent_folder_id'],
+      v_title: e['v_title'],
+      v_videoPath: e['v_videoPath'],
+      v_thumbnailPath: e['v_thumbnailPath'],
+      v_duration: e['v_duration'],
+      v_timestamp: DateTime.parse(e['v_timestamp']),
+      v_watched: e['v_watched'],
+      v_lastmodified: DateTime.parse(e['v_lastmodified']),
+      v_size: e['v_size'],
+      v_favourite: e['v_favourite'],
+      v_open: e['v_open'],
+     // playlist_id: e['playlist_id'].toString().split(',').toSet(),
+    
+    );
+     
+      }
+  
 }
 
-class queue_player with ChangeNotifier {
-  VideoPlayerController? controller;
-  int curentindex;
-  List<video> queue_video_list = [];
-  bool b_play;
 
-  queue_player({
-    this.controller = null,
-    required this.curentindex,
-    required this.queue_video_list,
-    this.b_play = false,
-  });
-}
 
 class favourite with ChangeNotifier {
   final int v_id;
@@ -187,5 +220,51 @@ class PlayList with ChangeNotifier {
     required this.p_detail,
   });
 
-  items() {}
+
+  Map<String, dynamic> toJson() {
+    return {
+      playlist_database.id: p_id,
+      playlist_database.playlist_name : p_title,
+      playlist_database.p_detail: jsonEncode(p_detail.map((e) => e.toJson()).toList()).toString(),
+    };
+  }
+
+PlayList.fromJson(Map<String, dynamic> json)
+      : p_id = json[playlist_database.id],
+        p_title = json[playlist_database.playlist_name],
+        p_detail =jsonDecode(json[playlist_database.p_detail]).map<video>((e) => video.fromJson(e)).toList();
+ 
+
+PlayList copy({
+
+  String? p_id,
+  String? p_title,
+  List<video>? p_detail,
+  
+}) {
+  return PlayList(
+    p_id: p_id ?? this.p_id,
+    p_title: p_title ?? this.p_title,
+    p_detail: p_detail??this.p_detail
+  );
 }
+
+}
+
+
+
+
+ final String playlist_databasename  = 'playlist_Table';
+
+ class playlist_database{
+  static final  List<String> values = [
+    
+  id,playlist_name,p_detail
+
+  ];
+  static final String id = 'p_id';
+  static final String playlist_name = 'p_title';
+  static final String p_detail = 'p_detail';
+  
+}
+

@@ -1,3 +1,6 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,6 +38,13 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement init
+      Provider.of<PlayList_detail>(context, listen: false).fetchdatabase();
+    super.initState();
   }
 
   void _bottoplaylist(BuildContext context, int p_index) {
@@ -111,7 +121,7 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
             itemCount: playLists.length,
             itemBuilder: (context, index) {
               return PlayList_details(
-                  key: ValueKey(playLists[index].p_id),
+                  key: ValueKey(index),
                   p_id: playLists[index].p_id,
                   bottmplaysheet: _bottomsheetdetail);
             }),
