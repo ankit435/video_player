@@ -30,14 +30,14 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-          child: PlayListfolder_add(p_id: p_id, onPressed: _bottoplaylist, on_delete:ondelete),
+          child: PlayListfolder_add(
+              p_id: p_id, onPressed: _bottoplaylist, on_delete: ondelete),
         );
       },
     );
   }
 
   void _bottoplaylist(BuildContext context, int p_index) {
-    
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -45,7 +45,6 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
       context: context,
       backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
-
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
@@ -60,28 +59,35 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
     );
   }
 
+  Future<void> ondelete(Set<String> p_id) async {
+    Provider.of<PlayList_detail>(context, listen: false)
+        .remove_playlist_folder(p_id);
+  }
 
-  Future<void> ondelete(Set<String>p_id) async {
-    Provider.of<PlayList_detail>(context, listen: false).remove_playlist_folder(p_id);
-}
+  Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
 
-Widget text(String text){
-  return Text(text , style: TextStyle(
-              color:  Theme.of(context).textTheme.bodyText1!.color,
-           ));
-}
   Widget _body() {
     return Column(children: [
       Container(
         height: 50,
         child: ListTile(
             title: Text(
-
               '  ${playLists.length} Playlists',
-              style: TextStyle(fontSize: 13,color: Theme.of(context).primaryColor,),
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             trailing: IconButton(
-              icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
+              icon: Icon(
+                Icons.add,
+                color: Theme.of(context).primaryColor,
+              ),
               onPressed: () {
                 showDialog(
                     context: context,
@@ -90,22 +96,22 @@ Widget text(String text){
                         f_id: "-1",
                         v_id: "-1",
                         condition: false,
-                       passvideo: [],
+                        passvideo: [],
                       );
                     });
               },
             )),
       ),
       Flexible(
-        child: ListView.builder(
-          // onReorder: ((oldIndex, newIndex) => {
-            
-          // }),
+        child: ReorderableListView.builder(
+            onReorder: ((oldIndex, newIndex) => {
+                  Provider.of<PlayList_detail>(context, listen: false)
+                      .reorederd_playlist_Folder(oldIndex, newIndex)
+                }),
             itemCount: playLists.length,
             itemBuilder: (context, index) {
-
               return PlayList_details(
-                  
+                  key: ValueKey(playLists[index].p_id),
                   p_id: playLists[index].p_id,
                   bottmplaysheet: _bottomsheetdetail);
             }),
@@ -116,13 +122,12 @@ Widget text(String text){
   Widget build(BuildContext context) {
     playLists = Provider.of<PlayList_detail>(context, listen: true).items();
     return Scaffold(
-      
       body: NestedScrollView(
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar( 
+          SliverAppBar(
             backgroundColor: Theme.of(context).primaryColor,
-      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             // pinned: true,
             floating: true,
             snap: true,
@@ -130,7 +135,8 @@ Widget text(String text){
             // actions: action(),
           ),
         ],
-        body: Container(   color: Theme.of(context).backgroundColor,child: _body()),
+        body:
+            Container(color: Theme.of(context).backgroundColor, child: _body()),
       ),
     );
   }

@@ -45,11 +45,13 @@ class _Create_playlistState extends State<Create_playlist> {
     });
     return isButtonEnabled;
   }
-Widget text(String text){
-  return Text(text , style: TextStyle(
-              color:  Theme.of(context).textTheme.bodyText1!.color,
-           ));
-}
+
+  Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
 
   Widget build(BuildContext context) {
     if (widget.condition)
@@ -81,36 +83,42 @@ Widget text(String text){
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child:  text('Cancel'),
+              child: text('Cancel'),
             ),
             TextButton(
               onPressed: isEmpty()
                   ? widget.passvideo.isNotEmpty
                       ? () {
-                         Navigator.pop(context);
-                          Provider.of<PlayList_detail>(context, listen: false)
-                              .create_one_copy_playList(
-                                  _inputController.text, widget.passvideo);
-                           // Provider.of<folder_details>(context, listen: false).add_to_playlist_id(playLists[index].p_id,widget.condition?[videos]:widget.passvideo);
-                          
+                          Navigator.pop(context);
+
+                          Provider.of<folder_details>(context, listen: false)
+                              .add_to_playlist_id(
+                                  Provider.of<PlayList_detail>(context,
+                                          listen: false)
+                                      .create_one_copy_playList(
+                                          _inputController.text,
+                                          widget.passvideo),
+                                  widget.passvideo);
                         }
                       : widget.condition
                           ? () {
                               Navigator.pop(context);
-                              if(Provider.of<PlayList_detail>(context,
+                              Provider.of<folder_details>(context,
                                       listen: false)
-                                  .create_add_one_playlist(
-                                      _inputController.text, video)){
-                                        print("add one to playlist");
-                                      }
-                                      
+                                  .add_to_playlist_id(
+                                      Provider.of<PlayList_detail>(context,
+                                              listen: false)
+                                          .create_add_one_playlist(
+                                              _inputController.text, video),
+                                      [video]);
                             }
                           : () {
                               Navigator.pop(context);
-                              Navigator.of(context).pushNamed(
-                                  Videos_And_Songs.routeName,
-                                  arguments: _inputController.text);
-                            }
+
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => Videos_And_Songs(
+                                      p_title: _inputController.text)));
+                             }
                   : null,
               child: text('Create'),
             ),

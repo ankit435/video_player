@@ -24,7 +24,7 @@ class _PlayList_detailsState extends State<PlayList_details> {
   ));
 }
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
   Widget build(BuildContext context) {
   

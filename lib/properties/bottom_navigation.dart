@@ -47,8 +47,8 @@ Widget icons(IconData icon){
           label: 'Muisc',
         ),
         BottomNavigationBarItem(
-          icon: icons(Icons.favorite,),
-          label: 'favorite',
+          icon: icons(Icons.playlist_play_sharp,),
+          label: 'Playlist',
           
         ),
       ],

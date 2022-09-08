@@ -243,7 +243,7 @@ Widget animatedIcon(){
   }
 
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
   AppBar _Appbar(String title) {
     return AppBar(

@@ -131,7 +131,7 @@ Future<void> loaddata() async {
         Files.routeName:(ctx)=> Files(),
         Setting.routeName:(ctx)=> Setting(),
         //Playlist_file.routeName:(context) => const Playlist_file(),
-        Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
+       // Videos_And_Songs.routeName:(context) => Videos_And_Songs(),
         theme_screen.routeName:(context) => theme_screen(),
         Create_theme.routeName:(context) => Create_theme(),
         Play_video.routeName:(context) => Play_video(),

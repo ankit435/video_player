@@ -379,7 +379,7 @@ void remove_playlist(Map<String,Set<String>> removeList){
     );
   }
   Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
 
   @override

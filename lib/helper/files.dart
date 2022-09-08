@@ -13,14 +13,10 @@ import 'package:video/theme/theme_constants.dart';
 import 'package:video_player/video_player.dart';
 
 class themes with ChangeNotifier {
-
-  
-  
   final List<theme> _themes_data = [
-    theme(theme_id: 0, brightness: Brightness.dark,themeData: ThemeData()),
+    theme(theme_id: 0, brightness: Brightness.dark, themeData: ThemeData()),
     theme(
         theme_id: 1, brightness: Brightness.dark, themeData: ThemeData.dark()),
-
     theme(
         theme_id: 2,
         brightness: Brightness.light,
@@ -94,11 +90,8 @@ class themes with ChangeNotifier {
         )),
   ];
 
-
-
-  themes(int theme_id){
-    themes_data[0].curr_thenme_id=theme_id;
-
+  themes(int theme_id) {
+    themes_data[0].curr_thenme_id = theme_id;
   }
   List<theme> get themes_data => _themes_data;
 
@@ -119,8 +112,8 @@ class themes with ChangeNotifier {
   // }
 
   void update_curr_theme_id(int id) async {
-       var pref=await SharedPreferences.getInstance();
-        pref.setInt('theme_id', id);
+    var pref = await SharedPreferences.getInstance();
+    pref.setInt('theme_id', id);
 
     _themes_data[0].curr_thenme_id = id;
     notifyListeners();
@@ -282,9 +275,8 @@ class folder_details with ChangeNotifier {
     return _folder_item[folder_index(f_id)].f_detail;
   }
 
- Map<String,Set<String>> delete_file(Map<String, String> selctionList)  {
-
-    Map<String,Set<String>> remove_play_list={};
+  Map<String, Set<String>> delete_file(Map<String, String> selctionList) {
+    Map<String, Set<String>> remove_play_list = {};
     try {
       selctionList.forEach((v_id, f_id) {
         int fIndex = folder_index(f_id);
@@ -294,13 +286,12 @@ class folder_details with ChangeNotifier {
             .deleteFile(_folder_item[fIndex].f_detail[index].v_videoPath)) {
           _folder_item[fIndex].f_size = (_folder_item[fIndex].f_size) -
               (_folder_item[fIndex].f_detail[index].v_size);
-            
+
           _folder_item[fIndex].f_detail[index].playlist_id.forEach((P_id) {
-            
-            if(remove_play_list.containsKey(P_id)){
+            if (remove_play_list.containsKey(P_id)) {
               remove_play_list[P_id]!.add(v_id);
-            }else{
-              remove_play_list[P_id]=Set();
+            } else {
+              remove_play_list[P_id] = Set();
               remove_play_list[P_id]!.add(v_id);
             }
           });
@@ -308,9 +299,8 @@ class folder_details with ChangeNotifier {
         }
       });
       notifyListeners();
-    
-      return remove_play_list;
 
+      return remove_play_list;
     } catch (e) {
       print(e);
     }
@@ -335,31 +325,27 @@ class folder_details with ChangeNotifier {
     return false;
   }
 
+  video gevideo(String f_id, String v_id) {
+    return _folder_item[folder_index(f_id)]
+        .f_detail[folder_video_index(folder_index(f_id), v_id)];
+  }
 
-
-video gevideo(String f_id,String v_id){
-  return _folder_item[folder_index(f_id)].f_detail[folder_video_index(folder_index(f_id), v_id)];
-}
-
-
-  Map<String,Set<String>> deleteFolder(Set<String> delete) {
-     Map<String,Set<String>> remove_play_list={};
+  Map<String, Set<String>> deleteFolder(Set<String> delete) {
+    Map<String, Set<String>> remove_play_list = {};
     try {
       delete.forEach((f_id) {
         int f_index = folder_index(f_id);
         if (Storage().deleteFolder(_folder_item[f_index].f_path)) {
           _folder_item[f_index].f_detail.forEach((element) {
             element.playlist_id.forEach((P_id) {
-              if(remove_play_list.containsKey(P_id)){
+              if (remove_play_list.containsKey(P_id)) {
                 remove_play_list[P_id]!.add(element.v_id);
-              }else{
-                remove_play_list[P_id]=Set();
+              } else {
+                remove_play_list[P_id] = Set();
                 remove_play_list[P_id]!.add(element.v_id);
               }
             });
-           
-            }
-          );
+          });
           _folder_item.removeAt(f_index);
         }
       });
@@ -498,22 +484,19 @@ video gevideo(String f_id,String v_id){
     return folders;
   }
 
-  void add_to_playlist_id(String p_id, List<video> list) {
-   
-
-  try {
-     list.forEach((element) {
-      int f_index = folder_index(element.parent_folder_id);
-      int v_index = folder_video_index(f_index, element.v_id);
-       _folder_item[f_index].f_detail[v_index].playlist_id.add(p_id);
-      
-    });
-    notifyListeners();
-} catch (e) {
-  print(e);
-}
-    
-
+  void add_to_playlist_id(String? p_id, List<video> list) {
+    try {
+      if (p_id != null) {
+        list.forEach((element) {
+          int f_index = folder_index(element.parent_folder_id);
+          int v_index = folder_video_index(f_index, element.v_id);
+          _folder_item[f_index].f_detail[v_index].playlist_id.add(p_id);
+        });
+      }
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
@@ -538,19 +521,18 @@ class favourite_details with ChangeNotifier {
   }
 }
 
-class Hide_list_detail  extends folder_details {
+class Hide_list_detail extends folder_details {
   List<Hide_list> _Hide_list_detail = [];
 }
 
 class PlayList_detail with ChangeNotifier {
   // ignore: non_constant_identifier_names
   List<PlayList> _playlist_item = [
-    PlayList(p_id:"Favourite" , p_title: "Favourite", p_detail: []),
+    PlayList(p_id: "Favourite", p_title: "Favourite", p_detail: []),
   ];
   List<PlayList> items() {
     return _playlist_item;
   }
-
 
   int getplayList_index_id(String p_id) {
     int index = _playlist_item.indexWhere((Playl) => Playl.p_id == p_id);
@@ -576,36 +558,42 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  bool playlist_adds(
-      List<video> video_details, String pTitle, Map<String, String> selctionList) {
+  Map<String, List<video>>? playlist_adds(List<video> video_details,
+      String? pTitle, String? p_id, Map<String, String> selctionList) {
+  
+    List<video> temp = [];
+
+    String P_id = p_id != null ? p_id : idGenerator();
+    int index = p_id == null? -1 :getplayList_index_id(P_id);
     try {
-      List<video> temp = [];
-      int index = getplayList_index(pTitle);
-
-      selctionList.forEach((key, value) {
-        int v_index =
-            video_details.indexWhere((element) => element.v_id == key);
-
-        if (index == -1) {
-          temp.add(video_details[v_index]);
-        } else {
-          if (_playlist_item[index]
-                  .p_detail
-                  .indexWhere((pv) => pv.v_id == key) ==
-              -1) {
-            _playlist_item[index].p_detail.add(video_details[v_index]);
-          }
-        }
+     if(index==-1){
+      selctionList.forEach((v_id, f_id) {
+        temp.add(video_details[video_details.indexWhere((video) => video.v_id == v_id)]);
       });
+      
 
-      if (index == -1) {
-        _playlist_item.add(PlayList(
-            p_id: idGenerator(), p_title: pTitle, p_detail: temp));
-      }
+      _playlist_item.add(PlayList(
+          p_id: P_id,
+          p_title: pTitle != null ? pTitle : "New Playlist",
+          p_detail: temp));
+     }
+     else{
+        selctionList.forEach((v_id, f_id) {
+          if(_playlist_item[index].p_detail.indexWhere((element) =>element.v_id==v_id )==-1){
+            temp.add(video_details[video_details.indexWhere((video) => video.v_id == v_id)]);
+          }
+        });
+         _playlist_item[index].p_detail.addAll(temp);
+        }
+      
+       
       notifyListeners();
-      return true;
-    } catch (e) {}
-    return false;
+
+      return {P_id: temp};
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   bool add_one_playlist(String p_id, video video_detail) {
@@ -653,10 +641,8 @@ class PlayList_detail with ChangeNotifier {
     int c = 0;
     try {
       if (tindex == -1) {
-        _playlist_item.add(PlayList(
-            p_detail: Pvideos,
-            p_id: idGenerator(),
-            p_title: target));
+        _playlist_item.add(
+            PlayList(p_detail: Pvideos, p_id: idGenerator(), p_title: target));
         c = Pvideos.length;
       } else {
         Pvideos.forEach((element) {
@@ -678,16 +664,15 @@ class PlayList_detail with ChangeNotifier {
     return -1;
   }
 
-  bool create_one_copy_playList(String title, List<video> passvideo) {
+  String? create_one_copy_playList(String title, List<video> passvideo) {
     try {
-      _playlist_item.add(PlayList(
-          p_detail: passvideo,
-          p_id: idGenerator(),
-          p_title: title));
+      String id = idGenerator();
+      _playlist_item
+          .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
       notifyListeners();
-      return true;
+      return id;
     } catch (e) {}
-    return false;
+    return null;
   }
 
   String idGenerator() {
@@ -695,17 +680,16 @@ class PlayList_detail with ChangeNotifier {
     return now.microsecondsSinceEpoch.toString();
   }
 
-  bool create_add_one_playlist(String title, video videos) {
+  String? create_add_one_playlist(String title, video videos) {
     try {
+      String id = idGenerator();
       List<video> passvideo = [videos];
-      _playlist_item.add(PlayList(
-          p_detail: passvideo,
-          p_id: idGenerator(),
-          p_title: title));
+      _playlist_item
+          .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
       notifyListeners();
-      return true;
+      return id;
     } catch (e) {}
-    return false;
+    return null;
   }
 
   bool rename_playlist_video(String v_id, String p_id, String newtitle) {
@@ -768,11 +752,18 @@ class PlayList_detail with ChangeNotifier {
     notifyListeners();
   }
 
+  void reorederd_playlist_Folder(int old_index, int new_ndex) {
+    new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
+     PlayList v = _playlist_item[old_index];
+    _playlist_item.removeAt(old_index);
+    _playlist_item.insert(new_ndex, v);
+    notifyListeners();
+  }
+
   void remove_from_playlist(Map<String, String> map) {
-   
     map.forEach((key, value) {
       int p_index = getplayList_index_id(key);
-    
+
       if (p_index != -1) {
         _playlist_item[p_index]
             .p_detail
@@ -791,7 +782,8 @@ class PlayList_detail with ChangeNotifier {
   }
 
   String P_file_length(String p_id) {
-    return _playlist_item.firstWhere((element) => element.p_id == p_id)
+    return _playlist_item
+        .firstWhere((element) => element.p_id == p_id)
         .p_detail
         .length
         .toString();

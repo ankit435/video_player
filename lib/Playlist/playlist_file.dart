@@ -109,14 +109,19 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
               trailing: IconButton(
                   icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Videos_And_Songs.routeName,
-                        arguments: p_title);
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Videos_And_Songs(
+                          p_id: widget.p_id,
+                        )));
+
+                    // Navigator.of(context).pushNamed(Videos_And_Songs.routeName,
+                    //     arguments: widget.p_id);
                   })),
         ),
         Flexible(
           child: ReorderableListView.builder(
             onReorder: (oldIndex, newIndex) {
-             // Provider.of<PlayList_detail>(context, listen: false).reorederd_playlist_video(oldIndex, newIndex, widget.p_id);
+              Provider.of<PlayList_detail>(context, listen: false).reorederd_playlist_video(oldIndex, newIndex, widget.p_id);
             },
               itemCount: playLists.length,
               itemBuilder: (context, index) {
