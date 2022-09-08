@@ -264,18 +264,30 @@ Widget icons(IconData icon){
       //file_detail=video;
     });
   }
+
+void remove_playlist(Map<String,Set<String>> removeList){
+
+  removeList.forEach((key, value) { 
+    value.forEach((element) { 
+      Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist({key:element});
+    });
+  });
+  
+}
+
   Future<void> onsinglefolderdelete(Set<String>delete) async {
    
     if (delete.isNotEmpty) {
+      remove_playlist(
       await Provider.of<folder_details>(context, listen: false)
-          .deleteFolder(delete);
+          .deleteFolder(delete));
     }
   }
 
   Future<void> ondelete() async {
     if (selction_list.isNotEmpty) {
-      await Provider.of<folder_details>(context, listen: false)
-          .deleteFolder(selction_list);
+      remove_playlist(await Provider.of<folder_details>(context, listen: false)
+          .deleteFolder(selction_list));
     }
     toggleselction();
     selction_list.clear();

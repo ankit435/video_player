@@ -165,9 +165,11 @@ void remove_playlist(Map<String,Set<String>> removeList){
 
  Future<void> onsinglefiledelete(Map<String,String>single_video_list) async {
 
+ 
+
     if (single_video_list.isNotEmpty) {
         Map<String,Set<String>> removeList=await Provider.of<folder_details>(context, listen: false)
-          .delete_file(selction_list);
+          .delete_file(single_video_list);
         remove_playlist(removeList);
         
      

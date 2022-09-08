@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:video/helper/files.dart';
 import 'package:video/properties/properties.dart';
-
-import '../helper/cruds_operation.dart';
 import '../helper/file.dart';
 import '../showdialogbox/Rename_playlist_file_and_folder.dart';
 import 'package:share_plus/share_plus.dart';

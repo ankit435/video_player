@@ -39,10 +39,7 @@ Widget text(String text){
            ),);
 }
 
-Future<void> ondelete() async{
-  delete.addAll({widget.v_id:widget.f_id});
-  await Provider.of<folder_details>(context, listen: false).delete_file(delete);
-}
+
 
 Widget icons(IconData icon){
   return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
@@ -87,11 +84,11 @@ Widget icons(IconData icon){
        ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
           
               Navigator.pop(context);    
-              Map<String,String> delete={widget.v_id:widget.f_id};
+              //Map<String,String> delete={widget.v_id:widget.f_id};
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Show_dialog(onPressedtext:"Delete",onPressed:(){widget.onsinglefiledelete(delete);},title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
+                      return Show_dialog(onPressedtext:"Delete",onPressed:(){widget.onsinglefiledelete({widget.v_id:widget.f_id});},title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
                     });
         // Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
 

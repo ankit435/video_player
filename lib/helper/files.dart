@@ -294,6 +294,7 @@ class folder_details with ChangeNotifier {
             .deleteFile(_folder_item[fIndex].f_detail[index].v_videoPath)) {
           _folder_item[fIndex].f_size = (_folder_item[fIndex].f_size) -
               (_folder_item[fIndex].f_detail[index].v_size);
+            
           _folder_item[fIndex].f_detail[index].playlist_id.forEach((P_id) {
             
             if(remove_play_list.containsKey(P_id)){
@@ -303,13 +304,13 @@ class folder_details with ChangeNotifier {
               remove_play_list[P_id]!.add(v_id);
             }
           });
-          
           _folder_item[fIndex].f_detail.removeAt(index);
         }
       });
       notifyListeners();
-      print("remove_play_list== "+remove_play_list.toString());
+    
       return remove_play_list;
+
     } catch (e) {
       print(e);
     }
@@ -341,20 +342,33 @@ video gevideo(String f_id,String v_id){
 }
 
 
-  bool deleteFolder(Set<String> delete) {
+  Map<String,Set<String>> deleteFolder(Set<String> delete) {
+     Map<String,Set<String>> remove_play_list={};
     try {
       delete.forEach((f_id) {
         int f_index = folder_index(f_id);
         if (Storage().deleteFolder(_folder_item[f_index].f_path)) {
+          _folder_item[f_index].f_detail.forEach((element) {
+            element.playlist_id.forEach((P_id) {
+              if(remove_play_list.containsKey(P_id)){
+                remove_play_list[P_id]!.add(element.v_id);
+              }else{
+                remove_play_list[P_id]=Set();
+                remove_play_list[P_id]!.add(element.v_id);
+              }
+            });
+           
+            }
+          );
           _folder_item.removeAt(f_index);
         }
       });
       notifyListeners();
 
-      return true;
+      return remove_play_list;
     } catch (e) {}
 
-    return false;
+    return remove_play_list;
   }
 
   bool rename_folder(String f_id, String newftitle) {

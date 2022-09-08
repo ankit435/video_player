@@ -176,7 +176,8 @@ try {
 
  bool deleteFile(String path) {
     try {
-     // File(path).deleteSync(recursive: false);
+      File(path).deleteSync(recursive: false);
+      
       return true;
     } catch (e) {
       print(e);
