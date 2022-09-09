@@ -83,12 +83,11 @@ Widget icons(IconData icon){
           title: text("Remove"),
           onTap: () {
             Navigator.pop(context);
-            Map<String,String> delete={widget.p_id:widget.v_id};
           
             showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return Show_dialog(onPressedtext:"Remove",onPressed:(){widget.on_delete(delete);},title: "Playlist",text:"Are you sure you want remove this Video?");
+                      return Show_dialog(onPressedtext:"Remove",onPressed:(){widget.on_delete({widget.p_id:widget.v_id});},title: "Playlist",text:"Are you sure you want remove this Video?");
                     });
           },
         ),

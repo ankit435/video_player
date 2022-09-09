@@ -38,12 +38,13 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
   }
 
   @override
-  void add_to_playlist() {
+  Future<void> add_to_playlist() async {
 
     Map<String, List<video>>? add_to_video =
-        Provider.of<PlayList_detail>(context, listen: false).playlist_adds(
+       await Provider.of<PlayList_detail>(context, listen: false).playlist_adds(
             file_detail, widget.p_title, widget.p_id, selction_list);
     if (add_to_video != null) {
+      // ignore: use_build_context_synchronously
       Provider.of<folder_details>(context, listen: false).add_to_playlist_id(
           add_to_video.keys.first, add_to_video.values.first);
     }

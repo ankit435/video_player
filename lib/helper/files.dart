@@ -136,54 +136,54 @@ class themes with ChangeNotifier {
 
   void changeTheme(int id) {
     theme themes = getThemeById();
-    _themes_data.forEach((element) {
+    for (var element in _themes_data) {
       if (element.theme_id == id) {
         element.themeData = themes.themeData;
         element.brightness = themes.brightness;
       }
-    });
+    }
     notifyListeners();
   }
 
   void changeBrightness(int id) {
     theme themes = getThemeById();
-    _themes_data.forEach((element) {
+    for (var element in _themes_data) {
       if (element.theme_id == id) {
         element.themeData = themes.themeData;
         element.brightness = themes.brightness;
       }
-    });
+    }
     notifyListeners();
   }
 
   void changeThemeData(int id, ThemeData themeData) {
     theme themes = getThemeById();
-    _themes_data.forEach((element) {
+    for (var element in _themes_data) {
       if (element.theme_id == id) {
         element.themeData = themeData;
       }
-    });
+    }
     notifyListeners();
   }
 
   void changeBrightnessData(int id, Brightness brightness) {
     theme themes = getThemeById();
-    _themes_data.forEach((element) {
+    for (var element in _themes_data) {
       if (element.theme_id == id) {
         element.themeData = themes.themeData;
         element.brightness = brightness;
       }
-    });
+    }
     notifyListeners();
   }
 
   void changeThemeDataData(int id, ThemeData themeData) {
     theme themes = getThemeById();
-    _themes_data.forEach((element) {
+    for (var element in _themes_data) {
       if (element.theme_id == id) {
         element.themeData = themeData;
       }
-    });
+    }
     notifyListeners();
   }
 }
@@ -212,9 +212,9 @@ class folder_details with ChangeNotifier {
 
   List<video> getAllvideo() {
     List<video> videos = [];
-    _folder_item.forEach((element) {
+    for (var element in _folder_item) {
       videos.addAll(element.f_detail);
-    });
+    }
 
     return videos;
   }
@@ -237,9 +237,9 @@ class folder_details with ChangeNotifier {
 
   int gettotalvideosize() {
     int size = 0;
-    _folder_item.forEach((element) {
+    for (var element in _folder_item) {
       size += element.f_size;
-    });
+    }
 
     return size;
   }
@@ -289,14 +289,14 @@ class folder_details with ChangeNotifier {
           _folder_item[fIndex].f_size = (_folder_item[fIndex].f_size) -
               (_folder_item[fIndex].f_detail[index].v_size);
 
-          _folder_item[fIndex].f_detail[index].playlist_id.forEach((P_id) {
+          for (var P_id in _folder_item[fIndex].f_detail[index].playlist_id) {
             if (remove_play_list.containsKey(P_id)) {
               remove_play_list[P_id]!.add(v_id);
             } else {
               remove_play_list[P_id] = Set();
               remove_play_list[P_id]!.add(v_id);
             }
-          });
+          }
           _folder_item[fIndex].f_detail.removeAt(index);
         }
       });
@@ -335,22 +335,22 @@ class folder_details with ChangeNotifier {
   Map<String, Set<String>> deleteFolder(Set<String> delete) {
     Map<String, Set<String>> remove_play_list = {};
     try {
-      delete.forEach((f_id) {
+      for (var f_id in delete) {
         int f_index = folder_index(f_id);
         if (Storage().deleteFolder(_folder_item[f_index].f_path)) {
-          _folder_item[f_index].f_detail.forEach((element) {
-            element.playlist_id.forEach((P_id) {
+          for (var element in _folder_item[f_index].f_detail) {
+            for (var P_id in element.playlist_id) {
               if (remove_play_list.containsKey(P_id)) {
                 remove_play_list[P_id]!.add(element.v_id);
               } else {
                 remove_play_list[P_id] = Set();
                 remove_play_list[P_id]!.add(element.v_id);
               }
-            });
-          });
+            }
+          }
           _folder_item.removeAt(f_index);
         }
-      });
+      }
       notifyListeners();
 
       return remove_play_list;
@@ -417,7 +417,6 @@ class folder_details with ChangeNotifier {
   }
 
   void Setduration(int duration, String v_id, String f_id) {
-  
     var f_index = folder_index(f_id);
     var v_index = folder_video_index(f_index, v_id);
     _folder_item[f_index].f_detail[v_index].v_duration = duration;
@@ -436,12 +435,12 @@ class folder_details with ChangeNotifier {
     List<video> videos = [];
     if (filter == null) return [];
 
-    _folder_item.forEach((element) {
+    for (var element in _folder_item) {
       videos.addAll(element.f_detail
           .where((video) =>
               video.v_title.toLowerCase().contains(filter.toLowerCase()))
           .toList());
-    });
+    }
 
     return videos;
   }
@@ -453,9 +452,9 @@ class folder_details with ChangeNotifier {
 
   List<video> selection_foldervideo(Set<String> selction_list) {
     List<video> selection_videos = [];
-    selction_list.forEach((element) {
+    for (var element in selction_list) {
       selection_videos.addAll(_folder_item[folder_index(element)].f_detail);
-    });
+    }
     return selection_videos;
   }
 
@@ -478,9 +477,9 @@ class folder_details with ChangeNotifier {
   List<String> get_folder_path(Set<String> selctionList) {
     List<String> folders = [];
     try {
-      selctionList.forEach((element) {
+      for (var element in selctionList) {
         folders.add(_folder_item[folder_index(element)].f_path);
-      });
+      }
     } catch (e) {}
 
     return folders;
@@ -489,11 +488,11 @@ class folder_details with ChangeNotifier {
   void add_to_playlist_id(String? p_id, List<video> list) {
     try {
       if (p_id != null) {
-        list.forEach((element) {
+        for (var element in list) {
           int f_index = folder_index(element.parent_folder_id);
           int v_index = folder_video_index(f_index, element.v_id);
           _folder_item[f_index].f_detail[v_index].playlist_id.add(p_id);
-        });
+        }
       }
       notifyListeners();
     } catch (e) {
@@ -530,63 +529,67 @@ class Hide_list_detail extends folder_details {
 class PlayList_detail with ChangeNotifier {
   // ignore: non_constant_identifier_names
 
-
-
-
-
   List<PlayList> _playlist_item = [
     PlayList(p_id: "Favourite", p_title: "Favourite", p_detail: []),
   ];
 
-
-
- fetchdatabase() async {
+  fetchdatabase() async {
     try {
       //addin_playlist_database();
       final db = await playerDatabase.instance;
       final List<PlayList> maps = (await db.readAllPlaylist());
-      _playlist_item=maps;
-      
+      for (var element in maps) {
+        int index=_playlist_item
+                .indexWhere((playlist) => playlist.p_id == element.p_id);
+          if(index==-1){
+            print(element.p_title+"=="+ element.count.toString());
+            if(element.count<=0){
+              deleteindatabase(element.p_id);
+            }
+            else{
+            _playlist_item.add(element);
+            }
+          }
+          
+          
+        
+      }
+
       notifyListeners();
     } catch (e) {
       print(e);
     }
   }
 
+  void addin_playlist_database() {
+    try {
+      for (var element in _playlist_item) {
+       
+        addtodatabase(element);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-void addin_playlist_database() {
- 
-  _playlist_item.forEach((element)  {
-    addtodatabase(element);
-  });
-}
+  Future<PlayList> addtodatabase(PlayList playList) async {
+    final db = await playerDatabase.instance;
+    playList.count = playList.count + 1;
+    return await db.create(playList);
+  }
 
-void addtodatabase(PlayList playList)async{
+  Future<int> updateindatabase(PlayList playList) async {
+    final db = await playerDatabase.instance;
+    return await db.update(playList);
+  }
 
- final db = await playerDatabase.instance;
- await db.create(playList);
-
-}
-
-void updateindatabase(PlayList playList)async{
-
- final db = await playerDatabase.instance;
- await db.update(playList);
-
-
-
-}
-
-void deleteindatabase(String p_id)async{
-   final db = await playerDatabase.instance;
- await db.delete_playlist(p_id);
-}
-
-
-
+  Future<int> deleteindatabase(String p_id) async {
+    final db = await playerDatabase.instance;
+    return await db.delete_playlist(p_id);
+  }
 
   List<PlayList> items() {
-    return _playlist_item;
+    return _playlist_item.skipWhile((value) => (value.count <= 0&&value.p_id!="Favourite")).toList();
   }
 
   int getplayList_index_id(String p_id) {
@@ -603,43 +606,41 @@ void deleteindatabase(String p_id)async{
     return _playlist_item[getplayList_index_id(p_id)].p_detail;
   }
 
-
-
-  Map<String, List<video>>? playlist_adds(List<video> video_details,
-      String? pTitle, String? p_id, Map<String, String> selctionList) {
-  
+  Future<Map<String, List<video>>?> playlist_adds(List<video> video_details,
+      String? pTitle, String? p_id, Map<String, String> selctionList) async {
     List<video> temp = [];
 
     String P_id = p_id != null ? p_id : idGenerator();
-    int index = p_id == null? -1 :getplayList_index_id(P_id);
+    int index = p_id == null ? -1 : getplayList_index_id(P_id);
     try {
-     if(index==-1){
-      selctionList.forEach((v_id, f_id) {
-        temp.add(video_details[video_details.indexWhere((video) => video.v_id == v_id)]);
-
-      });
-      
-
-      _playlist_item.add(PlayList(
-          p_id: P_id,
-          p_title: pTitle != null ? pTitle : "New Playlist",
-          p_detail: temp));
-      updateindatabase(PlayList(
-          p_id: P_id,
-          p_title: pTitle != null ? pTitle : "New Playlist",
-          p_detail: temp));
-     }
-     else{
+      if (index == -1) {
         selctionList.forEach((v_id, f_id) {
-          if(_playlist_item[index].p_detail.indexWhere((element) =>element.v_id==v_id )==-1){
-            temp.add(video_details[video_details.indexWhere((video) => video.v_id == v_id)]);
+          temp.add(video_details[
+              video_details.indexWhere((video) => video.v_id == v_id)]);
+        });
+
+        _playlist_item.add(await addtodatabase(PlayList(
+            p_id: P_id,
+            p_title: pTitle != null ? pTitle : "New Playlist",
+            p_detail: temp)));
+      } else {
+        selctionList.forEach((v_id, f_id) {
+          if (_playlist_item[index]
+                  .p_detail
+                  .indexWhere((element) => element.v_id == v_id) ==
+              -1) {
+            temp.add(video_details[
+                video_details.indexWhere((video) => video.v_id == v_id)]);
           }
         });
-         _playlist_item[index].p_detail.addAll(temp);
-         updateindatabase(_playlist_item[index]);
+        PlayList playList = _playlist_item[index];
+        playList.p_detail.addAll(temp);
+        playList.count = playList.count + temp.length;
+        if (updateindatabase(playList) != -1) {
+          _playlist_item[index] = playList;
         }
-      
-       
+      }
+
       notifyListeners();
 
       return {P_id: temp};
@@ -654,13 +655,15 @@ void deleteindatabase(String p_id)async{
     try {
       if (_playlist_item[index]
               .p_detail
-              .indexWhere((pv) => pv.v_id == video_detail.v_id) ==
+              .indexWhere((pv) => pv.v_id == video_detail.v_id) !=
           -1) {
-        _playlist_item[index].p_detail.add(video_detail);
-        updateindatabase(_playlist_item[index]);
-
+        PlayList playList = _playlist_item[index];
+        playList.p_detail.add(video_detail);
+        playList.count = playList.count + 1;
+        if (updateindatabase(playList) != -1) {
+          _playlist_item[index] = playList;
+        }
       }
-
       notifyListeners();
       return true;
     } catch (e) {
@@ -670,22 +673,23 @@ void deleteindatabase(String p_id)async{
     return false;
   }
 
-  bool remove_playlist_video(Map<int, String> selctionList) {
+bool remove_playlist_video(Map<int, String> selctionList) {
     print("hi");
     try {
       {
         selctionList.forEach((key, P_id) {
           int index = getplayList_index_id(P_id);
           if (index != -1) {
-            _playlist_item[index]
-                .p_detail
-                .removeWhere((element) => element.v_id == key);
-            updateindatabase(_playlist_item[index]);
-            
-          }
+            PlayList playList = _playlist_item[index];
+            playList.p_detail.removeWhere((element) => element.v_id == key);
+            playList.count = playList.count - 1;
 
+            if (updateindatabase(playList) != -1) {
+              _playlist_item[index] = playList;
+            }
+          }
         });
-        
+
         notifyListeners();
         return true;
       }
@@ -704,7 +708,7 @@ void deleteindatabase(String p_id)async{
             PlayList(p_detail: Pvideos, p_id: idGenerator(), p_title: target));
         c = Pvideos.length;
       } else {
-        Pvideos.forEach((element) {
+        for (var element in Pvideos) {
           if (_playlist_item[tindex]
                   .p_detail
                   .indexWhere((target) => target.v_id == element.v_id) ==
@@ -712,7 +716,7 @@ void deleteindatabase(String p_id)async{
             _playlist_item[tindex].p_detail.add(element);
             c++;
           }
-        });
+        }
       }
 
       notifyListeners();
@@ -723,13 +727,15 @@ void deleteindatabase(String p_id)async{
     return -1;
   }
 
-  String? create_one_copy_playList(String title, List<video> passvideo) {
+  Future<String?> create_one_copy_playList(
+      String title, List<video> passvideo) async {
     try {
-      String id = idGenerator();
-      _playlist_item
-          .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
+      String P_id = idGenerator();
+
+      _playlist_item.add(await addtodatabase(
+          PlayList(p_detail: passvideo, p_id: P_id, p_title: title)));
       notifyListeners();
-      return id;
+      return P_id;
     } catch (e) {}
     return null;
   }
@@ -739,13 +745,13 @@ void deleteindatabase(String p_id)async{
     return now.microsecondsSinceEpoch.toString();
   }
 
-  String? create_add_one_playlist(String title, video videos) {
+  Future<String?> create_add_one_playlist(String title, video videos) async {
     try {
       String id = idGenerator();
       List<video> passvideo = [videos];
-      // _playlist_item
-      //     .add(PlayList(p_detail: passvideo, p_id: id, p_title: title));
-      addtodatabase(PlayList(p_detail: passvideo, p_id: id, p_title: title));
+      _playlist_item.add(await addtodatabase(
+          PlayList(p_detail: passvideo, p_id: id, p_title: title)));
+
       notifyListeners();
       return id;
     } catch (e) {}
@@ -768,19 +774,28 @@ void deleteindatabase(String p_id)async{
   bool rename_playlist_folder(String p_id, String newtitle) {
     try {
       int pindex = getplayList_index_id(p_id);
-      _playlist_item[pindex].p_title = newtitle;
-      notifyListeners();
-      return true;
+
+      if (pindex != -1) {
+        PlayList playList = _playlist_item[pindex];
+        playList.p_title = newtitle;
+
+        if (updateindatabase(playList) != -1) {
+          _playlist_item[pindex] = playList;
+        }
+        notifyListeners();
+        return true;
+      }
     } catch (e) {}
     return false;
   }
 
   bool remove_playlist_folder(Set<String> p_id) {
     try {
-      p_id.forEach((p_id) {
-        _playlist_item.removeWhere((plylist) => plylist.p_id == p_id);
-        deleteindatabase(p_id);
-      });
+      for (var p_id in p_id) {
+        if (deleteindatabase(p_id) != -1) {
+          _playlist_item.removeWhere((element) => element.p_id == p_id);
+        }
+      }
       notifyListeners();
       return true;
     } catch (e) {}
@@ -815,7 +830,7 @@ void deleteindatabase(String p_id)async{
 
   void reorederd_playlist_Folder(int old_index, int new_ndex) {
     new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
-     PlayList v = _playlist_item[old_index];
+    PlayList v = _playlist_item[old_index];
     _playlist_item.removeAt(old_index);
     _playlist_item.insert(new_ndex, v);
     notifyListeners();
@@ -826,10 +841,16 @@ void deleteindatabase(String p_id)async{
       int p_index = getplayList_index_id(key);
 
       if (p_index != -1) {
-        _playlist_item[p_index]
-            .p_detail
-            .removeWhere((element) => element.v_id == value);
-        updateindatabase(_playlist_item[p_index]);
+        PlayList playList = _playlist_item[p_index];
+        
+          playList.p_detail.removeWhere((element) => element.v_id == value);
+          playList.count = playList.count - 1;
+          if (updateindatabase(playList) != -1) {
+          _playlist_item[p_index] = playList;
+          
+        }
+  
+        
       }
     });
     notifyListeners();
@@ -942,11 +963,11 @@ class queue_playerss with ChangeNotifier {
     if (queue_video_list.isEmpty) {
       queue_video_list = videos.toList();
     } else {
-      videos.forEach((element) {
+      for (var element in videos) {
         if (queue_video_list.indexWhere((v) => v.v_id == element.v_id) == -1) {
           queue_video_list.add(element);
         }
-      });
+      }
     }
     notifyListeners();
   }
@@ -956,11 +977,11 @@ class queue_playerss with ChangeNotifier {
     if (queue_video_list.isEmpty) {
       queue_video_list = videos.toList();
     } else {
-      videos.forEach((element) {
+      for (var element in videos) {
         if (queue_video_list.indexWhere((v) => v.v_id == element.v_id) == -1) {
           queue_video_list.insert(++curentindex, element);
         }
-      });
+      }
     }
     curentindex = oldindex;
     notifyListeners();

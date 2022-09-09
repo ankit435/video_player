@@ -213,11 +213,15 @@ class PlayList with ChangeNotifier {
   final String p_id;
   String p_title;
   List<video> p_detail = [];
+  int count = 0;
+  String p_thumbnailPath="";
 
   PlayList({
     required this.p_id,
     required this.p_title,
     required this.p_detail,
+    this.count = 0,
+    this.p_thumbnailPath="",
   });
 
 
@@ -225,6 +229,8 @@ class PlayList with ChangeNotifier {
     return {
       playlist_database.id: p_id,
       playlist_database.playlist_name : p_title,
+      playlist_database.count : count,
+      playlist_database.p_thumbnailPath: p_thumbnailPath,
       playlist_database.p_detail: jsonEncode(p_detail.map((e) => e.toJson()).toList()).toString(),
     };
   }
@@ -232,6 +238,8 @@ class PlayList with ChangeNotifier {
 PlayList.fromJson(Map<String, dynamic> json)
       : p_id = json[playlist_database.id],
         p_title = json[playlist_database.playlist_name],
+        count = json[playlist_database.count],
+        p_thumbnailPath = json[playlist_database.p_thumbnailPath],
         p_detail =jsonDecode(json[playlist_database.p_detail]).map<video>((e) => video.fromJson(e)).toList();
  
 
@@ -240,12 +248,18 @@ PlayList copy({
   String? p_id,
   String? p_title,
   List<video>? p_detail,
+  int? count=0,
+  String? p_thumbnailPath="",
+
+  
   
 }) {
   return PlayList(
     p_id: p_id ?? this.p_id,
     p_title: p_title ?? this.p_title,
-    p_detail: p_detail??this.p_detail
+    p_detail: p_detail??this.p_detail,
+    count: this.count,
+    p_thumbnailPath: this.p_thumbnailPath,
   );
 }
 
@@ -265,6 +279,9 @@ PlayList copy({
   static final String id = 'p_id';
   static final String playlist_name = 'p_title';
   static final String p_detail = 'p_detail';
+  static final String count = 'count';
+  static final String p_thumbnailPath = 'p_thumbnailPath';
+
   
 }
 

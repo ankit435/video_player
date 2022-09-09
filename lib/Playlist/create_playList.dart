@@ -88,12 +88,12 @@ class _Create_playlistState extends State<Create_playlist> {
             TextButton(
               onPressed: isEmpty()
                   ? widget.passvideo.isNotEmpty
-                      ? () {
+                      ? () async {
                           Navigator.pop(context);
 
                           Provider.of<folder_details>(context, listen: false)
                               .add_to_playlist_id(
-                                  Provider.of<PlayList_detail>(context,
+                                 await Provider.of<PlayList_detail>(context,
                                           listen: false)
                                       .create_one_copy_playList(
                                           _inputController.text,
@@ -101,12 +101,12 @@ class _Create_playlistState extends State<Create_playlist> {
                                   widget.passvideo);
                         }
                       : widget.condition
-                          ? () {
+                          ? () async {
                               Navigator.pop(context);
                               Provider.of<folder_details>(context,
                                       listen: false)
                                   .add_to_playlist_id(
-                                      Provider.of<PlayList_detail>(context,
+                                     await Provider.of<PlayList_detail>(context,
                                               listen: false)
                                           .create_add_one_playlist(
                                               _inputController.text, video),

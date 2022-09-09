@@ -20,7 +20,7 @@ Future<Database> get database async {
   }
 
 Future<Database> _initDB(String filePath) async {
-    final dbPath = "/storage/emulated/0/Ankit";
+    final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
     return await openDatabase(path, version: 1, onCreate: _createDB);
 
@@ -63,7 +63,9 @@ Future<Database> _initDB(String filePath) async {
     await db.execute('''CREATE TABLE $playlist_databasename( 
       ${playlist_database.id} $textType,
       ${playlist_database.playlist_name} $textType, 
-      ${playlist_database.p_detail} $textType
+      ${playlist_database.p_detail} $textType,
+      ${playlist_database.count} $integerType,
+      ${playlist_database.p_thumbnailPath} $textType
       )
     ''');
 
