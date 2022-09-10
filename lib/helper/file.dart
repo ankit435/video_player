@@ -84,7 +84,7 @@ class video with ChangeNotifier {
   final String parent_folder_id;
   String v_title;
    String v_videoPath;
-  final String v_thumbnailPath;
+  String? v_thumbnailPath=null;
   int v_duration;
   final DateTime v_timestamp;
    int v_watched;
@@ -98,7 +98,7 @@ class video with ChangeNotifier {
     required this.v_id,
     required this.parent_folder_id,
     required this.v_title,
-    required this.v_thumbnailPath,
+    this.v_thumbnailPath,
     required this.v_videoPath,
     required this.v_duration,
     required this.v_timestamp,
@@ -284,4 +284,79 @@ PlayList copy({
 
   
 }
+
+
+// class Thumbail_path with ChangeNotifier {
+//   final String v_videoPath;
+//   final String v_thumbnailPath;
+//   //final String t
+
+//   Thumbail_path({
+//     required this.v_videoPath,
+//     required this.v_thumbnailPath,
+//   });
+
+//   Map<String, Object?> toMap() {
+//     return {
+//       'v_videoPath': v_videoPath,
+//       'v_thumbnailPath': v_thumbnailPath,
+//     };
+//   }
+
+//   static Thumbail_path fromMap(Map<String, Object?> map) {
+//     return Thumbail_path(
+//       v_videoPath: map['v_videoPath'] as String,
+//       v_thumbnailPath: map['v_thumbnailPath'] as String,
+//     );
+//   }
+
+
+// // Thumbail_path copy({
+// //   String? v_videoPath,
+// //   String? v_thumbnailPath,
+// // }) {
+// //   return 
+// //   Thumbail_path(
+// //     v_videoPath: v_videoPath ?? this.v_videoPath,
+// //     v_thumbnailPath: v_thumbnailPath ?? this.v_thumbnailPath,
+// //   );
+// // }
+
+//   Map<String, Object?> toJson() {
+//     return {
+//       'v_videoPath': v_videoPath,
+//       'v_thumbnailPath': v_thumbnailPath,
+//     };
+//   }
+
+//   static fromJson(Map<String, Object?> first) {
+//     return Thumbail_path(
+//       v_videoPath: first['v_videoPath'] as String,
+//       v_thumbnailPath: first['v_thumbnailPath'] as String,
+//     );
+//   }
+
+
+
+
+// }
+
+
+
+
+
+
+
+// final String video_thumbailedatabase  = 'video_thumbailedatabase';
+
+// class video_thumbnail{
+//    static final  List<String> values = [
+//   v_videoPath,v_thumbnailPath
+
+//   ];
+ 
+//   static final String v_thumbnailPath = 'v_thumbnailPath';
+//   static final String v_videoPath = 'v_videoPath';
+//   //static final String v_duration = 'v_duration';
+// }
 

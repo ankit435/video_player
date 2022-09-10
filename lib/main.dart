@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/file/file.dart';
 import 'package:video/home/home.dart';
+import 'package:video/helper/neo_player/player.dart';
 
 
 
@@ -22,6 +23,7 @@ import 'permission/permission.dart';
 import 'theme/theme_manager.dart';
 import 'theme/theme_screen.dart';
 import 'video_player/video_play.dart';
+
 //ThemeManager _themeManager = ThemeManager();
 
 Future<void> main() async {
@@ -37,6 +39,7 @@ WidgetsFlutterBinding.ensureInitialized();
   else{
     theme_id=1;
   }
+  final db = await playerDatabase.instance;
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(theme_id),)], child: MyApp()));
 }

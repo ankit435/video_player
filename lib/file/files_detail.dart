@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -134,22 +135,64 @@ class _CharacteristListItemState extends State<Files_path> {
           color: Theme.of(context).textTheme.bodyText1!.color,
         ));
   }
+Future<Directory> video_thumbail() async{
+  //var dir = await getExternalStorageDirectory();
+  //var path = dir?.path;
+  var directory = Directory("/storage/emulated/0/video_thumbnail/");
+  if (!await directory.exists()) {
+    await directory.create();
+  }
+  return directory;
+}
+
+Future<String?> Createvideothumbail(File path) async{
+ 
+  var dir = await video_thumbail();
+  var thumbnail = await VideoThumbnail.thumbnailFile(
+    video: path.path,
+    thumbnailPath: dir.path,
+    imageFormat: ImageFormat.PNG,
+   
+    quality: 75,
+    
+  );
+  
+  return thumbnail;
+ 
+
+}
+
+  Widget image() {
+    return FutureBuilder(
+        future: Createvideothumbail(File(widget.file_path[widget.index].v_videoPath)),
+        builder: (context, snapshot) {
+          
+          if (snapshot.hasData&&Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id,  snapshot.data.toString())) {
+            return  Image.file(
+              File(snapshot.data.toString()),
+              height: 64,
+              width: 64,
+              fit: BoxFit.fill,
+            );
+            
+          } else {
+            return Image.asset(
+              "assets/video/video-play-button.png",
+              fit: BoxFit.cover,
+            );
+          }
+        });
+  }
 
   Widget build(BuildContext context) {
-//   uint8list= VideoThumbnail.thumbnailData(
-//   video: widget.file_path[widget.index].v_videoPath,
-//   imageFormat: ImageFormat.JPEG,
-//   maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-//   quality: 25,
-// );
     return ListTile(
       leading: widget.value == 1
           ? const Icon(
               Icons.folder,
             )
-          // : _controller!.value.isInitialized?
-          : Container(child: FittedBox (child: Image(image: AssetImage("assets/video/video-play-button.png"),fit: BoxFit.cover,height: 50,width: 50,))),
-      //: CircularProgressIndicator(),
+          : widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 64,
+              width: 64,) :  image(),
+  
       title: titles(),
       subtitle: widget.onPressed1 == null
           ? null

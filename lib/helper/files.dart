@@ -252,6 +252,36 @@ class folder_details with ChangeNotifier {
     return _folder_item[folder_index(f_id)].f_title;
   }
 
+
+  // void thumbailedatabase(String f_id, String v_id, String thumail) async{
+  //   final db = await playerDatabase.instance;
+  //       // db.create_thumbaile(v_id, thumail,duration: f_id);
+  // }
+
+
+String ?getthumbailpath(String f_id,String v_id){
+
+  int f_index=folder_index(f_id);
+  int v_index=folder_video_index(f_index, v_id);
+
+  return _folder_item[f_index].f_detail[v_index].v_thumbnailPath;
+}
+
+  bool setthumail(String f_id, String v_id, String thumail) {
+   
+    try {
+        //  thumbailedatabase(f_id, v_id, thumail);
+         _folder_item[folder_index(f_id)]
+            .f_detail[folder_video_index(folder_index(f_id), v_id)]
+            .v_thumbnailPath = thumail;
+        notifyListeners();
+        return true;
+    } catch (e) {
+      print(e);
+    }
+    return false;
+  }
+
   List<video> getfoldertotalvideo(String f_id, String sort, bool sortrevrsed) {
     if (sort == 'Name') {
       _folder_item[folder_index(f_id)].f_detail.sort((a, b) {
@@ -539,20 +569,16 @@ class PlayList_detail with ChangeNotifier {
       final db = await playerDatabase.instance;
       final List<PlayList> maps = (await db.readAllPlaylist());
       for (var element in maps) {
-        int index=_playlist_item
-                .indexWhere((playlist) => playlist.p_id == element.p_id);
-          if(index==-1){
-            print(element.p_title+"=="+ element.count.toString());
-            if(element.count<=0){
-              deleteindatabase(element.p_id);
-            }
-            else{
+        int index = _playlist_item
+            .indexWhere((playlist) => playlist.p_id == element.p_id);
+        if (index == -1) {
+          print(element.p_title + "==" + element.count.toString());
+          if (element.count <= 0) {
+            deleteindatabase(element.p_id);
+          } else {
             _playlist_item.add(element);
-            }
           }
-          
-          
-        
+        }
       }
 
       notifyListeners();
@@ -564,7 +590,6 @@ class PlayList_detail with ChangeNotifier {
   void addin_playlist_database() {
     try {
       for (var element in _playlist_item) {
-       
         addtodatabase(element);
       }
     } catch (e) {
@@ -589,7 +614,9 @@ class PlayList_detail with ChangeNotifier {
   }
 
   List<PlayList> items() {
-    return _playlist_item.skipWhile((value) => (value.count <= 0&&value.p_id!="Favourite")).toList();
+    return _playlist_item
+        .skipWhile((value) => (value.count <= 0 && value.p_id != "Favourite"))
+        .toList();
   }
 
   int getplayList_index_id(String p_id) {
@@ -673,7 +700,7 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-bool remove_playlist_video(Map<int, String> selctionList) {
+  bool remove_playlist_video(Map<int, String> selctionList) {
     print("hi");
     try {
       {
@@ -842,15 +869,12 @@ bool remove_playlist_video(Map<int, String> selctionList) {
 
       if (p_index != -1) {
         PlayList playList = _playlist_item[p_index];
-        
-          playList.p_detail.removeWhere((element) => element.v_id == value);
-          playList.count = playList.count - 1;
-          if (updateindatabase(playList) != -1) {
+
+        playList.p_detail.removeWhere((element) => element.v_id == value);
+        playList.count = playList.count - 1;
+        if (updateindatabase(playList) != -1) {
           _playlist_item[p_index] = playList;
-          
         }
-  
-        
       }
     });
     notifyListeners();

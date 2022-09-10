@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/helper/file.dart';
+import 'package:video_player/video_player.dart';
+import 'neo_player/player.dart';
 class Storage {
   static Set<String>ext={'MP4','FLV','MOV','MKV','AVI','WMV'};
   
@@ -27,6 +32,43 @@ static String getFileExtensions(FileSystemEntity file) {
       throw "FileSystemEntity is Directory, not a File";
     }
   }
+
+  static bool isVideo(FileSystemEntity file) {
+    if (file is File) {
+      return ext.contains(getFileExtensions(file).toUpperCase());
+    } else {
+      throw "FileSystemEntity is Directory, not a File";
+    }
+  }
+Future<Directory> video_thumbail() async{
+  //var dir = await getExternalStorageDirectory();
+  //var path = dir?.path;
+  var directory = Directory("/storage/emulated/0/video_thumbnail");
+  if (!await directory.exists()) {
+    await directory.create();
+  }
+  return directory;
+}
+
+
+
+
+// Future<String?> Createvideothumbail(File path) async{
+//   var dir = await video_thumbail();
+//   var thumbnail = await VideoThumbnail.thumbnailFile(
+//     video: path.path,
+//     thumbnailPath: dir.path,
+//     imageFormat: ImageFormat.JPEG,
+//     maxHeight: 128, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+//     quality: 7,
+//   );
+//   print(thumbnail.toString());
+//   return thumbnail;
+ 
+
+// }
+
+
 
 
 String idGenerator() {
@@ -64,7 +106,38 @@ try {
   //   return v_id;
   // }
 
-  void getfolder(List root, List<folder> folders, String parent,dynamic size,int t_id,int z_id) {
+   String?  gethumbail(String path) {
+
+String filename=folder_name(path);
+ var lastSeparator = filename.lastIndexOf('.');
+var newPath = filename.substring(0, lastSeparator);
+ String thumbailpath = "/storage/emulated/0/video_thumbnail/"+ newPath+".png" ;
+  print(thumbailpath);
+   //print(thumbailpath);
+    if(File(thumbailpath).existsSync()) {   
+      print(thumbailpath);
+      return thumbailpath;
+    } 
+   // print("null");
+    return null;
+  
+}
+
+
+
+  Future<int> getVideowatchduration(String path) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? v_id = prefs.getInt(path);
+    if(v_id ==null)
+    {
+      await prefs.setInt(path, 0);
+      return 0;
+    }
+    return v_id;
+  }
+
+
+  void getfolder(List root, List<folder> folders, String parent,dynamic size,int t_id,int z_id) async {
     List<video> file = [];
     String f_id=parent;
     
@@ -78,11 +151,13 @@ try {
           // file.add(i.absolute.path);
           if(filterExtension(getFileExtensions(i))){
           size+=i.lengthSync();
+          //Future<String?> thum= Createvideothumbail(i);
           file.add(video(
               parent_folder_id: f_id,
               v_id: i.absolute.path,
               v_title: folder_name(i.absolute.path),
-              v_thumbnailPath: i.absolute.path,
+              // v_thumbnailPath: await Createvideothumbail(i) as String,
+              v_thumbnailPath: gethumbail(i.absolute.path),
               v_videoPath: i.path,
               v_duration: -1,
               v_timestamp: i.lastModifiedSync(),
@@ -195,6 +270,55 @@ try {
         return false;
       }   
 }
+
+
+  // Future<String> gethumbail(String path) async {
+  //   final db = await playerDatabase.instance;
+  //   String thumbailpath = path.substring(0, path.lastIndexOf(".")) + ".jpg";
+  //   if (await File(thumbailpath).exists()) {
+  //     return thumbailpath;
+  //   } else {
+  //     final VideoPlayerController controller = VideoPlayerController.file(File(path));
+  //     await controller.initialize();
+  //     final int duration = controller.value.duration.inMilliseconds;
+  //     final int position = duration ~/ 2;
+  //     final VideoFrame frame = await controller.getVideoFrame(
+  //       VideoFrameFormat.jpeg,
+  //       position: Duration(milliseconds: position),
+  //     );
+  //     final Uint8List imageBytes = frame.image.planes[0].bytes;
+  //     final File imageFile = File(thumbailpath);
+  //     await imageFile.writeAsBytes(imageBytes);
+  //     await controller.dispose();
+  //     db.create_thumbaile(Thumbail_path(v_thumbnailPath: thumbailpath, v_videoPath: path));
+  //     return thumbailpath;
+  //   }
+  // }
+
+ 
+
+// getfromdatabase(String path)async{
+//   final db = await playerDatabase.instance;
+//   String val;
+//   var res=db.thumbail_path(path).then((value) => {val= value.v_thumbnailPath});
+//  //print(res);
+//   return res;
+// }
+
+
+
+
+//   gethumbail(path) {
+    
+//     getfromdatabase(path);
+//     // if (File(thumbpath).existsSync()) {
+//     //   return null;
+//     // } else {
+//     //   return "assets/images/placeholder.jpg";
+//     // }
+//     return null;
+
+//   }
 
     
   

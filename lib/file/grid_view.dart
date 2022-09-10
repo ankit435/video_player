@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../helper/file.dart';
 import '../helper/files.dart';
@@ -84,6 +87,51 @@ class _Grid_view_fileState extends State<Grid_view_file> {
           color: Theme.of(context).textTheme.bodyText1!.color,
         ));
   }
+  Future<Directory> video_thumbail() async{
+  //var dir = await getExternalStorageDirectory();
+  //var path = dir?.path;
+  var directory = Directory("/storage/emulated/0/video_thumbnail/");
+  if (!await directory.exists()) {
+    await directory.create();
+  }
+  return directory;
+}
+
+Future<String?> Createvideothumbail(File path) async{
+ 
+  var dir = await video_thumbail();
+  var thumbnail = await VideoThumbnail.thumbnailFile(
+    video: path.path,
+    thumbnailPath: dir.path,
+    imageFormat: ImageFormat.PNG,
+    quality: 75,
+    
+  );
+  
+  return thumbnail;
+ 
+
+}
+
+  Widget image() {
+    return FutureBuilder(
+        future: Createvideothumbail(File(widget.file_path[widget.index].v_videoPath)),
+        builder: (context, snapshot) {
+          
+          if (snapshot.hasData&&Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id,  snapshot.data.toString())) {
+            return  Image.file(
+              File(snapshot.data.toString()),
+              fit: BoxFit.fill,
+            );
+            
+          } else {
+            return Image.asset(
+              "assets/video/video-play-button.png",
+              fit: BoxFit.fill,
+            );
+          }
+        });
+  }
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -127,7 +175,7 @@ class _Grid_view_fileState extends State<Grid_view_file> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-          FittedBox (child: Image(image: AssetImage("assets/video/video-play-button.png"),fit: BoxFit.cover)),
+          widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,) :  image(),
           ListTile(
             title: text(widget.file_path[widget.index].v_title),
             subtitle:  FittedBox(

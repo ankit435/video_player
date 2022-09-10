@@ -8,7 +8,7 @@ class playerDatabase{
  
  static final playerDatabase instance = playerDatabase._init();
 
-  static Database? _database;
+static Database? _database;
 
  playerDatabase._init();
 
@@ -20,7 +20,7 @@ Future<Database> get database async {
   }
 
 Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
+    final dbPath ="/storage/emulated/0/dataabse/";
     final path = join(dbPath, filePath);
     return await openDatabase(path, version: 1, onCreate: _createDB);
 
@@ -68,9 +68,23 @@ Future<Database> _initDB(String filePath) async {
       ${playlist_database.p_thumbnailPath} $textType
       )
     ''');
-
+    // await db.execute('''CREATE TABLE $video_thumbailedatabase( 
+    //   ${video_thumbnail.v_videoPath} $idType,
+    //   ${video_thumbnail.v_thumbnailPath} $textType
+    //   )
+    // ''');
+    
 
   }
+
+  // create_thumbaile(  Thumbail_path  thumbai) async {
+  //   final db = await instance.database;
+  //   final res = await db.insert(video_thumbailedatabase, thumbai.toJson());
+    
+  //   // return Thumbail_path.copy();
+  //   //return false;
+  // }
+  
 
 Future<PlayList> create(PlayList playlist) async {
  
@@ -125,10 +139,24 @@ Future<int> delete_playlist(String p_id) async {
       whereArgs: [p_id],
     );
   }
-  
 
-  
+//   Future<Thumbail_path> thumbail_path(String v_id) async{
+//   final db = await instance.database;
+//   final maps = await db.query(
+//       video_thumbailedatabase,
+//       columns: video_thumbnail.values,
+//       where: '${video_thumbnail.v_videoPath} = ?',
+//       whereArgs: [v_id],
+//     );
 
+//     // print(maps);
+//      if (maps.isNotEmpty) {
+//       return  Thumbail_path.fromJson(maps.first);
+//     } else {
+//       throw Exception('ID $v_id not found');
+//     }
+// }
+  
 
 
 

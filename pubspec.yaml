@@ -38,11 +38,12 @@ dependencies:
   auto_size_text: ^3.0.0
   video_player: ^2.4.5
   share_plus: ^4.0.10+1
-  video_thumbnail: ^0.5.2
   flutter_circle_color_picker: ^0.3.0
   device_info_plus: ^4.1.2
   shared_preferences: ^2.0.15
   sqflite: ^2.0.3+1
+  video_thumbnail: ^0.5.2
+ 
 
 
   
