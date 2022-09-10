@@ -87,7 +87,7 @@ class video with ChangeNotifier {
   String? v_thumbnailPath=null;
   int v_duration;
   final DateTime v_timestamp;
-   int v_watched;
+  int  v_watched;
   final int v_size;
   final DateTime v_lastmodified;
   bool v_favourite;

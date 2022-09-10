@@ -112,10 +112,10 @@ String filename=folder_name(path);
  var lastSeparator = filename.lastIndexOf('.');
 var newPath = filename.substring(0, lastSeparator);
  String thumbailpath = "/storage/emulated/0/video_thumbnail/"+ newPath+".png" ;
-  print(thumbailpath);
+ 
    //print(thumbailpath);
     if(File(thumbailpath).existsSync()) {   
-      print(thumbailpath);
+   
       return thumbailpath;
     } 
    // print("null");
@@ -123,6 +123,11 @@ var newPath = filename.substring(0, lastSeparator);
   
 }
 
+
+void setvideoWatchduration( String path,int duration) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(path, duration);
+  }
 
 
   Future<int> getVideowatchduration(String path) async {
@@ -161,7 +166,7 @@ var newPath = filename.substring(0, lastSeparator);
               v_videoPath: i.path,
               v_duration: -1,
               v_timestamp: i.lastModifiedSync(),
-              v_watched: 0,
+              v_watched:0,
               v_size: i.lengthSync(),
               v_lastmodified: i.lastModifiedSync(),
               ),

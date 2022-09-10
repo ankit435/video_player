@@ -453,10 +453,17 @@ String ?getthumbailpath(String f_id,String v_id){
     notifyListeners();
   }
 
+  void setvideoWatchduration( String path,int duration) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(path, duration);
+  }
+
+
   void SetWatchedduration(int duration, String v_id, String f_id) {
     var f_index = folder_index(f_id);
     var v_index = folder_video_index(f_index, v_id);
     print("duration" + duration.toString());
+    //setvideoWatchduration(_folder_item[f_index].f_detail[v_index].v_videoPath,duration);
     _folder_item[f_index].f_detail[v_index].v_watched = duration;
     notifyListeners();
   }

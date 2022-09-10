@@ -80,7 +80,7 @@ class _Grid_view_fileState extends State<Grid_view_file> {
   }
    Widget text(String text) {
     return Text(text,
-    maxLines: 1,
+    maxLines: 2,
     overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 12,
@@ -121,7 +121,7 @@ Future<String?> Createvideothumbail(File path) async{
           if (snapshot.hasData&&Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id,  snapshot.data.toString())) {
             return  Image.file(
               File(snapshot.data.toString()),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             );
             
           } else {
@@ -175,7 +175,7 @@ Future<String?> Createvideothumbail(File path) async{
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-          widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,) :  image(),
+          widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 60,) :  image(),
           ListTile(
             title: text(widget.file_path[widget.index].v_title),
             subtitle:  FittedBox(
