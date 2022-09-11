@@ -117,11 +117,15 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
            ),
          ),
       onTap: widget.selection? (){widget.toggleselctionlist(widget.folder_detail.f_id,widget.folder_detail.f_size);}:() {
-        Navigator.of(context).pushNamed(Files.routeName, arguments: {
-          'v1': widget.folder_detail.f_title,
-          'v2': widget.folder_detail.f_id
-        }
-        );
+     
+      Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Files(
+
+                        f_id: widget.folder_detail.f_id,
+                        title: widget.folder_detail.f_title,
+                        recent: false,
+                        )));
+
       },
       trailing: widget.selection?checkbox():iconbutoon(),
       onLongPress: (){

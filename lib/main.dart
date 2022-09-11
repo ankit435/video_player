@@ -39,7 +39,7 @@ WidgetsFlutterBinding.ensureInitialized();
   else{
     theme_id=1;
   }
-  final db = await playerDatabase.instance;
+  await playerDatabase.instance;
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(theme_id),)], child: MyApp()));
 }
@@ -100,6 +100,7 @@ Future<void> loaddata() async {
     return MultiProvider(
       providers: [
         
+        ChangeNotifierProvider.value(value: recent_videos()),
         
        ChangeNotifierProvider.value(
           value: folder_details()
@@ -131,7 +132,7 @@ Future<void> loaddata() async {
       routes: {
         FlutterDemo.routeName: (ctx) => FlutterDemo(),
         Search.routeName: (ctx) => const Search(),
-        Files.routeName:(ctx)=> Files(),
+        // Files.routeName:(ctx)=> Files(),
         Setting.routeName:(ctx)=> Setting(),
         //Playlist_file.routeName:(context) => const Playlist_file(),
        // Videos_And_Songs.routeName:(context) => Videos_And_Songs(),

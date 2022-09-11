@@ -32,7 +32,7 @@ class _PlayListfolder_addState extends State<PlayListfolder_add> {
            ));
 }
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
 
 // Future<void> ondelete({int? p_id,int? v_id,int? f_id}) async {
@@ -103,7 +103,7 @@ Widget icons(IconData icon){
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return Rename_playlist_file_and_folder(v_id: "0", condition: true,p_id: widget.p_id,);
+                return Rename_playlist_file_and_folder(v_id: "0", condition: true,p_id: widget.p_id, f_id: "0",rename_name:Provider.of<PlayList_detail>(context, listen: false).getplaylisttitle(widget.p_id) ,);
               },
             );
           }

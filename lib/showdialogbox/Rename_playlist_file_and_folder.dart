@@ -11,9 +11,15 @@ class Rename_playlist_file_and_folder extends StatefulWidget {
   final String v_id;
   final bool condition;
   final String p_id;
+  final String f_id;
+  
+  String rename_name;
+  
 
-  const Rename_playlist_file_and_folder(
+   Rename_playlist_file_and_folder(
       {Key? key,
+      required this.f_id,
+      required this. rename_name,
       required this.p_id,
       required this.v_id,
       required this.condition})
@@ -31,6 +37,18 @@ class _Rename_playlist_file_and_folderState extends State<Rename_playlist_file_a
   void dispose() {
     _inputController.dispose();
     super.dispose();
+  }
+   void initState() {
+    super.initState();
+    
+     
+      _inputController.value = _inputController.value.copyWith(
+        text: widget.rename_name,
+        selection:
+            TextSelection(baseOffset: widget.rename_name.length, extentOffset: widget.rename_name.length),
+        composing: TextRange.empty,
+      );
+    
   }
 
   bool isEmpty() {
@@ -87,10 +105,19 @@ Widget text(String text){
                           ? Provider.of<PlayList_detail>(context, listen: false)
                               .rename_playlist_folder(
                                   widget.p_id, _inputController.text)
-                          : Provider.of<PlayList_detail>(context, listen: false)
+                          :{ 
+                          if(Provider.of<folder_details>(context, listen: false)
+                              .rename_file(widget.v_id, widget.f_id,
+                                  _inputController.text)){
+                          Provider.of<PlayList_detail>(context, listen: false)
                               .rename_playlist_video(widget.v_id, widget.p_id,
-                                  _inputController.text);
-                    }
+                                  _inputController.text)
+                                  }
+                          else{
+                            print("failed to rename")
+                          }
+                    };
+                  }
                   : null,
               child:  text('Rename'),
             ),

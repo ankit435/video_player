@@ -132,21 +132,24 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
   Widget build(BuildContext context) {
     playLists = Provider.of<PlayList_detail>(context, listen: true).items();
     return Scaffold(
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-            // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            // pinned: true,
-            floating: true,
-            snap: true,
-            title: text("PlayList"),
-            // actions: action(),
-          ),
-        ],
-        body:
-            Container(color: Theme.of(context).backgroundColor, child: _body()),
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              backgroundColor: Theme.of(context).backgroundColor,
+              // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              // pinned: true,
+              floating: true,
+              snap: true,
+              title: text("PlayList"),
+              // actions: action(),
+            ),
+          ],
+          body:
+              Container(color: Theme.of(context).backgroundColor, child: _body()),
+        ),
       ),
     );
   }

@@ -42,7 +42,7 @@ Widget text(String text){
 
 
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
 
 
@@ -75,7 +75,7 @@ Widget icons(IconData icon){
          ListTile(
           leading: icons(Icons.lock),
           title: text("Lock Folder"),
-          onTap: (){print("lock");},
+          onTap: (){ Provider.of<recent_videos>(context, listen: false).add_to_recent(videos) ;},
         ),
          ListTile(leading: icons(Icons.playlist_add), title:  text("Add to PlayList"),onTap: () {
             Navigator.pop(context);
@@ -84,13 +84,13 @@ Widget icons(IconData icon){
        ListTile(leading: icons(Icons.delete), title: text("Delete"),onTap: (){
           
               Navigator.pop(context);    
-              //Map<String,String> delete={widget.v_id:widget.f_id};
+             
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return Show_dialog(onPressedtext:"Delete",onPressed:(){widget.onsinglefiledelete({widget.v_id:widget.f_id});},title: "Delete Video from Device",text:"Are you sure you want to delete this File?");
                     });
-        // Provider.of<folder_details>(context, listen: false).delete_one_file(videos);
+       
 
        } ),
        ListTile(leading: icons(Icons.share), title: text("Share"),onTap: () async {

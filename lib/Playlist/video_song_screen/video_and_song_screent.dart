@@ -24,6 +24,7 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
 
   List<Widget> action() {
     return [
+      IconButton(onPressed: (){}, icon: icons(Icons.search)),
       IconButton(
         onPressed: () {
           selction_list.isNotEmpty 
@@ -31,9 +32,12 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
               : null;
           Navigator.of(context).pop();
         },
-        icon: const Icon(Icons.check),
+        icon:  icons(Icons.check),
         padding: EdgeInsets.only(right: 5),
-      )
+      ),
+      
+
+
     ];
   }
 
@@ -95,6 +99,20 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
     super.didChangeDependencies();
   }
 
+    Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
+  
+  Widget icons(IconData icon) {
+    return Icon(
+      icon,
+      color: Theme.of(context).iconTheme.color,
+    );
+  }
+
   Widget build(BuildContext context) {
     file_detail =
         Provider.of<folder_details>(context, listen: true).getAllvideo();
@@ -106,35 +124,41 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-          body: NestedScrollView(
-            floatHeaderSlivers: true,
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                pinned: true,
-                floating: true,
-                snap: true,
-                title: Text(selction_list.length.toString() + " Selected"),
-                actions: action(),
-                bottom: TabBar(tabs: [
-                  Tab(
-                    text: "Song",
-                  ),
-                  Tab(
-                    text: "Video",
-                  )
-                ]),
-              ),
-            ],
-            body: TabBarView(
-              children: [
-                Song_playlist(),
-                Video_playlist(
-                    selction_list: selction_list,
-                    toggleselctionlist: toggleselctionlist,
-                    Files_path: file_detail,
-                    select_all_file: _select_all_file),
+          body: Container(
+            color: Theme.of(context).backgroundColor,
+            child: NestedScrollView(
+   
+              floatHeaderSlivers: true,
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverAppBar(
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  pinned: true,
+                  floating: true,
+                  snap: true,
+                  title: text(selction_list.length.toString() + " Selected"),
+                  actions: action(),
+                  bottom: TabBar(tabs: [
+                    Tab(
+                      child: text("Song") ,
+                      //text: "Song",
+                      
+                    ),
+                    Tab(
+                     child: text("Video") ,
+                    )
+                  ]),
+                ),
               ],
+              body: TabBarView(
+                children: [
+                  Song_playlist(),
+                  Video_playlist(
+                      selction_list: selction_list,
+                      toggleselctionlist: toggleselctionlist,
+                      Files_path: file_detail,
+                      select_all_file: _select_all_file),
+                ],
+              ),
             ),
           ),
         ));

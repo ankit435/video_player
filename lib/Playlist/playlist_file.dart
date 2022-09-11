@@ -109,7 +109,6 @@ class _Playlist_fileState extends State<Playlist_file> {
     return Column(
       children: [
         Container(
-          height: 50,
           child: ListTile(
               leading: Icon(
                 Icons.play_arrow,
@@ -137,6 +136,7 @@ class _Playlist_fileState extends State<Playlist_file> {
         ),
         Flexible(
           child: ReorderableListView.builder(
+            padding: EdgeInsets.zero,
               onReorder: (oldIndex, newIndex) {
                 Provider.of<PlayList_detail>(context, listen: false)
                     .reorederd_playlist_video(oldIndex, newIndex, widget.p_id);
@@ -177,107 +177,111 @@ class _Playlist_fileState extends State<Playlist_file> {
         .getPlayListWithplay_id(widget.p_id);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverAppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-
-            expandedHeight: 240,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                height: 240,
-                width: double.infinity,
-                child: Stack(
-                  children: [
-                    Container(
-                      height: 240,
-                      width: double.infinity,
-                      child: playLists.isEmpty
-                          ? Image.asset(
-                              "assets/video/video-play-button.png",
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              File(Provider.of<folder_details>(context,
-                                      listen: false)
-                                  .getthumbailpath(
-                                      playLists[0].parent_folder_id,
-                                      playLists[0].v_id) ??
-                              "assets/video/video-play-button.png"),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Container(
-                      height: 240,
-                      width: double.infinity,
-                      color: Colors.black.withOpacity(0.5),
-                    ),
-                    Positioned(
-                      top: 100,
-                      left: 20,
-                      child: Container(
-                        height: 100,
-                        width: 100,
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+             // elevation: 0,
+              backgroundColor: Theme.of(context).backgroundColor,
+              expandedHeight: 240,
+             
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  height: 240,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 240,
+                        width: double.infinity,
                         child: playLists.isEmpty
-                          ? Image.asset(
-                              "assets/video/video-play-button.png",
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                          File(Provider.of<folder_details>(context,
-                                      listen: false)
-                                  .getthumbailpath(
-                                      playLists[0].parent_folder_id,
-                                      playLists[0].v_id) ??
-                              "assets/video/video-play-button.png"),
-                          height: 64,
-                          width: 64,
-                          fit: BoxFit.fill,
+                            ? Image.asset(
+                                "assets/video/video-play-button.png",
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                File(Provider.of<folder_details>(context,
+                                        listen: false)
+                                    .getthumbailpath(
+                                        playLists[0].parent_folder_id,
+                                        playLists[0].v_id) ??
+                                "assets/video/video-play-button.png"),
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                      Container(
+                        height: 240,
+                        width: double.infinity,
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                      Positioned(
+                        top: 100,
+                        left: 20,
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          child: playLists.isEmpty
+                            ? Image.asset(
+                                "assets/video/video-play-button.png",
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                            File(Provider.of<folder_details>(context,
+                                        listen: false)
+                                    .getthumbailpath(
+                                        playLists[0].parent_folder_id,
+                                        playLists[0].v_id) ??
+                                "assets/video/video-play-button.png"),
+                            height: 64,
+                            width: 64,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 100,
-                      left: 140,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            p_title,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            playLists.length.toString() + ' videos',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      Positioned(
+                        top: 100,
+                        left: 140,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              p_title,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              playLists.length.toString() + ' videos',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                // background: Colors.blue,
               ),
-              // background: Colors.blue,
+              pinned: true,
+              floating: true,
+              snap: true,
+              title: text(p_title),
+              // actions: action(),
             ),
-            pinned: true,
-            floating: true,
-            snap: true,
-            title: text(p_title),
-            // actions: action(),
-          ),
-        ],
-        body:
-            Container(color: Theme.of(context).backgroundColor, child: _body()),
+          ],
+          body:
+              Container(color: Theme.of(context).backgroundColor, child: _body()),
+        ),
       ),
     );
   }

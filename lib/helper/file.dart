@@ -360,3 +360,57 @@ PlayList copy({
 //   //static final String v_duration = 'v_duration';
 // }
 
+
+final String Recent_database  = 'Recent_database';
+
+class Recent_video{
+ static final List<String> values = [
+   R_video_id,time_stamp,videos
+  ];
+
+  static final  String R_video_id="R_video_id";
+  static final  String  videos="videos";
+ static final  String  time_stamp="time_stamp";
+}
+
+class recent_video with ChangeNotifier{
+  String R_video_id;
+  video videos;
+  int time_stamp;
+   recent_video({
+    required this. R_video_id,
+    required this.videos,
+    required this.time_stamp
+
+   });
+
+
+
+  Map<String, Object?> toJson() {
+    return {
+
+      Recent_video.R_video_id: R_video_id,
+      Recent_video.time_stamp: time_stamp,
+      Recent_video.videos: jsonEncode(videos.toJson()).toString(),
+    };
+  }
+
+  recent_video copy
+    ({
+      String? R_video_id,
+      video? videos,
+      int? time_stamp,
+    }) =>
+        recent_video(
+          R_video_id: R_video_id ?? this.R_video_id,
+          videos: videos ?? this.videos,
+          time_stamp: time_stamp ?? this.time_stamp,
+        );
+
+  
+recent_video.fromJson(Map<String, dynamic> json):
+  R_video_id = json[Recent_video.R_video_id],
+  time_stamp = json[Recent_video.time_stamp],
+  videos = video.fromJson(jsonDecode(json[Recent_video.videos]));
+}
+

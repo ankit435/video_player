@@ -61,7 +61,8 @@ class _SettingState extends State<Setting> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar( 
-          backgroundColor: Theme.of(context).primaryColor,
+          elevation: 0,
+          backgroundColor: Theme.of(context).backgroundColor,
        title: text("Setting")),
         body:Container(
              color: Theme.of(context).backgroundColor,

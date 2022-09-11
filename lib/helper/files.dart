@@ -74,12 +74,12 @@ class themes with ChangeNotifier {
         themeData: ThemeData(
           primarySwatch: Colors.blue,
           primaryColor: Colors.blue,
-          secondaryHeaderColor: Color.fromARGB(255, 6, 235, 124),
+          secondaryHeaderColor: Color.fromARGB(255, 40, 23, 75),
           brightness: Brightness.light,
           backgroundColor: Color.fromARGB(255, 40, 23, 75),
           accentColor: Colors.black,
           primaryIconTheme:
-              IconThemeData(color: Color.fromARGB(255, 15, 107, 206)),
+              IconThemeData(color: Color.fromARGB(255, 7, 230, 18)),
           accentIconTheme:
               IconThemeData(color: Color.fromARGB(255, 214, 9, 57)),
           dividerColor: Color.fromARGB(31, 201, 180, 180),
@@ -224,14 +224,13 @@ class folder_details with ChangeNotifier {
     return index;
   }
 
-  List<video> getfolderIdvideo(String f_id) {
-    return _folder_item[folder_index(f_id)].f_detail;
+  List<video> getfolderIdvideo(String fId) {
+    return _folder_item[folder_index(fId)].f_detail;
   }
 
-  int folder_video_index(int f_index, String v_id) {
-    int index = _folder_item[f_index]
-        .f_detail
-        .indexWhere((video) => video.v_id == v_id);
+  int folder_video_index(int fIndex, String vId) {
+    int index =
+        _folder_item[fIndex].f_detail.indexWhere((video) => video.v_id == vId);
     return index;
   }
 
@@ -248,83 +247,79 @@ class folder_details with ChangeNotifier {
     return _folder_item[folder_index(fId)].f_size;
   }
 
-  String getfoldername(String f_id) {
-    return _folder_item[folder_index(f_id)].f_title;
+  String getfoldername(String fId) {
+    return _folder_item[folder_index(fId)].f_title;
   }
-
 
   // void thumbailedatabase(String f_id, String v_id, String thumail) async{
   //   final db = await playerDatabase.instance;
   //       // db.create_thumbaile(v_id, thumail,duration: f_id);
   // }
 
+  String? getthumbailpath(String fId, String vId) {
+    int fIndex = folder_index(fId);
+    int vIndex = folder_video_index(fIndex, vId);
 
-String ?getthumbailpath(String f_id,String v_id){
+    return _folder_item[fIndex].f_detail[vIndex].v_thumbnailPath;
+  }
 
-  int f_index=folder_index(f_id);
-  int v_index=folder_video_index(f_index, v_id);
-
-  return _folder_item[f_index].f_detail[v_index].v_thumbnailPath;
-}
-
-  bool setthumail(String f_id, String v_id, String thumail) {
-   
+  bool setthumail(String fId, String vId, String thumail) {
     try {
-        //  thumbailedatabase(f_id, v_id, thumail);
-         _folder_item[folder_index(f_id)]
-            .f_detail[folder_video_index(folder_index(f_id), v_id)]
-            .v_thumbnailPath = thumail;
-        notifyListeners();
-        return true;
+      //  thumbailedatabase(f_id, v_id, thumail);
+      _folder_item[folder_index(fId)]
+          .f_detail[folder_video_index(folder_index(fId), vId)]
+          .v_thumbnailPath = thumail;
+      notifyListeners();
+      return true;
     } catch (e) {
       print(e);
     }
     return false;
   }
 
-  List<video> getfoldertotalvideo(String f_id, String sort, bool sortrevrsed) {
+  List<video> getfoldertotalvideo(String fId, String sort, bool sortrevrsed) {
     if (sort == 'Name') {
-      _folder_item[folder_index(f_id)].f_detail.sort((a, b) {
+      _folder_item[folder_index(fId)].f_detail.sort((a, b) {
         return a.v_title.toLowerCase().compareTo(b.v_title.toLowerCase());
       });
     } else if (sort == "Date") {
-      _folder_item[folder_index(f_id)].f_detail.sort((a, b) {
+      _folder_item[folder_index(fId)].f_detail.sort((a, b) {
         return a.v_timestamp.compareTo(b.v_timestamp);
       });
     } else if (sort == "Length") {
-      _folder_item[folder_index(f_id)].f_detail.sort((a, b) {
+      _folder_item[folder_index(fId)].f_detail.sort((a, b) {
         return a.v_duration.compareTo(b.v_duration);
       });
     } else if (sort == "Size") {
-      _folder_item[folder_index(f_id)].f_detail.sort((a, b) {
+      _folder_item[folder_index(fId)].f_detail.sort((a, b) {
         return a.v_size.compareTo(b.v_size);
       });
     }
 
     if (sortrevrsed) {
-      return _folder_item[folder_index(f_id)].f_detail.reversed.toList();
+      return _folder_item[folder_index(fId)].f_detail.reversed.toList();
     }
-    return _folder_item[folder_index(f_id)].f_detail;
+    return _folder_item[folder_index(fId)].f_detail;
   }
 
   Map<String, Set<String>> delete_file(Map<String, String> selctionList) {
-    Map<String, Set<String>> remove_play_list = {};
+    Map<String, Set<String>> removePlayList = {};
     try {
-      selctionList.forEach((v_id, f_id) {
-        int fIndex = folder_index(f_id);
-        int index = folder_video_index(fIndex, v_id);
+      selctionList.forEach((vId, fId) {
+        int fIndex = folder_index(fId);
+        int index = folder_video_index(fIndex, vId);
 
         if (Storage()
             .deleteFile(_folder_item[fIndex].f_detail[index].v_videoPath)) {
           _folder_item[fIndex].f_size = (_folder_item[fIndex].f_size) -
               (_folder_item[fIndex].f_detail[index].v_size);
 
-          for (var P_id in _folder_item[fIndex].f_detail[index].playlist_id) {
-            if (remove_play_list.containsKey(P_id)) {
-              remove_play_list[P_id]!.add(v_id);
+          for (var PId in _folder_item[fIndex].f_detail[index].playlist_id) {
+            if (removePlayList.containsKey(PId)) {
+              removePlayList[PId]!.add(vId);
             } else {
-              remove_play_list[P_id] = Set();
-              remove_play_list[P_id]!.add(v_id);
+              removePlayList[PId] = Set();
+              removePlayList[PId]!.add(vId);
             }
           }
           _folder_item[fIndex].f_detail.removeAt(index);
@@ -332,22 +327,22 @@ String ?getthumbailpath(String f_id,String v_id){
       });
       notifyListeners();
 
-      return remove_play_list;
+      return removePlayList;
     } catch (e) {
       print(e);
     }
-    return remove_play_list;
+    return removePlayList;
   }
 
   bool delete_one_file(video videos) {
     try {
-      int f_index = folder_index(videos.parent_folder_id);
-      int v_index = folder_video_index(f_index, videos.v_id);
-      print(f_index);
-      print(v_index);
-      _folder_item[f_index].f_size -=
-          _folder_item[f_index].f_detail[v_index].v_size;
-      _folder_item[f_index].f_detail.removeAt(v_index);
+      int fIndex = folder_index(videos.parent_folder_id);
+      int vIndex = folder_video_index(fIndex, videos.v_id);
+      print(fIndex);
+      print(vIndex);
+      _folder_item[fIndex].f_size -=
+          _folder_item[fIndex].f_detail[vIndex].v_size;
+      _folder_item[fIndex].f_detail.removeAt(vIndex);
       notifyListeners();
       return true;
     } catch (e) {
@@ -357,41 +352,41 @@ String ?getthumbailpath(String f_id,String v_id){
     return false;
   }
 
-  video gevideo(String f_id, String v_id) {
-    return _folder_item[folder_index(f_id)]
-        .f_detail[folder_video_index(folder_index(f_id), v_id)];
+  video gevideo(String fId, String vId) {
+    return _folder_item[folder_index(fId)]
+        .f_detail[folder_video_index(folder_index(fId), vId)];
   }
 
   Map<String, Set<String>> deleteFolder(Set<String> delete) {
-    Map<String, Set<String>> remove_play_list = {};
+    Map<String, Set<String>> removePlayList = {};
     try {
-      for (var f_id in delete) {
-        int f_index = folder_index(f_id);
-        if (Storage().deleteFolder(_folder_item[f_index].f_path)) {
-          for (var element in _folder_item[f_index].f_detail) {
-            for (var P_id in element.playlist_id) {
-              if (remove_play_list.containsKey(P_id)) {
-                remove_play_list[P_id]!.add(element.v_id);
+      for (var fId in delete) {
+        int fIndex = folder_index(fId);
+        if (Storage().deleteFolder(_folder_item[fIndex].f_path)) {
+          for (var element in _folder_item[fIndex].f_detail) {
+            for (var PId in element.playlist_id) {
+              if (removePlayList.containsKey(PId)) {
+                removePlayList[PId]!.add(element.v_id);
               } else {
-                remove_play_list[P_id] = Set();
-                remove_play_list[P_id]!.add(element.v_id);
+                removePlayList[PId] = Set();
+                removePlayList[PId]!.add(element.v_id);
               }
             }
           }
-          _folder_item.removeAt(f_index);
+          _folder_item.removeAt(fIndex);
         }
       }
       notifyListeners();
 
-      return remove_play_list;
+      return removePlayList;
     } catch (e) {}
 
-    return remove_play_list;
+    return removePlayList;
   }
 
-  bool rename_folder(String f_id, String newftitle) {
+  bool rename_folder(String fId, String newftitle) {
     try {
-      int index = folder_index(f_id);
+      int index = folder_index(fId);
       if (Storage().renameFolder(_folder_item[index].f_path, newftitle)) {
         _folder_item[index].f_title = newftitle;
         _folder_item[index].f_path = _folder_item[index]
@@ -409,27 +404,26 @@ String ?getthumbailpath(String f_id,String v_id){
     return false;
   }
 
-  bool rename_file(String v_id, String f_id, String newvtitle) {
+  bool rename_file(String vId, String fId, String newvtitle) {
     try {
-      int f_index = folder_index(f_id);
-      int v_index = folder_video_index(f_index, v_id);
+      int fIndex = folder_index(fId);
+      int vIndex = folder_video_index(fIndex, vId);
 
       if (Storage().renamefile(
-          _folder_item[f_index].f_detail[v_index].v_videoPath, newvtitle)) {
-        _folder_item[f_index].f_detail[v_index].v_title = newvtitle;
-        _folder_item[f_index].f_detail[v_index].v_videoPath =
-            _folder_item[f_index]
-                    .f_detail[v_index]
-                    .v_videoPath
-                    .substring(
-                        0,
-                        _folder_item[f_index]
-                                .f_detail[v_index]
-                                .v_videoPath
-                                .lastIndexOf('/') +
-                            1)
-                    .toString() +
-                newvtitle;
+          _folder_item[fIndex].f_detail[vIndex].v_videoPath, newvtitle)) {
+        _folder_item[fIndex].f_detail[vIndex].v_title = newvtitle;
+        _folder_item[fIndex].f_detail[vIndex].v_videoPath = _folder_item[fIndex]
+                .f_detail[vIndex]
+                .v_videoPath
+                .substring(
+                    0,
+                    _folder_item[fIndex]
+                            .f_detail[vIndex]
+                            .v_videoPath
+                            .lastIndexOf('/') +
+                        1)
+                .toString() +
+            newvtitle;
         notifyListeners();
         return true;
       }
@@ -439,32 +433,31 @@ String ?getthumbailpath(String f_id,String v_id){
     return false;
   }
 
-  void updatevideoopen(String v_id, String f_id) {
-    var f_index = folder_index(f_id);
-    var v_index = folder_video_index(f_index, v_id);
-    _folder_item[f_index].f_detail[v_index].v_open = true;
+  void updatevideoopen(String vId, String fId) {
+    var fIndex = folder_index(fId);
+    var vIndex = folder_video_index(fIndex, vId);
+    _folder_item[fIndex].f_detail[vIndex].v_open = true;
     notifyListeners();
   }
 
-  void Setduration(int duration, String v_id, String f_id) {
-    var f_index = folder_index(f_id);
-    var v_index = folder_video_index(f_index, v_id);
-    _folder_item[f_index].f_detail[v_index].v_duration = duration;
+  void Setduration(int duration, String vId, String fId) {
+    var fIndex = folder_index(fId);
+    var vIndex = folder_video_index(fIndex, vId);
+    _folder_item[fIndex].f_detail[vIndex].v_duration = duration;
     notifyListeners();
   }
 
-  void setvideoWatchduration( String path,int duration) async {
+  void setvideoWatchduration(String path, int duration) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt(path, duration);
   }
 
-
-  void SetWatchedduration(int duration, String v_id, String f_id) {
-    var f_index = folder_index(f_id);
-    var v_index = folder_video_index(f_index, v_id);
+  void SetWatchedduration(int duration, String vId, String fId) {
+    var fIndex = folder_index(fId);
+    var vIndex = folder_video_index(fIndex, vId);
     print("duration" + duration.toString());
     //setvideoWatchduration(_folder_item[f_index].f_detail[v_index].v_videoPath,duration);
-    _folder_item[f_index].f_detail[v_index].v_watched = duration;
+    _folder_item[fIndex].f_detail[vIndex].v_watched = duration;
     notifyListeners();
   }
 
@@ -482,29 +475,29 @@ String ?getthumbailpath(String f_id,String v_id){
     return videos;
   }
 
-  String folder_name(String? f_id) {
-    if (f_id == null) return "";
-    return _folder_item[folder_index(f_id)].f_title;
+  String folder_name(String? fId) {
+    if (fId == null) return "";
+    return _folder_item[folder_index(fId)].f_title;
   }
 
-  List<video> selection_foldervideo(Set<String> selction_list) {
-    List<video> selection_videos = [];
-    for (var element in selction_list) {
-      selection_videos.addAll(_folder_item[folder_index(element)].f_detail);
+  List<video> selection_foldervideo(Set<String> selctionList) {
+    List<video> selectionVideos = [];
+    for (var element in selctionList) {
+      selectionVideos.addAll(_folder_item[folder_index(element)].f_detail);
     }
-    return selection_videos;
+    return selectionVideos;
   }
 
-  List<String> getallvideo_path(Map<String, String> selction_list) {
-    List<String> v_path = [];
+  List<String> getallvideo_path(Map<String, String> selctionList) {
+    List<String> vPath = [];
     try {
-      selction_list.forEach((key, element) {
+      selctionList.forEach((key, element) {
         // print(key.toString()+"  "+element.toString());
         int fIndex = folder_index(element);
         int index = folder_video_index(fIndex, key);
-        v_path.add(_folder_item[fIndex].f_detail[index].v_videoPath);
+        vPath.add(_folder_item[fIndex].f_detail[index].v_videoPath);
       });
-      return v_path;
+      return vPath;
     } catch (e) {
       print(e);
     }
@@ -522,13 +515,13 @@ String ?getthumbailpath(String f_id,String v_id){
     return folders;
   }
 
-  void add_to_playlist_id(String? p_id, List<video> list) {
+  void add_to_playlist_id(String? pId, List<video> list) {
     try {
-      if (p_id != null) {
+      if (pId != null) {
         for (var element in list) {
-          int f_index = folder_index(element.parent_folder_id);
-          int v_index = folder_video_index(f_index, element.v_id);
-          _folder_item[f_index].f_detail[v_index].playlist_id.add(p_id);
+          int fIndex = folder_index(element.parent_folder_id);
+          int vIndex = folder_video_index(fIndex, element.v_id);
+          _folder_item[fIndex].f_detail[vIndex].playlist_id.add(pId);
         }
       }
       notifyListeners();
@@ -615,9 +608,9 @@ class PlayList_detail with ChangeNotifier {
     return await db.update(playList);
   }
 
-  Future<int> deleteindatabase(String p_id) async {
+  Future<int> deleteindatabase(String pId) async {
     final db = await playerDatabase.instance;
-    return await db.delete_playlist(p_id);
+    return await db.delete_playlist(pId);
   }
 
   List<PlayList> items() {
@@ -626,8 +619,8 @@ class PlayList_detail with ChangeNotifier {
         .toList();
   }
 
-  int getplayList_index_id(String p_id) {
-    int index = _playlist_item.indexWhere((Playl) => Playl.p_id == p_id);
+  int getplayList_index_id(String pId) {
+    int index = _playlist_item.indexWhere((Playl) => Playl.p_id == pId);
     return index;
   }
 
@@ -636,35 +629,35 @@ class PlayList_detail with ChangeNotifier {
     return index;
   }
 
-  List<video> getPlayListWithplay_id(String p_id) {
-    return _playlist_item[getplayList_index_id(p_id)].p_detail;
+  List<video> getPlayListWithplay_id(String pId) {
+    return _playlist_item[getplayList_index_id(pId)].p_detail;
   }
 
-  Future<Map<String, List<video>>?> playlist_adds(List<video> video_details,
-      String? pTitle, String? p_id, Map<String, String> selctionList) async {
+  Future<Map<String, List<video>>?> playlist_adds(List<video> videoDetails,
+      String? pTitle, String? pId, Map<String, String> selctionList) async {
     List<video> temp = [];
 
-    String P_id = p_id != null ? p_id : idGenerator();
-    int index = p_id == null ? -1 : getplayList_index_id(P_id);
+    String PId = pId != null ? pId : idGenerator();
+    int index = pId == null ? -1 : getplayList_index_id(PId);
     try {
       if (index == -1) {
-        selctionList.forEach((v_id, f_id) {
-          temp.add(video_details[
-              video_details.indexWhere((video) => video.v_id == v_id)]);
+        selctionList.forEach((vId, fId) {
+          temp.add(videoDetails[
+              videoDetails.indexWhere((video) => video.v_id == vId)]);
         });
 
         _playlist_item.add(await addtodatabase(PlayList(
-            p_id: P_id,
+            p_id: PId,
             p_title: pTitle != null ? pTitle : "New Playlist",
             p_detail: temp)));
       } else {
-        selctionList.forEach((v_id, f_id) {
+        selctionList.forEach((vId, fId) {
           if (_playlist_item[index]
                   .p_detail
-                  .indexWhere((element) => element.v_id == v_id) ==
+                  .indexWhere((element) => element.v_id == vId) ==
               -1) {
-            temp.add(video_details[
-                video_details.indexWhere((video) => video.v_id == v_id)]);
+            temp.add(videoDetails[
+                videoDetails.indexWhere((video) => video.v_id == vId)]);
           }
         });
         PlayList playList = _playlist_item[index];
@@ -677,22 +670,22 @@ class PlayList_detail with ChangeNotifier {
 
       notifyListeners();
 
-      return {P_id: temp};
+      return {PId: temp};
     } catch (e) {
       print(e);
     }
     return null;
   }
 
-  bool add_one_playlist(String p_id, video video_detail) {
-    int index = getplayList_index_id(p_id);
+  bool add_one_playlist(String pId, video videoDetail) {
+    int index = getplayList_index_id(pId);
     try {
       if (_playlist_item[index]
               .p_detail
-              .indexWhere((pv) => pv.v_id == video_detail.v_id) !=
+              .indexWhere((pv) => pv.v_id == videoDetail.v_id) !=
           -1) {
         PlayList playList = _playlist_item[index];
-        playList.p_detail.add(video_detail);
+        playList.p_detail.add(videoDetail);
         playList.count = playList.count + 1;
         if (updateindatabase(playList) != -1) {
           _playlist_item[index] = playList;
@@ -711,8 +704,8 @@ class PlayList_detail with ChangeNotifier {
     print("hi");
     try {
       {
-        selctionList.forEach((key, P_id) {
-          int index = getplayList_index_id(P_id);
+        selctionList.forEach((key, PId) {
+          int index = getplayList_index_id(PId);
           if (index != -1) {
             PlayList playList = _playlist_item[index];
             playList.p_detail.removeWhere((element) => element.v_id == key);
@@ -733,8 +726,8 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  int copy_playList(String p_id, String target, List<video> Pvideos) {
-    int tindex = getplayList_index_id(p_id);
+  int copy_playList(String pId, String target, List<video> Pvideos) {
+    int tindex = getplayList_index_id(pId);
     int c = 0;
     try {
       if (tindex == -1) {
@@ -764,13 +757,15 @@ class PlayList_detail with ChangeNotifier {
   Future<String?> create_one_copy_playList(
       String title, List<video> passvideo) async {
     try {
-      String P_id = idGenerator();
+      String PId = idGenerator();
 
       _playlist_item.add(await addtodatabase(
-          PlayList(p_detail: passvideo, p_id: P_id, p_title: title)));
+          PlayList(p_detail: passvideo, p_id: PId, p_title: title)));
       notifyListeners();
-      return P_id;
+      return PId;
     } catch (e) {}
+    throw (e);
+
     return null;
   }
 
@@ -792,22 +787,27 @@ class PlayList_detail with ChangeNotifier {
     return null;
   }
 
-  bool rename_playlist_video(String v_id, String p_id, String newtitle) {
+  bool rename_playlist_video(String vId, String pId, String newtitle) {
     try {
-      int pindex = getplayList_index_id(p_id);
-      int pvindex = _playlist_item[pindex]
-          .p_detail
-          .indexWhere((element) => element.v_id == v_id);
-      _playlist_item[pindex].p_detail[pvindex].v_title = newtitle;
+      int pindex = getplayList_index_id(pId);
+
+      PlayList playlist = _playlist_item[pindex];
+      int pvindex =
+          playlist.p_detail.indexWhere((element) => element.v_id == vId);
+      if (updateindatabase(playlist) != -1) {
+        print("rename  sucess");
+        _playlist_item[pindex] = playlist;
+      }
+
       notifyListeners();
       return true;
     } catch (e) {}
     return false;
   }
 
-  bool rename_playlist_folder(String p_id, String newtitle) {
+  bool rename_playlist_folder(String pId, String newtitle) {
     try {
-      int pindex = getplayList_index_id(p_id);
+      int pindex = getplayList_index_id(pId);
 
       if (pindex != -1) {
         PlayList playList = _playlist_item[pindex];
@@ -823,11 +823,11 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  bool remove_playlist_folder(Set<String> p_id) {
+  bool remove_playlist_folder(Set<String> pId) {
     try {
-      for (var p_id in p_id) {
-        if (deleteindatabase(p_id) != -1) {
-          _playlist_item.removeWhere((element) => element.p_id == p_id);
+      for (var pId in pId) {
+        if (deleteindatabase(pId) != -1) {
+          _playlist_item.removeWhere((element) => element.p_id == pId);
         }
       }
       notifyListeners();
@@ -836,11 +836,11 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  bool Remove_by_v_id(int v_id) {
+  bool Remove_by_v_id(int vId) {
     try {
       bool flag = false;
       for (var ply in _playlist_item) {
-        int index = ply.p_detail.indexWhere((element) => element.v_id == v_id);
+        int index = ply.p_detail.indexWhere((element) => element.v_id == vId);
         if (index != -1) {
           ply.p_detail.removeAt(index);
           notifyListeners();
@@ -853,51 +853,54 @@ class PlayList_detail with ChangeNotifier {
     return false;
   }
 
-  void reorederd_playlist_video(int old_index, int new_ndex, String p_id) {
-    new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
-    int p_index = getplayList_index_id(p_id);
-    video v = _playlist_item[p_index].p_detail[old_index];
-    _playlist_item[p_index].p_detail.removeAt(old_index);
-    _playlist_item[p_index].p_detail.insert(new_ndex, v);
+  void reorederd_playlist_video(int oldIndex, int newNdex, String pId) {
+    newNdex = newNdex > oldIndex ? newNdex - 1 : newNdex;
+    int pIndex = getplayList_index_id(pId);
+    video v = _playlist_item[pIndex].p_detail[oldIndex];
+    _playlist_item[pIndex].p_detail.removeAt(oldIndex);
+    _playlist_item[pIndex].p_detail.insert(newNdex, v);
+
+    updateindatabase(_playlist_item[pIndex]);
+
     notifyListeners();
   }
 
-  void reorederd_playlist_Folder(int old_index, int new_ndex) {
-    new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
-    PlayList v = _playlist_item[old_index];
-    _playlist_item.removeAt(old_index);
-    _playlist_item.insert(new_ndex, v);
+  void reorederd_playlist_Folder(int oldIndex, int newNdex) {
+    newNdex = newNdex > oldIndex ? newNdex - 1 : newNdex;
+    PlayList v = _playlist_item[oldIndex];
+    _playlist_item.removeAt(oldIndex);
+    _playlist_item.insert(newNdex, v);
     notifyListeners();
   }
 
   void remove_from_playlist(Map<String, String> map) {
     map.forEach((key, value) {
-      int p_index = getplayList_index_id(key);
+      int pIndex = getplayList_index_id(key);
 
-      if (p_index != -1) {
-        PlayList playList = _playlist_item[p_index];
+      if (pIndex != -1) {
+        PlayList playList = _playlist_item[pIndex];
 
         playList.p_detail.removeWhere((element) => element.v_id == value);
         playList.count = playList.count - 1;
         if (updateindatabase(playList) != -1) {
-          _playlist_item[p_index] = playList;
+          _playlist_item[pIndex] = playList;
         }
       }
     });
     notifyListeners();
   }
 
-  playlis_title(String? p_id) {
-    return _playlist_item.firstWhere((element) => element.p_id == p_id).p_title;
+  playlis_title(String? pId) {
+    return _playlist_item.firstWhere((element) => element.p_id == pId).p_title;
   }
 
-  String getplaylisttitle(String p_id) {
-    return _playlist_item.firstWhere((element) => element.p_id == p_id).p_title;
+  String getplaylisttitle(String pId) {
+    return _playlist_item.firstWhere((element) => element.p_id == pId).p_title;
   }
 
-  String P_file_length(String p_id) {
+  String P_file_length(String pId) {
     return _playlist_item
-        .firstWhere((element) => element.p_id == p_id)
+        .firstWhere((element) => element.p_id == pId)
         .p_detail
         .length
         .toString();
@@ -1022,14 +1025,14 @@ class queue_playerss with ChangeNotifier {
     return queue_video_list[curentindex];
   }
 
-  void reorederd_quelist(int old_index, int new_ndex) {
-    new_ndex = new_ndex > old_index ? new_ndex - 1 : new_ndex;
-    video v = queue_video_list[old_index];
-    queue_video_list.removeAt(old_index);
-    queue_video_list.insert(new_ndex, v);
-    curentindex = curentindex == old_index
-        ? new_ndex
-        : old_index > new_ndex
+  void reorederd_quelist(int oldIndex, int newNdex) {
+    newNdex = newNdex > oldIndex ? newNdex - 1 : newNdex;
+    video v = queue_video_list[oldIndex];
+    queue_video_list.removeAt(oldIndex);
+    queue_video_list.insert(newNdex, v);
+    curentindex = curentindex == oldIndex
+        ? newNdex
+        : oldIndex > newNdex
             ? curentindex + 1
             : curentindex - 1;
     notifyListeners();
@@ -1064,13 +1067,13 @@ class queue_playerss with ChangeNotifier {
     notifyListeners();
   }
 
-  void remove_from_queue(String v_id) {
+  void remove_from_queue(String vId) {
     try {
-      var q_index =
-          queue_video_list.indexWhere((element) => element.v_id == v_id);
-      queue_video_list.removeAt(q_index);
+      var qIndex =
+          queue_video_list.indexWhere((element) => element.v_id == vId);
+      queue_video_list.removeAt(qIndex);
       if (queue_video_list.length > 0 &&
-          (q_index == curentindex || curentindex >= queue_video_list.length)) {
+          (qIndex == curentindex || curentindex >= queue_video_list.length)) {
         curentindex = Random().nextInt(queue_video_list.length);
       }
 
@@ -1120,5 +1123,127 @@ class queue_playerss with ChangeNotifier {
       return true;
     } catch (e) {}
     return false;
+  }
+}
+
+class recent_videos with ChangeNotifier {
+  List<recent_video> recent_video_list = [];
+
+  void fetchrecent_video() async {
+    final db = await playerDatabase.instance;
+    var maps = (await db.readAllRecent());
+    recent_video_list = maps;
+    notifyListeners();
+  }
+
+  Future<recent_video> add_to_database(recent_video v) async {
+    final db = await playerDatabase.instance;
+    print(v.R_video_id);
+
+    return await db.insert_recent_video(v);
+  }
+
+  Future<List<recent_video>> get_recent_video() async {
+    final db = await playerDatabase.instance;
+    return await db.readAllRecent();
+  }
+
+  Future<int> delete_recent_video(String r_id) async {
+    final db = await playerDatabase.instance;
+    return await db.delete_recent_video(r_id);
+  }
+
+  Future<int> delete_all_recent_video() async {
+    final db = await playerDatabase.instance;
+    return await db.delete_all_recent_video();
+  }
+
+  Future<int> update_recent_video(recent_video v) async {
+    final db = await playerDatabase.instance;
+    return await db.update_recent_video(v);
+  }
+
+  Future<dynamic> Find_recent_video(String r_id) async {
+    final db = await playerDatabase.instance;
+    return await db.readRecent(r_id);
+  }
+
+  void add_to_recent(video v) async {
+    try {
+      recent_video r =
+            recent_video(R_video_id: v.v_id, time_stamp: DateTime.now().microsecondsSinceEpoch, videos: v);
+      
+      int r_index=recent_video_list.indexWhere((element) => element.R_video_id == v.v_id);
+      if(r_index!=-1){
+        if(update_recent_video(r)!=-1){
+          recent_video_list.removeAt(r_index);
+          recent_video_list.insert(0, r);
+        }
+        
+      }
+      else {
+      // if(recent_video_list.length>=10){
+      //   recent_video_list.removeAt(10);
+      // }
+        add_to_database(r);
+        recent_video_list.insert(0, r);
+
+      }
+      notifyListeners();
+      return;
+      
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void remove_from_recent(List<String> delete) async {
+    try {
+
+      //print(delete);
+      delete.forEach((vId) {
+        if (delete_recent_video(vId) != -1) {
+        recent_video_list.removeWhere((element) => element.R_video_id == vId);
+      }
+      });
+      notifyListeners();
+      return;
+
+
+      
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void remove_all_recent() async {
+    if (delete_all_recent_video() != -1) {
+      recent_video_list.clear();
+      notifyListeners();
+    }
+  }
+
+// List<recent_video> getrecent_videot(){
+//     return recent_video_list;
+// }
+
+  int getRecentvideo_size() {
+    int size = 0;
+    recent_video_list.forEach((element) {
+      size += element.videos.v_size;
+    });
+    return size;
+  }
+
+  List<video> getrecent_video_list() {
+    List<video> v = [];
+    recent_video_list.forEach((element) {
+      v.add(element.videos);
+    });
+    return v;
+  }
+
+  bool showReecent() {
+    return recent_video_list.length > 0;
   }
 }

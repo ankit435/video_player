@@ -20,7 +20,7 @@ Future<Database> get database async {
   }
 
 Future<Database> _initDB(String filePath) async {
-    final dbPath ="/storage/emulated/0/dataabse/";
+    const dbPath ="/storage/emulated/0/dataabse/";
     final path = join(dbPath, filePath);
     return await openDatabase(path, version: 1, onCreate: _createDB);
 
@@ -28,7 +28,7 @@ Future<Database> _initDB(String filePath) async {
 
 
   Future _createDB(Database db, int version) async {
-
+    final idTypes = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final idType = 'TEXT PRIMARY KEY ';
     final textType = 'TEXT NOT NULL';
     final boolType = 'BOOLEAN NOT NULL';
@@ -73,6 +73,14 @@ Future<Database> _initDB(String filePath) async {
     //   ${video_thumbnail.v_thumbnailPath} $textType
     //   )
     // ''');
+
+    await db.execute('''CREATE TABLE $Recent_database( 
+      ${Recent_video.R_video_id} $textType,
+      ${Recent_video.time_stamp} $integerType,
+      ${Recent_video.videos} $textType
+      )
+    ''');
+    
     
 
   }
@@ -84,6 +92,8 @@ Future<Database> _initDB(String filePath) async {
   //   // return Thumbail_path.copy();
   //   //return false;
   // }
+
+
   
 
 Future<PlayList> create(PlayList playlist) async {
@@ -140,22 +150,70 @@ Future<int> delete_playlist(String p_id) async {
     );
   }
 
-//   Future<Thumbail_path> thumbail_path(String v_id) async{
-//   final db = await instance.database;
-//   final maps = await db.query(
-//       video_thumbailedatabase,
-//       columns: video_thumbnail.values,
-//       where: '${video_thumbnail.v_videoPath} = ?',
-//       whereArgs: [v_id],
-//     );
 
-//     // print(maps);
-//      if (maps.isNotEmpty) {
-//       return  Thumbail_path.fromJson(maps.first);
-//     } else {
-//       throw Exception('ID $v_id not found');
-//     }
-// }
+Future<recent_video> insert_recent_video(recent_video recent) async {
+ 
+    final db = await instance.database;
+    final id = await db.insert(Recent_database, recent.toJson());
+    return recent.copy();
+  }
+
+Future<dynamic> readRecent(String id) async {
+    final db = await instance.database;
+    final maps = await db.query(
+      Recent_database,
+      columns: Recent_video.values,
+      where: '${Recent_video.R_video_id} = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return recent_video.fromJson(maps.first);
+    } else {
+      //return null;
+    throw Exception('ID $id not found');
+
+    }
+    
+  }
+
+Future<List<recent_video>> readAllRecent() async {
+    final db = await instance.database;
+
+    final orderBy = '${Recent_video.time_stamp} ASC';
+
+    final result = await db.query(Recent_database, orderBy: orderBy);
+
+    return result.map((json) => recent_video.fromJson(json)).toList();
+  }
+
+Future<int> update_recent_video(recent_video recent) async {
+    final db = await instance.database;
+    return db.update(
+      Recent_database,
+      recent.toJson(),
+      where: '${Recent_video.R_video_id} = ?',
+      whereArgs: [recent.R_video_id],
+    );
+  }
+Future<int> delete_recent_video(String  R_video_id) async {
+    final db = await instance.database;
+    return await db.delete(
+      Recent_database,
+      where: '${Recent_video.R_video_id} = ?',
+      whereArgs: [R_video_id],
+    );
+  
+
+}
+
+Future<int> delete_all_recent_video() async {
+    final db = await instance.database;
+    return await db.delete(
+      Recent_database,
+    );
+  }
+
   
 
 

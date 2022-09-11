@@ -8,6 +8,7 @@ import 'package:video/helper/file.dart';
 import 'package:video/helper/files.dart';
 import 'package:video/helper/storage.dart';
 import 'package:video/video_player/video_utilites/bottom_icon_buttons.dart';
+import '../file/file.dart';
 import '../folder/showfile.dart';
 import '../properties/bottomsheet_playlist.dart';
 import '../properties/folder_bottom_sheet.dart';
@@ -31,10 +32,10 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   bool selection = false;
   int selcted_size = 0;
   var queue;
+  bool mounted = true;
 
   Set<String> selction_list = {};
   void toggleselction() {
-    print("hi");
     setState(() {
       selection = !selection;
       selction_list.clear();
@@ -52,46 +53,39 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
       }
     });
   }
+
   late AnimationController _animationController;
-bool isPlaying = false;
+  bool isPlaying = false;
 
   void initState() {
-    // TODO: implement initState
     WidgetsBinding.instance.addObserver(this);
     _fetching_data();
+     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
     super.initState();
   }
+
 
   @override
   void dispose() {
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
+    mounted = false;
     super.dispose();
   }
-  Widget text(String text){
-     return Text(text , style: TextStyle(
-              color:  Theme.of(context).textTheme.bodyText1!.color,
-           ));
-}
 
-
-Widget animatedIcon(){
-  return AnimatedIcon(
-    icon: AnimatedIcons.play_pause,
-    progress: _animationController,
-    size: 50,
-    color: Colors.white,
-  );
-
-}
-
+  Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
 
   Widget _Popups() {
     return selection == false
         ? PopupMenuButton(
-          color:  Theme.of(context).backgroundColor,
-          icon: icons(Icons.more_vert),
-            itemBuilder: (context) =>  [
+            color: Theme.of(context).backgroundColor,
+            icon: icons(Icons.more_vert),
+            itemBuilder: (context) => [
               PopupMenuItem(
                   value: 1,
                   child: ListTile(
@@ -132,12 +126,12 @@ Widget animatedIcon(){
               if (value == 1) {
                 toggleselction();
               } else if (value == 2) {
-                  getloaddata();
+                getloaddata();
               } else if (value == 3) {
-               Navigator.of(context).pushNamed(Setting.routeName);
+                Navigator.of(context).pushNamed(Setting.routeName);
                 // Navigator.of(context).push(MaterialPageRoute(
                 //     builder: (context) => Setting(isLoading: _isLoading,
-                          
+
                 //         )));
               } else if (value == 4) {
                 getAllvideos();
@@ -146,9 +140,9 @@ Widget animatedIcon(){
             },
           )
         : PopupMenuButton(
-          color:  Theme.of(context).backgroundColor,
-           icon: icons(Icons.more_vert),
-            itemBuilder: (context) =>  [
+            color: Theme.of(context).backgroundColor,
+            icon: icons(Icons.more_vert),
+            itemBuilder: (context) => [
               PopupMenuItem(
                   value: 1,
                   // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
@@ -213,6 +207,7 @@ Widget animatedIcon(){
               icon: icons(Icons.lock_rounded),
             ),
             _Popups(),
+            Padding(padding: EdgeInsets.only(left: 15)),
           ]
         : [
             IconButton(
@@ -227,7 +222,6 @@ Widget animatedIcon(){
                     context: context,
                     builder: (BuildContext context) {
                       return Show_dialog(
-
                         onPressedtext: "Delete",
                         onPressed: ondelete,
                         title: "Delete Video from Device",
@@ -238,22 +232,30 @@ Widget animatedIcon(){
               },
               icon: icons(Icons.delete),
             ),
-            _Popups()
+            _Popups(),
+            Padding(padding: EdgeInsets.only(left: 15)),
           ]);
   }
 
-Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).iconTheme.color,);
-}
+  Widget icons(IconData icon) {
+    return Icon(
+      icon,
+      color: Theme.of(context).iconTheme.color,
+    );
+  }
+
   AppBar _Appbar(String title) {
     return AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-      
+        elevation: 0,
+        backgroundColor: Theme.of(context).backgroundColor,
         leading: selection
             ? IconButton(
                 icon: icons(Icons.close), onPressed: () => toggleselction())
             : null,
-        title: text(title),
+        title: Padding(
+          padding: EdgeInsets.only(left: 8.0),
+          child: text(title),
+        ),
         actions: _action());
   }
 
@@ -265,21 +267,18 @@ Widget icons(IconData icon){
     });
   }
 
-void remove_playlist(Map<String,Set<String>> removeList){
-
-  removeList.forEach((key, value) { 
-    value.forEach((element) { 
-      Provider.of<PlayList_detail>(context, listen: false).remove_from_playlist({key:element});
+  void remove_playlist(Map<String, Set<String>> removeList) {
+    removeList.forEach((key, value) {
+      value.forEach((element) {
+        Provider.of<PlayList_detail>(context, listen: false)
+            .remove_from_playlist({key: element});
+      });
     });
-  });
-  
-}
+  }
 
-  Future<void> onsinglefolderdelete(Set<String>delete) async {
-   
+  Future<void> onsinglefolderdelete(Set<String> delete) async {
     if (delete.isNotEmpty) {
-      remove_playlist(
-      await Provider.of<folder_details>(context, listen: false)
+      remove_playlist(await Provider.of<folder_details>(context, listen: false)
           .deleteFolder(delete));
     }
   }
@@ -293,65 +292,58 @@ void remove_playlist(Map<String,Set<String>> removeList){
     selction_list.clear();
   }
 
-//  Future< void> loaddata() async{
-//   setState(() {
-//     _isInit = true;
-
-//   });
-// }
-// ignore: non_constant_identifier_names
   Future<void> _fetching_data() async {
-     var pref=await SharedPreferences.getInstance();
- 
-   bool? initData= pref.getBool("init_data");
-    //print(_isInit);
-    if (initData!=null&&initData) {
-      
-      setState(() {
-        // pref.setBool('is_loading', true).then((value) => _isLoading=true);
-        _isLoading=true;
-        
-      });
-      try {
-        await Future.delayed(const Duration(milliseconds: 500));
-        await Provider.of<folder_details>(context, listen: false)
-            .addfolder(await Storage().localPath())
-            .then((_) {
-          setState(() {
-          //pref.setBool('is_loading', true).then((value) => _isLoading=false);
-           _isLoading=false;
-          });
+    if (mounted) {
+      var pref = await SharedPreferences.getInstance();
+
+      bool? initData = pref.getBool("init_data");
+      //print(_isInit);
+      if (initData != null && initData) {
+        setState(() {
+          // pref.setBool('is_loading', true).then((value) => _isLoading=true);
+          _isLoading = true;
         });
-      } catch (error) {
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: text('An error occurred!'),
-            content: text('Check storage permission !.'),
-            actions: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: text('okay'),
-              )
-            ],
-          ),
-        );
+        try {
+          await Future.delayed(const Duration(milliseconds: 500));
+          await Provider.of<folder_details>(context, listen: false)
+              .addfolder(await Storage().localPath())
+              .then((_) {
+            setState(() {
+              //pref.setBool('is_loading', true).then((value) => _isLoading=false);
+              _isLoading = false;
+            });
+          });
+        } catch (error) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: text('An error occurred!'),
+              content: text('Check storage permission !.'),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: text('okay'),
+                )
+              ],
+            ),
+          );
+        }
       }
+      await pref.setBool('init_data', false);
     }
-     await pref.setBool('init_data', false);
     //_isInit = false;
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||state == AppLifecycleState.detached) 
-    {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
       //_isInit = true;
-    
+
       return;
     }
-    
+
     if (state == AppLifecycleState.paused && !detect) {
       setState(() {
         detect = true;
@@ -370,11 +362,9 @@ void remove_playlist(Map<String,Set<String>> removeList){
     return Future.delayed(Duration(seconds: 1));
   }
 
-
-
   void didChangeDependencies() {
     _fetching_data();
-   // print("dependency");
+    // print("dependency");
     super.didChangeDependencies();
   }
 
@@ -391,8 +381,10 @@ void remove_playlist(Map<String,Set<String>> removeList){
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           child: Floder_bottomsheet(
-            onsinglefolderdelete:onsinglefolderdelete,
-              bottoplaylist: _bottoplaylist, f_Id: f_Id, v_id:" -1"),
+              onsinglefolderdelete: onsinglefolderdelete,
+              bottoplaylist: _bottoplaylist,
+              f_Id: f_Id,
+              v_id: " -1"),
         );
       },
     );
@@ -400,13 +392,10 @@ void remove_playlist(Map<String,Set<String>> removeList){
 
   Future<void> getloaddata() async {
     print("load data");
-    var pref=await SharedPreferences.getInstance();
+    var pref = await SharedPreferences.getInstance();
     await pref.setBool('init_data', true);
     _fetching_data();
-   
-    
-}
-
+  }
 
   void queue_list_video(BuildContext context) {
     // print(f_Id);
@@ -447,36 +436,80 @@ void remove_playlist(Map<String,Set<String>> removeList){
     );
   }
 
+  Widget folder_contennt(Height) {
+    return Container(
+      height: Height -
+          AppBar().preferredSize.height -
+          MediaQuery.of(context).padding.top -
+          MediaQuery.of(context).padding.bottom,
+      width: double.infinity,
+      child: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          :_body()
+          
+          //  folder_list.isNotEmpty
+          //     ? RefreshIndicator(onRefresh: _pullRefresh, child:)
+          //     : ElevatedButton(
+          //         onPressed: () {
+          //           getloaddata();
+          //         },
+          //         child: text("Reload")),
+    );
+  }
+
   var folder_list;
   Widget build(BuildContext context) {
-    //print(file)
     folder_list = Provider.of<folder_details>(context, listen: true).items();
     queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
-    return Scaffold(
-    
-      appBar: _Appbar(selction_list.length <= 0
-          ? "Video"
-          : selction_list.length.toString() + " Selected"),
-      body: Container(
-        color: Theme.of(context).backgroundColor,
-        child: _isLoading
-            ? Container(
-                child: Center(
-                child: CircularProgressIndicator(),
-              ))
-            : Center(
-                child: folder_list.isNotEmpty
-                    ? RefreshIndicator(onRefresh: _pullRefresh, child: _body())
-                    : 
-                    ElevatedButton(
-                        onPressed: () {
-                          getloaddata();
-                        },
-                        child: text("Reload")),
+    return Scaffold(body: LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          
+
+            color: Theme.of(context).backgroundColor,
+            child: RefreshIndicator (
+              onRefresh: _pullRefresh,
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      
+                      Container(
+                        child: _Appbar(selction_list.length <= 0
+                            ? "Video"
+                            : selction_list.length.toString() + " Selected"),
+                      ),
+                      Provider.of<recent_videos>(context, listen: true).showReecent()? 
+
+                      Container(
+                        height: 50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.folder,
+                            color: IconTheme.of(context).color,
+                          ),
+                          title: text("Recently Played"),
+                          onTap: (){
+                            Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Files(
+                          f_id: "",
+                          title: "Recent Video",
+                          recent: true,
+                          )));
+            
+                          },
+                        ),
+                      ):Container(),
+                      folder_contennt(constraints.maxHeight - 50),
+                    ],
+                  ),
+                  bottom_background(),
+                ],
               ),
-      ),
-    );
+            ));
+      },
+    ));
   }
 
   Widget iconbutton(IconData icon, Function param1) {
@@ -493,7 +526,10 @@ void remove_playlist(Map<String,Set<String>> removeList){
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(icon, color:IconTheme.of(context).color,), // icon
+                Icon(
+                  icon,
+                  color: IconTheme.of(context).color,
+                ), // icon
                 // text
               ],
             ),
@@ -503,83 +539,78 @@ void remove_playlist(Map<String,Set<String>> removeList){
     );
   }
 
-  Widget _body() {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: folder_list.length,
-            itemBuilder: (context, index) {
-              return CharacteristListItem(
-                bottomsheet: _videoproprties,
-                folder_detail: folder_list[index],
-                toggleselction: toggleselction,
-                selection: selection,
-                selction_list: selction_list,
-                toggleselctionlist: toggleselctionlist,
-                //queue_list_video:queue_list_video
-              );
-            },
-          ),
-        ),
-        queue[0] && queue[3].length > 0
-            ? Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  child: ListTile(
-                    onTap: () {
+  Widget bottom_background() {
+    return queue[0] && queue[3].length > 0
+        ? Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              child: ListTile(
+                onTap: () {
+                  Navigator.of(context).pushNamed(Play_video.routeName);
+                },
+                tileColor: Theme.of(context).backgroundColor,
+                leading: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    iconbutton(Icons.close, () {
+                      Provider.of<queue_playerss>(context, listen: false)
+                          .togle_bacground_play();
+                    }),
+                    iconbutton(Icons.disc_full, () {
                       Navigator.of(context).pushNamed(Play_video.routeName);
-                    },
-                    tileColor: Colors.black,
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        iconbutton(Icons.close, () {
-                          Provider.of<queue_playerss>(context, listen: false)
-                              .togle_bacground_play();
-                        }),
-                        iconbutton(Icons.disc_full,(){
-                          Navigator.of(context).pushNamed(Play_video.routeName);}),
-                      ],
-                    ),
-                    title: AutoSizeText(
-                        Provider.of<queue_playerss>(context, listen: false)
-                            .video_title(),
-                        maxLines: 2,
-                        minFontSize: 13,
-                        maxFontSize: 18,
-                        overflow: TextOverflow.ellipsis,
-                         style: TextStyle(
-              color:  Theme.of(context).textTheme.bodyText1!.color,
-           ),
-                        )
-                        ,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        iconbutton(
-                            queue[1].value.isPlaying
-                                ? Icons.pause
-                                : Icons.play_arrow, () {
-                          Provider.of<queue_playerss>(context, listen: false)
-                              .updatecontoler_play_pause();
-                        }),
-                        iconbutton(Icons.skip_next, () {
-                         
-
-                          // print(queue[0]);
-                        }),
-                        iconbutton(Icons.menu, () {
-                          queue_list_video(context);
-                        })
-                      ],
-                    ),
+                    }),
+                  ],
+                ),
+                title: AutoSizeText(
+                  Provider.of<queue_playerss>(context, listen: false)
+                      .video_title(),
+                  maxLines: 2,
+                  minFontSize: 13,
+                  maxFontSize: 18,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color,
                   ),
                 ),
-              )
-            : Container()
-      ],
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    iconbutton(
+                        queue[1].value.isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow, () {
+                      Provider.of<queue_playerss>(context, listen: false)
+                          .updatecontoler_play_pause();
+                    }),
+                    iconbutton(Icons.skip_next, () {
+                      // print(queue[0]);
+                    }),
+                    iconbutton(Icons.menu, () {
+                      queue_list_video(context);
+                    })
+                  ],
+                ),
+              ),
+            ),
+          )
+        : Container();
+  }
+
+  Widget _body() {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: folder_list.length,
+      itemBuilder: (context, index) {
+        return CharacteristListItem(
+          bottomsheet: _videoproprties,
+          folder_detail: folder_list[index],
+          toggleselction: toggleselction,
+          selection: selection,
+          selction_list: selction_list,
+          toggleselctionlist: toggleselctionlist,
+          //queue_list_video:queue_list_video
+        );
+      },
     );
   }
 }
-

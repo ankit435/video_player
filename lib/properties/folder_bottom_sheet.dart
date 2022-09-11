@@ -43,7 +43,7 @@ Future<void> ondelete() async {
           .deleteFolder({widget.f_Id});
 }
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
   Widget build(BuildContext context) {
     var f_videos=Provider.of<folder_details>(context, listen: false).getfoldertotalvideo(widget.f_Id,"Name",false);

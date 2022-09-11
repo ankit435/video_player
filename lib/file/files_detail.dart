@@ -178,7 +178,7 @@ Future<String?> Createvideothumbail(File path) async{
           } else {
             return Image.asset(
               "assets/video/video-play-button.png",
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             );
           }
         });

@@ -149,7 +149,12 @@ startTimer();
   }
 
   video getvideo() {
-    return Provider.of<queue_playerss>(context, listen: false).getvideo_by_id();
+
+    video v= Provider.of<queue_playerss>(context, listen: false).getvideo_by_id();
+    
+    Provider.of<recent_videos>(context, listen: false).add_to_recent(v) ;
+
+    return v;
   }
 
   void update_curent_watch_time() {

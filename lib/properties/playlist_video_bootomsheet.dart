@@ -37,15 +37,12 @@ class _playlistbootoomshetState extends State<playlistbootoomshet> {
            ));
 }
 Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
 
 
   Widget build(BuildContext context) {
- 
     var videos=Provider.of<folder_details>(context, listen: false).gevideo(widget.f_id,widget.v_id);
-
-  
     return Wrap(
       children: <Widget>[
          ListTile(
@@ -107,7 +104,7 @@ Widget icons(IconData icon){
               context: context,
               builder: (BuildContext context) {
                 //rename playlist video
-                return Rename_playlist_file_and_folder(v_id: widget.v_id, condition: false,p_id: widget.p_id,);
+                return Rename_playlist_file_and_folder(v_id: widget.v_id, condition: false,p_id: widget.p_id,f_id: widget.f_id,rename_name: videos.v_title,);
               },
             );
           }

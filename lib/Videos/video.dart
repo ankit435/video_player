@@ -140,7 +140,7 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
     });
   }
   Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+  return Icon(icon,color:Theme.of(context).iconTheme.color,);
 }
 
   Widget _Popups() {
@@ -207,6 +207,7 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
               icon: icons(Icons.delete),
             ),
             _Popups(),
+            Padding(padding: EdgeInsets.only(left: 15)),
           ]
         : [
             IconButton(
@@ -238,12 +239,14 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
                         ? Icons.list_alt_rounded
                         : Icons.grid_view_outlined)),
             _Popups(),
+            Padding(padding: EdgeInsets.only(left: 15)),
           ]);
   }
 
   AppBar _Appbar(String title) {
     return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
+      elevation: 0,
+      backgroundColor: Theme.of(context).backgroundColor,
       leading: selection?IconButton(
         icon: icons(Icons.close),
         onPressed: () =>selection? toggleselction(): Navigator.of(context).pop(),
@@ -255,6 +258,7 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
 
   Widget _listViewbulder(List<video> file_detail) {
     return ListView.builder(
+      padding: EdgeInsets.zero,
         itemCount: file_detail.length,
         itemBuilder: (context, index) {
           return Files_path(
@@ -335,9 +339,9 @@ Widget _body(){
     Column(
         children: [
           ListTile(
-              title: Text(
+              title: text(
                 '${file_detail.length} video  ${Storage().getFileSize(size, 1)}',
-                style: TextStyle(fontSize: 13),
+                //style: TextStyle(fontSize: 13),
               ),
               trailing: selection
                   ? Checkbox(

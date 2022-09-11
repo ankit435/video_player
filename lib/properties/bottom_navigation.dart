@@ -26,42 +26,45 @@ class _BottomnavigationState extends State<Bottomnavigation> {
         Playlist_Screen(),
       ];
 
-Widget icons(IconData icon){
-  return Icon(icon,color:Theme.of(context).secondaryHeaderColor,);
+Widget icons(IconData icon,int selceted){
+  return Icon(icon,color: selceted== _selectedIndex?Theme.of(context).iconTheme.color:Theme.of(context).secondaryHeaderColor,);
 }
 
    Widget _bottomNavigation() {
     return BottomNavigationBar(
       items:  <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: icons(Icons.home),
+          icon: icons(Icons.home,0),
           label: 'Home',
+          backgroundColor: Theme.of(context).primaryColor,
           
         ),
         BottomNavigationBarItem(
-          icon: icons(Icons.video_library),
+          icon: icons(Icons.video_library,1),
           label: 'Video',
+           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
-          icon: icons(Icons.my_library_music_outlined),
+          icon: icons(Icons.my_library_music_outlined,2),
           label: 'Muisc',
+           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
-          icon: icons(Icons.playlist_play_sharp,),
+          icon: icons(Icons.playlist_play_sharp,3),
           label: 'Playlist',
+           backgroundColor: Theme.of(context).primaryColor,
           
         ),
       ],
-      type: BottomNavigationBarType.fixed,
+      //type: BottomNavigationBarType.fixed,
       currentIndex: _selectedIndex,
       backgroundColor: Theme.of(context).primaryColor,
-      unselectedItemColor: Theme.of(context).primaryIconTheme.color,
+      unselectedItemColor: Theme.of(context).secondaryHeaderColor,
       selectedFontSize:
-          Theme.of(context).textTheme.titleMedium!.fontSize!.toDouble(),
+          Theme.of(context).textTheme.titleLarge!.fontSize!.toDouble(),
       unselectedFontSize:
-          Theme.of(context).textTheme.titleMedium!.fontSize!.toDouble(),
-      selectedItemColor: Theme.of(context).secondaryHeaderColor,
-      
+          Theme.of(context).textTheme.titleSmall!.fontSize!.toDouble(),
+      selectedItemColor: Theme.of(context).primaryIconTheme.color,
       onTap: _onItemTapped,
     );
   }

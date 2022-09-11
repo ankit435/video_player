@@ -28,6 +28,7 @@ class _Video_playlistState extends State<Video_playlist> {
   
   Widget _listViewbulder() {
     return ListView.builder(
+        padding: EdgeInsets.zero,
         itemCount: widget.Files_path.length,
         itemBuilder: (context, index) {
           return Files_path(

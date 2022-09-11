@@ -60,6 +60,7 @@ class _Create_playlistState extends State<Create_playlist> {
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: AlertDialog(
+          backgroundColor:Theme.of(context).backgroundColor,
           insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -71,7 +72,7 @@ class _Create_playlistState extends State<Create_playlist> {
               children: <Widget>[
                 TextFormField(
                   autofocus: true,
-                  decoration: InputDecoration(labelText: 'Create Playlist'),
+                  decoration: InputDecoration(labelText: 'Create Playlist',),
                   controller: _inputController,
                   onChanged: (val) {
                     isEmpty();

@@ -89,6 +89,7 @@ Widget listvaluebuilder(){
             children: [
               Expanded(
                 child: ListView.builder(
+                  padding: EdgeInsets.only(bottom:10),
                   itemCount: values.length,
                   itemBuilder: (context, index) {
                     // return ListTile(
@@ -180,6 +181,8 @@ Widget listvaluebuilder(){
     return Scaffold(
    
       appBar: AppBar( 
+        backgroundColor:  Theme.of(context).backgroundColor,
+        elevation: 0,
         title: TextFormField(
             controller: searchController,
             autofocus: true,
