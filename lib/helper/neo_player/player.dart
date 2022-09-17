@@ -31,33 +31,29 @@ Future<Database> _initDB(String filePath) async {
     final idTypes = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final idType = 'TEXT PRIMARY KEY ';
     final textType = 'TEXT NOT NULL';
+    final textType_without_null = 'TEXT';
     final boolType = 'BOOLEAN NOT NULL';
     final integerType = 'INTEGER NOT NULL';
+    final default_value = 'TEXT DEFAULT FALSE';
 
-    // await db.execute('''CREATE TABLE $folder_databasename( 
-    //   ${folder_database.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-    //   ${folder_database.folder_name} TEXT NOT NULL,
-    //   ${folder_database.folder_path} TEXT NOT NULL,
-    //   ${folder_database.folder_size} TEXT NOT NULL,
-    //   ${folder_database.folder_date} TEXT NOT NULL,
-    //   )
-    // ''');
-
+    
     // await db.execute('''CREATE TABLE $Video_databasename( 
-    //   ${video_database.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-    //   ${video_database.Video_name} TEXT NOT NULL,
-    //   ${video_database.Video_path} TEXT NOT NULL,
-    //   ${video_database.Video_size} TEXT NOT NULL,
-    //   ${video_database.Video_date} TEXT NOT NULL,
-    //   ${video_database.Video_duration} TEXT NOT NULL,
-    //   ${video_database.Video_watched} TEXT NOT NULL,
-    //   ${video_database.Video_type} INTEGER NOT NULL,
-    //   ${video_database.Video_folder_id} INTEGER NOT NULL,
-    //   ${video_database.Video_playlist_id} INTEGER NOT NULL,
-    //   ${video_database.Video_thumbnail_path} TEXT NOT NULL,
-    //   ${video_database.Video_open} BOOLEAN NOT NULL,
-    //   ${video_database.Video_favourite} BOOLEAN NOT NULL,
-    //   ${video_database.Video_lastmodified} TEXT NOT NULL,
+    //   ${video_database.Video_id} $idType,
+    //   ${video_database.Video_name} $textType,
+    //   ${video_database.Video_path} $textType,
+    //   ${video_database.Video_size} $integerType,
+    //   ${video_database.Video_date} $textType,
+    //   ${video_database.Video_duration} $integerType,
+    //   ${video_database.Video_watched} $integerType,
+    //   ${video_database.Video_folder_id} $textType,
+    //   ${video_database.Video_thumbnail_path} $textType_without_null,
+    //   ${video_database.Video_open} $integerType,
+    //   ${video_database.Video_favourite} $integerType,
+    //   ${video_database.Video_lastmodified} $textType,
+    //   ${video_database.Video_playlist_id} $textType,
+    //   ${video_database.Video_ListedTime} $textType
+
+
     //   )
     // ''');
     await db.execute('''CREATE TABLE $playlist_databasename( 
@@ -80,19 +76,94 @@ Future<Database> _initDB(String filePath) async {
       ${Recent_video.videos} $textType
       )
     ''');
-    
-    
+
+ 
 
   }
 
-  // create_thumbaile(  Thumbail_path  thumbai) async {
-  //   final db = await instance.database;
-  //   final res = await db.insert(video_thumbailedatabase, thumbai.toJson());
-    
-  //   // return Thumbail_path.copy();
-  //   //return false;
-  // }
 
+
+
+
+
+
+  
+
+
+//  Future<video> add_video_database(video video) async {
+//     final db = await instance.database;
+//     final id = await db.insert(Video_databasename, video.toJson());
+//      if(id==-1)
+//     {
+//       throw Exception('Failed to create video');
+//     }
+//     return   video.copy();
+//   }
+
+//   Future<video> update_video_database(video video) async {
+//     print(video.v_id);
+//     final db = await instance.database;
+//     final id = await db.update(Video_databasename, video.toJson(),
+//         where: '${video_database.Video_id} = ?', whereArgs: [video.v_id]);
+//     if(id==-1)
+//     {
+//       throw Exception('ID failed not found');
+//     }
+
+//     return   video.copy();
+//   }
+
+//   Future<video> delete_video_database(video video) async {
+//     final db = await instance.database;
+//     final id = await db.delete(Video_databasename,
+//         where: '${video_database.Video_id} = ?', whereArgs: [video.v_id]);
+
+//     if(id==-1)
+//     {
+//       throw Exception('Failed to delete not found');
+//     }
+//       print("rename sucessfully");
+//     return video.copy();
+//   }
+
+//   Future<List<video>> get_all_video_database() async {
+//     final db = await instance.database;
+//     final result = await db.query(Video_databasename);
+//     return result.map((json) => video.fromJson(json)).toList();
+//   }
+
+//   Future<video>getvideo_by_v_id(String v_id) async {
+//     final db = await instance.database;
+//     final result = await db.query(Video_databasename,where: '${video_database.Video_id} = ?', whereArgs: [v_id]);
+    
+//     //print(result.length);
+//     if(result.isNotEmpty){
+//       return result.map((json) => video.fromJson(json)).toList()[0];
+//     }
+//     else{
+//        throw Exception('ID $v_id not found');
+//     }
+
+//   }
+
+//   Future<List<video>> get_all_video_database_by_folder_id(String folder_id) async {
+//     final db = await instance.database;
+//     final result = await db.query(Video_databasename,where: '${video_database.Video_folder_id} = ?', whereArgs: [folder_id]);
+//     return result.map((json) => video.fromJson(json)).toList();
+//   }
+
+
+// Future<String> rename_folder_path(String old_path,String new_path) async{
+//    final db = await instance.database;
+//    final id=await db.rawUpdate("Update $Video_databasename Set ${video_database.Video_folder_id} = '${new_path}' Where ${video_database.Video_folder_id}='${old_path}'");
+//    if(id==-1){
+//      throw Exception('Failde to update not found');
+//    }
+//    return new_path;
+
+
+
+// }
 
   
 
@@ -213,9 +284,6 @@ Future<int> delete_all_recent_video() async {
       Recent_database,
     );
   }
-
-  
-
 
 
  Future close() async {

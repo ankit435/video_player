@@ -98,7 +98,7 @@ Widget text(String text){
             ),
             TextButton(
               onPressed: isEmpty()
-                  ? () {
+                  ? () async {
                       Navigator.pop(context);
 
                       widget.condition
@@ -106,7 +106,7 @@ Widget text(String text){
                               .rename_playlist_folder(
                                   widget.p_id, _inputController.text)
                           :{ 
-                          if(Provider.of<folder_details>(context, listen: false)
+                          if(await Provider.of<folder_details>(context, listen: false)
                               .rename_file(widget.v_id, widget.f_id,
                                   _inputController.text)){
                           Provider.of<PlayList_detail>(context, listen: false)

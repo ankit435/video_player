@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:video/helper/theme_model.dart';
+import 'package:video/video_player/video_utilites/bottom_icon_buttons.dart';
 import 'package:video/video_player/video_utilites/slider.dart';
 import 'package:video/video_player/video_utilites/video_player_bottomsheet.dart';
 
@@ -158,6 +159,7 @@ startTimer();
   }
 
   void update_curent_watch_time() {
+    print("update_curent_watch_time");
     video v = getvideo();
     Provider.of<folder_details>(context, listen: false)
         .SetWatchedduration(currentDuration, v.v_id, v.parent_folder_id);
@@ -165,6 +167,8 @@ startTimer();
 
   @override
   void didChangeDependencies() {
+    print("hello_dispose");
+    update_curent_watch_time();
     super.didChangeDependencies();
   }
 
@@ -176,7 +180,7 @@ void exitfullscreen(){
   void dispose() {
     super.dispose();
     _timer.cancel();
-        exitfullscreen();
+    exitfullscreen();
 
     mounted = false;
 
@@ -242,9 +246,7 @@ void exitfullscreen(){
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
-            child: Container(
-              height: 300,
-            ));
+            child: icon_butoons());
       },
     );
   }
@@ -299,6 +301,11 @@ void exitfullscreen(){
           ]);
   }
 
+
+Widget icons_theme(IconData? icon){
+  return Icon(icon, color: Colors.white,);
+}
+
   Widget iconbutton(IconData? icon, Function param1, {String text = ""}) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
@@ -315,10 +322,7 @@ void exitfullscreen(){
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 text.isEmpty
-                    ? Icon(
-                        icon,
-                        color: Theme.of(context).primaryIconTheme.color,
-                      )
+                    ? icons_theme(icon)
                     : FittedBox(
                         child: Text(
                         "${text}X",
@@ -438,7 +442,8 @@ void exitfullscreen(){
       ),
       iconbutton(Icons.speed, () {
         _bottoslider(context);
-      }, text: speed.toString()),
+      },
+      text: speed.toString()),
       SizedBox(
         width: 10,
       ),
@@ -460,39 +465,46 @@ void exitfullscreen(){
 
   List<Widget> action() {
     return [
-      IconButton(
-          onPressed: () {
+      iconbutton(Icons.closed_caption_outlined,
+         () {
             _bottombutton(context);
-          },
-          icon: Icon(Icons.closed_caption_outlined)),
+          },),
+          
 
       if(p_id!=null||f_id!=null)    
-      IconButton(
-        onPressed: () {
+      iconbutton(Icons.playlist_play,
+        () {
           _bottofolder_queue_list(context);
         },
-        icon: Icon(Icons.playlist_play),
+       
       ),
-      IconButton(
-          onPressed: () {
+      iconbutton(
+          Icons.more_vert, () {
             _bottombutton(context);
           },
-          icon: Icon(Icons.more_vert)),
+          ),
     ];
   }
 
   List<Widget> topbaar() {
     return [
       AppBar(
-        //  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: iconbutton(
+         Icons.arrow_back,
+         () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: AutoSizeText(
+
           Provider.of<queue_playerss>(context, listen: false).video_title(),
+          
           maxLines: 2,
           minFontSize: 17,
           maxFontSize: 18,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: Theme.of(context).primaryIconTheme.color,
+           // color: Theme.of(context).primaryIconTheme.color,
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -529,14 +541,21 @@ void exitfullscreen(){
   }
 
   void startTimer() {
+    if(mounted){
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) => setState(
         () {
+          if(show==false){
+            timer.cancel();
+          }
+
 
          if(show&&_controller!.value.isPlaying){
            
+         
+
           if (_start < 1) {
             setState(() {
               show = false;
@@ -551,6 +570,7 @@ void exitfullscreen(){
         
       ),
     );
+    }
   }
 
 
@@ -564,7 +584,8 @@ void exitfullscreen(){
             children: [
               Text(getDuration(currentDuration.toDouble()),
                   style: TextStyle(
-                      color: Theme.of(context).sliderTheme.activeTrackColor,
+                      //color: Theme.of(context).sliderTheme.activeTrackColor,
+                      color: Colors.white,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w500)),
               Expanded(
@@ -584,7 +605,8 @@ void exitfullscreen(){
                       _controller!.value.duration.inMilliseconds.toDouble() -
                           currentDuration.toDouble()),
                   style: TextStyle(
-                      color: Theme.of(context).sliderTheme.inactiveTrackColor,
+                      //color: Theme.of(context).sliderTheme.inactiveTrackColor,
+                      color: Colors.white,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w500)),
             ],
@@ -613,10 +635,21 @@ void exitfullscreen(){
     _controller!.seekTo(targetPosition);
   }
 
+
+
   void show_content() {
-    setState(() {
-      show = !show;
-    });
+
+    if (show) {
+      setState(() {
+        show = false;
+      });
+    } else {
+      setState(() {
+        show = true;
+      });
+      startTimer();
+    }
+  
   }
 
   String getDuration(double value) {
@@ -743,31 +776,32 @@ void exitfullscreen(){
                       ),
                 ),
               ),
-              GestureDetector(
-                onTap: show_content,
-                onDoubleTap: () {
-                  print("left");
-                  backward();
-                },
-                onVerticalDragUpdate: (details) {
-                  int sensitivity = 0;
-                  if (details.delta.dy > sensitivity) {
-                  print("swipe down");
-                  } else if (details.delta.dy < -sensitivity) {
-                  print("swipe up");
-                  }
-                },
-                child: ClipPath(
-                  clipper: OvalRightBorderClipper(
-                      curveHeight: MediaQuery.of(context).size.height),
-                  child: Container(
-                      color: Colors.transparent,
-                      height: double.infinity,
-                      width: double.infinity,
-                     // child: LinearProgressIndicator(value: 0.3),
-                      ),
-                ),
-              ),
+             GestureDetector(
+               onTap: show_content,
+               onDoubleTap: () {
+                 print("left");
+                 backward();
+               },
+               onVerticalDragUpdate: (details) {
+                 int sensitivity = 0;
+                 if (details.delta.dy > sensitivity) {
+                 print("swipe down");
+                 } else if (details.delta.dy < -sensitivity) {
+                 print("swipe up");
+                 }
+               },
+               child: ClipPath(
+                 clipper: OvalRightBorderClipper(
+                     curveHeight: MediaQuery.of(context).size.height),
+                 child: Container(
+                     color: Colors.transparent,
+                     height: double.infinity,
+                     width: double.infinity,
+                     
+                    // child: LinearProgressIndicator(value: 0.3),
+                     ),
+               ),
+             ),
               show && !lock
                   ? Container(
                       child: Column(
@@ -777,6 +811,19 @@ void exitfullscreen(){
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: topbaar(),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children:[
+                              
+                              
+                              Transform.scale( scale: 2,child: Icon(Icons.fast_rewind, color: Colors.white)),
+
+                              Transform.scale( scale: 2,child: Icon(Icons.fast_forward, color: Colors.white)),
+                              
+                            ],
+                          ),
+                          
+
                           Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: bottobar(),
@@ -784,7 +831,19 @@ void exitfullscreen(){
                         ],
                       ),
                     )
-                  : Container(),
+                  : Container( child: Center(child:show||_controller!.value.isPlaying?Container():  Transform.scale(scale: 4,
+                    child: iconbutton( _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                            () {
+                          setState(() {
+                            update_curent_watch_time();
+                            if (_controller!.value.isPlaying) {
+                              _controller!.pause();
+                            } else {
+                              _controller!.play();
+                            }
+                          });
+                        }),
+                  )))
             ],
           ),
         ));

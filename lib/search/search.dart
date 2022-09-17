@@ -19,35 +19,45 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
- List<video> values = [];
+  List<video> values = [];
   String? filter;
   String? oldtext;
   TextEditingController searchController = new TextEditingController();
-
+   late Timer _timer;
+  int _start = 3;
+  bool loading = true;
+  bool mounted=true;
 
   void initState() {
+
+   if(mounted){ 
     startTimer();
     searchController.addListener(() {
       setState(() {
         filter = searchController.text;
       });
     });
+   }
     super.initState();
   }
 
   void dispose() {
+   
     searchController.dispose();
+    _timer.cancel();;
+    mounted=false;
+    
     super.dispose();
   }
-   Future<void> onsinglefiledelete(Map<String,String>single_video_list) async {
-   
+
+  Future<void> onsinglefiledelete(Map<String, String> single_video_list) async {
     if (single_video_list.isNotEmpty) {
       await Provider.of<folder_details>(context, listen: false)
           .delete_file(single_video_list);
     }
   }
-  
-void _videoproprties(BuildContext context, String v_id,String f_id) {
+
+  void _videoproprties(BuildContext context, String v_id, String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -57,15 +67,18 @@ void _videoproprties(BuildContext context, String v_id,String f_id) {
         return GestureDetector(
           onTap: () {},
           behavior: HitTestBehavior.opaque,
-
-          child:Bottom_model(v_id:v_id,file_detail: values,f_id:f_id,onPressed:_bottoplaylist,onsinglefiledelete:onsinglefiledelete),
+          child: Bottom_model(
+              v_id: v_id,
+              file_detail: values,
+              f_id: f_id,
+              onPressed: _bottoplaylist,
+              onsinglefiledelete: onsinglefiledelete),
         );
       },
     );
   }
 
-
-void _bottoplaylist(BuildContext context, String v_id,String f_id) {
+  void _bottoplaylist(BuildContext context, String v_id, String f_id) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -77,70 +90,60 @@ void _bottoplaylist(BuildContext context, String v_id,String f_id) {
           onTap: () {},
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
-          child:BottomPlayList(v_id:v_id,passvideo: const [],f_id: f_id,condition: true),
+          child: BottomPlayList(
+              v_id: v_id, passvideo: const [], f_id: f_id, condition: true),
         );
       },
     );
   }
 
-
-Widget listvaluebuilder(){
-    return Row(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(bottom:10),
-                  itemCount: values.length,
-                  itemBuilder: (context, index) {
-                    // return ListTile(
-                    //   title: text(values[index].v_title),
-                    // );
-            return Files_path(
-              file_path: values,
-              index: index,
-              value: 0,
-              onPressed: null,
-              selection: false,
-              selction_list: {},
-              onPressed1: null,
-              bottommodel:_videoproprties,
-            );
-                  },
-                ),
-              ),
-            ],
+  Widget listvaluebuilder() {
+    return ListView.builder(
+      
+      itemCount: values.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Files_path(
+            file_path: values,
+            index: index,
+            value: 0,
+            onPressed: null,
+            selection: false,
+            selction_list: {},
+            onPressed1: null,
+            bottommodel: _videoproprties,
+          ),
         );
+      },
+    );
   }
 
-
-  late Timer _timer;
-  int _start = 3;
-  bool loading = true;
+ 
 
   void startTimer() {
+    if(mounted){
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) => setState(
         () {
-
-         if(loading) {
-          if (_start < 1) {
-            setState(() {
-              loading = false;
-              _start=3;
-            });
-            timer.cancel();
-          } else {
-            _start = _start - 1;
+          if (loading) {
+            if (_start < 1) {
+              setState(() {
+                loading = false;
+                _start = 3;
+              });
+              timer.cancel();
+            } else {
+              _start = _start - 1;
+            }
           }
-         }
         },
-        
       ),
     );
+    }
   }
-
 
 // Widget fututurebuilder(){
 //   return FutureBuilder(
@@ -167,21 +170,21 @@ Widget listvaluebuilder(){
 //     return filesList;
 //   }
 
-
-@override
+  @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
-    
+  
     super.didChangeDependencies();
   }
+
   @override
   Widget build(BuildContext context) {
-    values=Provider.of<folder_details>(context, listen: true).getsearchvideo(filter);
+    values = Provider.of<folder_details>(context, listen: true)
+        .getsearchvideo(filter);
 //         .getsearchvideo(filter);
     return Scaffold(
-   
-      appBar: AppBar( 
-        backgroundColor:  Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).backgroundColor,
         elevation: 0,
         title: TextFormField(
             controller: searchController,
@@ -189,29 +192,29 @@ Widget listvaluebuilder(){
             decoration: const InputDecoration(labelText: 'Search')),
       ),
       body: Container(
-           color: Theme.of(context).backgroundColor,
-        child: filter==null||filter==''?Container() :  Center(
-          child: 
-          //oldtext==filter&&filter!=Null?listvaluebuilder():
-          //fututurebuilder(),
-          filter!=null&&filter!.isNotEmpty&&values.length<=0? loading? Container(
-                child: Center(
-                child: CircularProgressIndicator(),
-              )):Container()
-              
-              :
-
-          listvaluebuilder()
-        ),
+        color: Theme.of(context).backgroundColor,
+        child: filter == null || filter == ''
+            ? Container()
+            : Center(
+                child:
+                    //oldtext==filter&&filter!=Null?listvaluebuilder():
+                    //fututurebuilder(),
+                    filter != null && filter!.isNotEmpty && values.length <= 0
+                        ? loading
+                            ? Container(
+                                child: Center(
+                                child: CircularProgressIndicator(),
+                              ))
+                            : Container()
+                        : listvaluebuilder()),
       ),
     );
   }
 
-  Widget customBuild(BuildContext context, AsyncSnapshot snapshot) {
-    values = snapshot.data;
-    return values.isNotEmpty && snapshot.connectionState == ConnectionState.done
-        ? listvaluebuilder():Container();
-  }
+  // Widget customBuild(BuildContext context, AsyncSnapshot snapshot) {
+  //   values = snapshot.data;
+  //   return values.isNotEmpty && snapshot.connectionState == ConnectionState.done
+  //       ? listvaluebuilder():Container();
+  // }
 
- 
 }

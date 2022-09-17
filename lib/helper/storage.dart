@@ -48,7 +48,7 @@ class Storage {
   Future<Directory> video_thumbail() async {
     //var dir = await getExternalStorageDirectory();
     //var path = dir?.path;
-    var directory = Directory("/storage/emulated/0/video_thumbnail");
+    var directory = Directory("/storage/emulated/0/neo_player/");
     if (!await directory.exists()) {
       await directory.create();
     }
@@ -103,15 +103,24 @@ class Storage {
   //   }
   //   return v_id;
   // }
+  
+  
+
+      String get_thumbail_path(String path){
+      String filename = folder_name(path);
+      var lastSeparator = filename.lastIndexOf('.');
+      var newPath = filename.substring(0, lastSeparator);
+     return  "/storage/emulated/0/neo_player/$newPath.jpg";
+}
+
+
 
   String? gethumbail(String path) {
-    String filename = folder_name(path);
-    var lastSeparator = filename.lastIndexOf('.');
-    var newPath = filename.substring(0, lastSeparator);
-    String thumbailpath =
-        "/storage/emulated/0/video_thumbnail/" + newPath + ".png";
+    // String filename = folder_name(path);
+    // var lastSeparator = filename.lastIndexOf('.');
+    // var newPath = filename.substring(0, lastSeparator);
+    String thumbailpath =get_thumbail_path(path);
 
-    //print(thumbailpath);
     if (File(thumbailpath).existsSync()) {
       return thumbailpath;
     }
@@ -119,20 +128,24 @@ class Storage {
     return null;
   }
 
-  void setvideoWatchduration(String path, int duration) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(path, duration);
-  }
+  // void setvideoWatchduration(String path, int duration) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt(path, duration);
+  // }
 
-  Future<int> getVideowatchduration(String path) async {
+  Future<List<String>> getVideowatchduration(String path) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? v_id = prefs.getInt(path);
+    List<String>? v_id = prefs.getStringList(path);
+
+   
     if (v_id == null) {
-      await prefs.setInt(path, 0);
-      return 0;
+    //  await prefs.setStringList(path, ['0','-1']);
+      return ['0','-1'];
     }
     return v_id;
   }
+
+  
 
   void getfolder(List root, List<folder> folders, String parent, dynamic size,
       int t_id, int z_id) async {
@@ -150,19 +163,24 @@ class Storage {
           if (filterExtension(getFileExtensions(i))) {
             size += i.lengthSync();
             //Future<String?> thum= Createvideothumbail(i);
+             List<String> watched=await getVideowatchduration(i.absolute.path);
             file.add(
+             
               video(
                 parent_folder_id: f_id,
                 v_id: i.absolute.path,
                 v_title: folder_name(i.absolute.path),
-                // v_thumbnailPath: await Createvideothumbail(i) as String,
                 v_thumbnailPath: gethumbail(i.absolute.path),
                 v_videoPath: i.path,
-                v_duration: -1,
+                v_duration: int.parse(watched[1]),
                 v_timestamp: i.lastModifiedSync(),
-                v_watched: 0,
+                v_watched: int.parse(watched[0]),
                 v_size: i.lengthSync(),
                 v_lastmodified: i.lastModifiedSync(),
+                ListedTime: DateTime.now(),
+                v_favourite: false,
+                v_open: watched[1]=='-1'?false:true,
+                playlist_id: {},
               ),
             );
           }
@@ -191,11 +209,16 @@ class Storage {
     return _folders;
   }
 
+  void videuration_delete(String path) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(path);
+  }
+
   bool File_deletes(Set<int> selctionList, List<video> filePath) {
     try {
       selctionList.forEach((element) {
         File(filePath[element].v_videoPath).deleteSync(recursive: false);
-        ;
+        videuration_delete(filePath[element].v_videoPath);
       });
       return true;
     } catch (e) {
@@ -204,20 +227,7 @@ class Storage {
 
     return false;
   }
-  //   bool Folder_deletes(Set<int> selctionList, List<video> Folder_path) {
-
-  //     try {
-  //       selctionList.forEach((element) {
-  //           Directory(Folder_path[element].f_path).deleteSync(recursive: true);
-  //       ;});
-  //       return true;
-  //     } catch (e) {
-  //       print(e);
-  //       return false;
-  //     }
-
-  //   return false;
-  // }
+ 
 
   bool deleteFolder(String path) {
     try {
@@ -247,14 +257,9 @@ class Storage {
       if (File(path).existsSync()) {
           File(path).deleteSync(recursive: false);
       
-     
-      String filename = folder_name(path);
-      var lastSeparator = filename.lastIndexOf('.');
-      var newPath = filename.substring(0, lastSeparator);
-      String thumbailpath =
-          "/storage/emulated/0/video_thumbnail/" + newPath + ".png";
-
+   
       //print(thumbailpath);
+      String thumbailpath =get_thumbail_path(path);
       if (File(thumbailpath).existsSync()) {
         File(thumbailpath).deleteSync(recursive: false);
       }
@@ -268,6 +273,28 @@ class Storage {
     }
   }
 
+String? rename_thumbaile(String? path,String newtitle)
+{
+  if(path==null){
+    return null;
+  }
+          String oldpath =get_thumbail_path(path);
+
+          if (File(oldpath).existsSync()) {
+             var lastSeparator = newtitle.lastIndexOf('.');
+             var newPath = newtitle.substring(0, lastSeparator);
+             String new_thumbail_path="/storage/emulated/0/neo_player/" + newPath + ".jpg";
+             File(oldpath).renameSync(new_thumbail_path);
+             return new_thumbail_path;
+
+          }
+    return oldpath;
+
+}
+
+
+
+
   bool renamefile(String f_path, String newftitle) {
     try {
 
@@ -275,26 +302,13 @@ class Storage {
           File(f_path).renameSync(
               f_path.substring(0, f_path.lastIndexOf(Platform.pathSeparator) + 1) +
                   newftitle);
-        
-      String filename = folder_name(f_path);
-      var lastSeparator = filename.lastIndexOf('.');
-      var oldpath = filename.substring(0, lastSeparator);
-       String thumbailpath =
-          "/storage/emulated/0/video_thumbnail/" + oldpath + ".png";
-        if (File(thumbailpath).existsSync()) {
-             var lastSeparator = newftitle.lastIndexOf('.');
-             var newPath = newftitle.substring(0, lastSeparator);
-             File(thumbailpath).renameSync("/storage/emulated/0/video_thumbnail/" + newPath + ".png");
-
+          rename_thumbaile(f_path,newftitle);
+           return true;
         }
-        return true;
-
-      
-
-      }
-
 
       return false;
+       
+
     } catch (e) {
       print(e);
       return false;

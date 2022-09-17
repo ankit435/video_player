@@ -14,7 +14,12 @@ class playback_slider extends StatefulWidget {
 
 class _playback_sliderState extends State<playback_slider> {
   @override
-
+  Widget text(String text) {
+    return Text(text,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyText1!.color,
+        ));
+  }
   Widget iconbutton(double spe) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
@@ -31,7 +36,7 @@ class _playback_sliderState extends State<playback_slider> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(spe.toString() + "X")
+                text(spe.toString() + "X")
                 // text
               ],
             ),
@@ -53,7 +58,7 @@ double dp(double val, int places){
             padding: const EdgeInsets.only(top: 25),
             child: Align(
               alignment: Alignment.center,
-              child: Text(widget.speed.toStringAsFixed(2) + " X"),
+              child: text(widget.speed.toStringAsFixed(2) + " X"),
             ),
           ),
           Padding(

@@ -196,15 +196,73 @@ class folder_details with ChangeNotifier {
     return _folder_item[index].f_detail;
   }
 
-  Future<void> addfolder(List<folder> newfolader) async {
+  Future<bool> fetchdatabase() async {
     try {
-      _folder_item = newfolader;
-    } catch (error) {
-      print(error);
-      throw error;
+      _folder_item = await Storage().localPath();
+      var db = await playerDatabase.instance;
+
+      // for (int i = 0; i < _folder_item.length; i++) {
+      //   for (int j = 0; j < _folder_item[i].f_detail.length; j++) {
+      //     try {
+      //       _folder_item[i].f_detail[j] =
+      //           (await db.getvideo_by_v_id(_folder_item[i].f_detail[j].v_id));
+      //     } catch (e) {
+      //       print(e);
+      //       await db.add_video_database(_folder_item[i].f_detail[j]);
+      //     }
+      //   }
+      // }
+
+      notifyListeners();
+
+      return true;
+    } catch (e) {
+      print(e);
+      throw e;
     }
-    notifyListeners();
   }
+
+
+
+
+  // Future<video> update_Video_database(video v) async {
+  //   var db = await playerDatabase.instance;
+  //   return await db.update_video_database(v);
+  //   // notifyListeners();
+  // }
+
+
+//   Future<video> rename_file_database(video v,String new_path,String new_title) async {
+//     var db = await playerDatabase.instance;
+//     try {
+//       video Copy_v=(await  db.delete_video_database(v));
+//       print(v.v_id);
+//       return await db.add_video_database(video(v_id: new_path, parent_folder_id: v.parent_folder_id, v_title: new_title, v_videoPath: new_path, v_duration: v.v_duration, v_timestamp: v.v_timestamp, v_watched: v.v_watched, v_lastmodified: v.v_lastmodified, v_size: v.v_size, ListedTime:v. ListedTime, playlist_id: v.playlist_id,v_thumbnailPath: null));
+//     } catch (e) {
+//       print(e);
+//       throw Exception("field to rename file");
+//     }
+  
+//   }
+
+//  Future<String> Rename_folder_databse(String f_older_path,String new_path ) async{
+
+//     try {
+//           var db = await playerDatabase.instance;
+//           return await db.rename_folder_path(f_older_path, new_path);
+      
+//     } catch (e) {
+//       throw Exception ("failder to rename folder");
+//     }
+
+//   }
+
+
+
+
+  
+
+
 
   List<folder> items() {
     return _folder_item;
@@ -263,12 +321,14 @@ class folder_details with ChangeNotifier {
     return _folder_item[fIndex].f_detail[vIndex].v_thumbnailPath;
   }
 
-  bool setthumail(String fId, String vId, String thumail) {
+ Future< bool> setthumail(String fId, String vId, String thumail) async{
     try {
-      //  thumbailedatabase(f_id, v_id, thumail);
-      _folder_item[folder_index(fId)]
-          .f_detail[folder_video_index(folder_index(fId), vId)]
-          .v_thumbnailPath = thumail;
+        int f_index=folder_index(fId);
+        int v_index=folder_video_index(folder_index(fId), vId);
+        video v=_folder_item[f_index].f_detail[v_index];
+        v.v_thumbnailPath=thumail;
+      //  _folder_item[f_index].f_detail[v_index]=(await update_Video_database(v));
+       _folder_item[f_index].f_detail[v_index]=v;
       notifyListeners();
       return true;
     } catch (e) {
@@ -384,17 +444,20 @@ class folder_details with ChangeNotifier {
     return removePlayList;
   }
 
-  bool rename_folder(String fId, String newftitle) {
+  Future< bool> rename_folder(String fId, String newftitle) async {
     try {
       int index = folder_index(fId);
       if (Storage().renameFolder(_folder_item[index].f_path, newftitle)) {
-        _folder_item[index].f_title = newftitle;
-        _folder_item[index].f_path = _folder_item[index]
+        
+        String newpath=_folder_item[index]
                 .f_path
                 .substring(0, _folder_item[index].f_path.lastIndexOf('/'))
                 .toString() +
             '/' +
             newftitle;
+        //_folder_item[index].f_path = (await Rename_folder_databse(_folder_item[index].f_path,newpath));
+        _folder_item[index].f_path = newpath;
+        _folder_item[index].f_title = newftitle;
         notifyListeners();
         return true;
       }
@@ -404,18 +467,15 @@ class folder_details with ChangeNotifier {
     return false;
   }
 
-  bool rename_file(String vId, String fId, String newvtitle) {
+  Future< bool> rename_file(String vId, String fId, String newvtitle)  async{
     try {
       int fIndex = folder_index(fId);
       int vIndex = folder_video_index(fIndex, vId);
 
       if (Storage().renamefile(
           _folder_item[fIndex].f_detail[vIndex].v_videoPath, newvtitle)) {
-        _folder_item[fIndex].f_detail[vIndex].v_title = newvtitle;
-        _folder_item[fIndex].f_detail[vIndex].v_videoPath = _folder_item[fIndex]
-                .f_detail[vIndex]
-                .v_videoPath
-                .substring(
+        video v=_folder_item[fIndex].f_detail[vIndex];
+        String new_path=v.v_videoPath.substring(
                     0,
                     _folder_item[fIndex]
                             .f_detail[vIndex]
@@ -424,6 +484,13 @@ class folder_details with ChangeNotifier {
                         1)
                 .toString() +
             newvtitle;
+        //_folder_item[fIndex].f_detail[vIndex] = (await rename_file_database(v,new_path,newvtitle));
+        //
+        _folder_item[fIndex].f_detail[vIndex].v_videoPath = new_path; 
+      
+
+
+        
         notifyListeners();
         return true;
       }
@@ -433,32 +500,48 @@ class folder_details with ChangeNotifier {
     return false;
   }
 
-  void updatevideoopen(String vId, String fId) {
+  void updatevideoopen(String vId, String fId) async {
     var fIndex = folder_index(fId);
     var vIndex = folder_video_index(fIndex, vId);
-    _folder_item[fIndex].f_detail[vIndex].v_open = true;
-    notifyListeners();
+    video v = _folder_item[fIndex].f_detail[vIndex];
+    v.v_open = true;
+    try {
+      //_folder_item[fIndex].f_detail[vIndex] = (await update_Video_database(v));
+      _folder_item[fIndex].f_detail[vIndex]=v;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 
   void Setduration(int duration, String vId, String fId) {
     var fIndex = folder_index(fId);
     var vIndex = folder_video_index(fIndex, vId);
     _folder_item[fIndex].f_detail[vIndex].v_duration = duration;
+
+    print("setduration=="+ duration.toString());
     notifyListeners();
   }
 
-  void setvideoWatchduration(String path, int duration) async {
+  Future<bool> setvideoWatchduration_path(String path, int duration,int total_duration) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(path, duration);
+    return await prefs.setStringList(path, [duration.toString(),total_duration.toString()]);
   }
 
-  void SetWatchedduration(int duration, String vId, String fId) {
+  void SetWatchedduration(int duration, String vId, String fId) async {
     var fIndex = folder_index(fId);
     var vIndex = folder_video_index(fIndex, vId);
-    print("duration" + duration.toString());
-    //setvideoWatchduration(_folder_item[f_index].f_detail[v_index].v_videoPath,duration);
-    _folder_item[fIndex].f_detail[vIndex].v_watched = duration;
-    notifyListeners();
+    video v = _folder_item[fIndex].f_detail[vIndex];
+    v.v_watched = duration;
+    try {
+    //  _folder_item[fIndex].f_detail[vIndex] = (await update_Video_database(v));
+      if(await setvideoWatchduration_path(v.v_videoPath, duration,v.v_duration)){
+        _folder_item[fIndex].f_detail[vIndex]=v;
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   List<video> getsearchvideo(String? filter) {
@@ -552,9 +635,9 @@ class favourite_details with ChangeNotifier {
   }
 }
 
-class Hide_list_detail extends folder_details {
-  List<Hide_list> _Hide_list_detail = [];
-}
+// class Hide_list_detail extends folder_details {
+//   List<Hide_list> _Hide_list_detail = [];
+// }
 
 class PlayList_detail with ChangeNotifier {
   // ignore: non_constant_identifier_names
@@ -851,6 +934,20 @@ class PlayList_detail with ChangeNotifier {
       print(e);
     }
     return false;
+  }
+
+  String? getcurrent_playlist_id(String p_id) {
+    return _playlist_item
+        .firstWhere((element) => element.p_id == p_id)
+        .curr_played_video_id;
+  }
+
+  void set_current_playlist(String pId, String vId) {
+    int index = getplayList_index_id(pId);
+    if (index != -1) {
+      _playlist_item[index].curr_played_video_id = vId;
+    }
+    notifyListeners();
   }
 
   void reorederd_playlist_video(int oldIndex, int newNdex, String pId) {
@@ -1170,28 +1267,27 @@ class recent_videos with ChangeNotifier {
 
   void add_to_recent(video v) async {
     try {
-      recent_video r =
-            recent_video(R_video_id: v.v_id, time_stamp: DateTime.now().microsecondsSinceEpoch, videos: v);
-      
-      int r_index=recent_video_list.indexWhere((element) => element.R_video_id == v.v_id);
-      if(r_index!=-1){
-        if(update_recent_video(r)!=-1){
+      recent_video r = recent_video(
+          R_video_id: v.v_id,
+          time_stamp: DateTime.now().microsecondsSinceEpoch,
+          videos: v);
+
+      int r_index = recent_video_list
+          .indexWhere((element) => element.R_video_id == v.v_id);
+      if (r_index != -1) {
+        if (update_recent_video(r) != -1) {
           recent_video_list.removeAt(r_index);
           recent_video_list.insert(0, r);
         }
-        
-      }
-      else {
-      // if(recent_video_list.length>=10){
-      //   recent_video_list.removeAt(10);
-      // }
+      } else {
+        if (recent_video_list.length >= 31) {
+          recent_video_list.removeAt(31);
+        }
         add_to_database(r);
         recent_video_list.insert(0, r);
-
       }
       notifyListeners();
       return;
-      
     } catch (e) {
       print(e);
     }
@@ -1199,18 +1295,14 @@ class recent_videos with ChangeNotifier {
 
   void remove_from_recent(List<String> delete) async {
     try {
-
       //print(delete);
       delete.forEach((vId) {
         if (delete_recent_video(vId) != -1) {
-        recent_video_list.removeWhere((element) => element.R_video_id == vId);
-      }
+          recent_video_list.removeWhere((element) => element.R_video_id == vId);
+        }
       });
       notifyListeners();
       return;
-
-
-      
     } catch (e) {
       print(e);
     }

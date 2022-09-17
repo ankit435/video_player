@@ -10,7 +10,7 @@ import 'package:video_player/video_player.dart';
 
 // class folder_database{
 //   static final  List<String> values = [
-    
+
 //   id,folder_name,folder_size,folder_date,folder_path
 
 //   ];
@@ -23,20 +23,20 @@ import 'package:video_player/video_player.dart';
 
 // class playlist_database{
 //   static final  List<String> values = [
-    
+
 //   id,playlist_name,playlist_thumbnail_path
 
 //   ];
 //   static final String id = '_id';
 //   static final String playlist_name = 'playlist_name';
 //   static final String playlist_thumbnail_path = 'playlist_thumbnail_path';
-  
+
 // }
 
 // class video_database{
 //   static final  List<dynamic> values = [
 //   id,Video_name,Video_path,Video_size,Video_date,Video_duration, Video_type,Video_folder_id, Video_playlist_id, Video_thumbnail_path,Video_open,Video_lastmodified,Video_favourite
-//   ]; 
+//   ];
 
 //   static final String id = '_id';
 //   static final String Video_name = 'Video_name';
@@ -53,16 +53,12 @@ import 'package:video_player/video_player.dart';
 //   static final int Video_favourite = 0;
 //   static final String Video_lastmodified="Video_lastmodified";
 
-
 // }
-
-
-
 
 class folder with ChangeNotifier {
   final String f_id;
   String f_title;
-   String f_path;
+  String f_path;
   // ignore: non_constant_identifier_names
   List<video> f_detail = [];
   final DateTime f_timestamp;
@@ -83,15 +79,16 @@ class video with ChangeNotifier {
   final String v_id;
   final String parent_folder_id;
   String v_title;
-   String v_videoPath;
-  String? v_thumbnailPath=null;
+  String v_videoPath;
+  String? v_thumbnailPath = null;
   int v_duration;
-  final DateTime v_timestamp;
-  int  v_watched;
+  final DateTime v_timestamp; //
+  int v_watched;
   final int v_size;
   final DateTime v_lastmodified;
   bool v_favourite;
   bool v_open;
+  final DateTime ListedTime;
   Set<String> playlist_id = {};
 
   video({
@@ -106,10 +103,13 @@ class video with ChangeNotifier {
     required this.v_lastmodified,
     required this.v_size,
     this.v_favourite = false,
-    this.v_open = false, 
-    
+    this.v_open = false,
+    required this.ListedTime,
+    required this.playlist_id,
+
+    //this.ListedTime,
+
     // ignore: non_constant_identifier_names
-    
   });
   void toggleBoostStatus() {
     v_open = true;
@@ -120,10 +120,10 @@ class video with ChangeNotifier {
     v_favourite = !v_favourite;
     notifyListeners();
   }
-  
- toJson() {
+
+  toJson() {
     return {
-      'v_id':   v_id ,
+      'v_id': v_id,
       'parent_folder_id': parent_folder_id,
       'v_title': v_title,
       'v_videoPath': v_videoPath,
@@ -133,17 +133,16 @@ class video with ChangeNotifier {
       'v_watched': v_watched,
       'v_lastmodified': v_lastmodified.toIso8601String(),
       'v_size': v_size,
-      'v_favourite': v_favourite ,
-      'v_open': v_open,
+      'v_favourite': v_favourite?1:0,
+      'v_open': v_open?1:0,
       'playlist_id': playlist_id.toString(),
+      'ListedTime': ListedTime.toIso8601String(),
+       
     };
   }
-  
-  factory video.fromJson( e) {
-   
-     
-   
-    return  video(
+
+  factory video.fromJson(e) {
+    return video(
       v_id: e['v_id'],
       parent_folder_id: e['parent_folder_id'],
       v_title: e['v_title'],
@@ -153,17 +152,89 @@ class video with ChangeNotifier {
       v_timestamp: DateTime.parse(e['v_timestamp']),
       v_watched: e['v_watched'],
       v_lastmodified: DateTime.parse(e['v_lastmodified']),
-      v_size: e['v_size'],
-      v_favourite: e['v_favourite'],
-      v_open: e['v_open'],
-     // playlist_id: e['playlist_id'].toString().split(',').toSet(),
+      v_size: e['v_size'] ,
+      v_favourite: e['v_favourite']==1?true:false,
+      v_open: e['v_open']==1?true:false,
+      playlist_id: e['playlist_id'].toString().split(',').toSet(),
+      ListedTime: DateTime.parse(e['ListedTime']),
     
     );
-     
-      }
+  }
+
+  video copy({    
+    String? v_id,
+    String? parent_folder_id,
+    String? v_title,
+    String? v_videoPath,
+    String? v_thumbnailPath,
+    int? v_duration,
+    DateTime? v_timestamp,
+    int? v_watched,
+    DateTime? v_lastmodified,
+    int? v_size,
+    bool? v_favourite,
+    bool? v_open,
+    DateTime? ListedTime,
+    Set<String>? playlist_id,
+  }) {
+    return video(
+      v_id: v_id ?? this.v_id,
+      parent_folder_id: parent_folder_id ?? this.parent_folder_id,
+      v_title: v_title ?? this.v_title,
+      v_videoPath: v_videoPath ?? this.v_videoPath,
+      v_thumbnailPath: v_thumbnailPath ?? this.v_thumbnailPath,
+      v_duration: v_duration ?? this.v_duration,
+      v_timestamp: v_timestamp ?? this.v_timestamp,
+      v_watched: v_watched ?? this.v_watched,
+      v_lastmodified: v_lastmodified ?? this.v_lastmodified,
+      v_size: v_size ?? this.v_size,
+      v_favourite: v_favourite ?? this.v_favourite,
+      v_open: v_open ?? this.v_open,
+      ListedTime: ListedTime ?? this.ListedTime,
+      playlist_id: playlist_id ?? this.playlist_id,
+    );
+  }
+
+  
+
   
 }
 
+
+
+final String Video_databasename = 'Video_Table';
+
+
+class video_database{
+
+
+static final List<String> values =[ 
+  Video_id,Video_name,Video_path,Video_size,Video_date,Video_duration,Video_folder_id, Video_thumbnail_path,Video_open,Video_lastmodified,Video_favourite,Video_watched,Video_playlist_id
+  ];
+
+ // static final String Video_table = 'Video_Table';
+  static final String Video_id = 'v_id';
+  static final String Video_name = 'v_title';
+  static final String Video_path = 'v_videoPath';
+  static final String Video_size = 'v_size';
+  static final String Video_date = 'v_timestamp';
+  static final String Video_duration = 'v_duration';
+  static final String Video_watched = 'v_watched';
+  static final String Video_folder_id = 'parent_folder_id';
+  static final String Video_thumbnail_path = 'v_thumbnailPath';
+  static final String Video_open = "v_open";
+  static final String Video_favourite = "v_favourite";
+  static final String Video_lastmodified="v_lastmodified";
+  static final String Video_ListedTime="ListedTime";
+  static final String Video_playlist_id="playlist_id";
+
+
+ 
+
+
+
+
+}
 
 
 class favourite with ChangeNotifier {
@@ -199,92 +270,79 @@ class favourite with ChangeNotifier {
   }
 }
 
-class Hide_list with ChangeNotifier {
-  final int h_id;
-  final String h_path;
+// class Hide_list with ChangeNotifier {
+//   final int h_id;
+//   final String h_path;
 
-  Hide_list({
-    required this.h_id,
-    required this.h_path,
-  });
-}
+//   Hide_list({
+//     required this.h_id,
+//     required this.h_path,
+//   });
+// }
 
 class PlayList with ChangeNotifier {
   final String p_id;
   String p_title;
   List<video> p_detail = [];
   int count = 0;
-  String p_thumbnailPath="";
+  String p_thumbnailPath = "";
+  String? curr_played_video_id = null;
 
   PlayList({
     required this.p_id,
     required this.p_title,
     required this.p_detail,
     this.count = 0,
-    this.p_thumbnailPath="",
+    this.p_thumbnailPath = "",
   });
-
 
   Map<String, dynamic> toJson() {
     return {
       playlist_database.id: p_id,
-      playlist_database.playlist_name : p_title,
-      playlist_database.count : count,
+      playlist_database.playlist_name: p_title,
+      playlist_database.count: count,
       playlist_database.p_thumbnailPath: p_thumbnailPath,
-      playlist_database.p_detail: jsonEncode(p_detail.map((e) => e.toJson()).toList()).toString(),
+      playlist_database.p_detail:
+          jsonEncode(p_detail.map((e) => e.toJson()).toList()).toString(),
     };
   }
 
-PlayList.fromJson(Map<String, dynamic> json)
+  PlayList.fromJson(Map<String, dynamic> json)
       : p_id = json[playlist_database.id],
         p_title = json[playlist_database.playlist_name],
         count = json[playlist_database.count],
         p_thumbnailPath = json[playlist_database.p_thumbnailPath],
-        p_detail =jsonDecode(json[playlist_database.p_detail]).map<video>((e) => video.fromJson(e)).toList();
- 
+        p_detail = jsonDecode(json[playlist_database.p_detail])
+            .map<video>((e) => video.fromJson(e))
+            .toList();
 
-PlayList copy({
-
-  String? p_id,
-  String? p_title,
-  List<video>? p_detail,
-  int? count=0,
-  String? p_thumbnailPath="",
-
-  
-  
-}) {
-  return PlayList(
-    p_id: p_id ?? this.p_id,
-    p_title: p_title ?? this.p_title,
-    p_detail: p_detail??this.p_detail,
-    count: this.count,
-    p_thumbnailPath: this.p_thumbnailPath,
-  );
+  PlayList copy({
+    String? p_id,
+    String? p_title,
+    List<video>? p_detail,
+    int? count = 0,
+    String? p_thumbnailPath = "",
+  }) {
+    return PlayList(
+      p_id: p_id ?? this.p_id,
+      p_title: p_title ?? this.p_title,
+      p_detail: p_detail ?? this.p_detail,
+      count: this.count,
+      p_thumbnailPath: this.p_thumbnailPath,
+    );
+  }
 }
 
-}
+final String playlist_databasename = 'playlist_Table';
 
-
-
-
- final String playlist_databasename  = 'playlist_Table';
-
- class playlist_database{
-  static final  List<String> values = [
-    
-  id,playlist_name,p_detail
-
-  ];
+class playlist_database {
+  static final List<String> values = [id, playlist_name, p_detail];
   static final String id = 'p_id';
   static final String playlist_name = 'p_title';
   static final String p_detail = 'p_detail';
   static final String count = 'count';
   static final String p_thumbnailPath = 'p_thumbnailPath';
-
-  
 }
-
 
 // class Thumbail_path with ChangeNotifier {
 //   final String v_videoPath;
@@ -310,12 +368,11 @@ PlayList copy({
 //     );
 //   }
 
-
 // // Thumbail_path copy({
 // //   String? v_videoPath,
 // //   String? v_thumbnailPath,
 // // }) {
-// //   return 
+// //   return
 // //   Thumbail_path(
 // //     v_videoPath: v_videoPath ?? this.v_videoPath,
 // //     v_thumbnailPath: v_thumbnailPath ?? this.v_thumbnailPath,
@@ -336,16 +393,7 @@ PlayList copy({
 //     );
 //   }
 
-
-
-
 // }
-
-
-
-
-
-
 
 // final String video_thumbailedatabase  = 'video_thumbailedatabase';
 
@@ -354,63 +402,52 @@ PlayList copy({
 //   v_videoPath,v_thumbnailPath
 
 //   ];
- 
+
 //   static final String v_thumbnailPath = 'v_thumbnailPath';
 //   static final String v_videoPath = 'v_videoPath';
 //   //static final String v_duration = 'v_duration';
 // }
 
+final String Recent_database = 'Recent_database';
 
-final String Recent_database  = 'Recent_database';
+class Recent_video {
+  static final List<String> values = [R_video_id, time_stamp, videos];
 
-class Recent_video{
- static final List<String> values = [
-   R_video_id,time_stamp,videos
-  ];
-
-  static final  String R_video_id="R_video_id";
-  static final  String  videos="videos";
- static final  String  time_stamp="time_stamp";
+  static final String R_video_id = "R_video_id";
+  static final String videos = "videos";
+  static final String time_stamp = "time_stamp";
 }
 
-class recent_video with ChangeNotifier{
+class recent_video with ChangeNotifier {
   String R_video_id;
   video videos;
   int time_stamp;
-   recent_video({
-    required this. R_video_id,
-    required this.videos,
-    required this.time_stamp
-
-   });
-
-
+  recent_video(
+      {required this.R_video_id,
+      required this.videos,
+      required this.time_stamp});
 
   Map<String, Object?> toJson() {
     return {
-
       Recent_video.R_video_id: R_video_id,
       Recent_video.time_stamp: time_stamp,
       Recent_video.videos: jsonEncode(videos.toJson()).toString(),
     };
   }
 
-  recent_video copy
-    ({
-      String? R_video_id,
-      video? videos,
-      int? time_stamp,
-    }) =>
-        recent_video(
-          R_video_id: R_video_id ?? this.R_video_id,
-          videos: videos ?? this.videos,
-          time_stamp: time_stamp ?? this.time_stamp,
-        );
+  recent_video copy({
+    String? R_video_id,
+    video? videos,
+    int? time_stamp,
+  }) =>
+      recent_video(
+        R_video_id: R_video_id ?? this.R_video_id,
+        videos: videos ?? this.videos,
+        time_stamp: time_stamp ?? this.time_stamp,
+      );
 
-  
-recent_video.fromJson(Map<String, dynamic> json):
-  R_video_id = json[Recent_video.R_video_id],
-  time_stamp = json[Recent_video.time_stamp],
-  videos = video.fromJson(jsonDecode(json[Recent_video.videos]));
+  recent_video.fromJson(Map<String, dynamic> json)
+      : R_video_id = json[Recent_video.R_video_id],
+        time_stamp = json[Recent_video.time_stamp],
+        videos = video.fromJson(jsonDecode(json[Recent_video.videos]));
 }
-

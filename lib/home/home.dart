@@ -59,8 +59,8 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
 
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    _fetching_data();
-     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
+   //_fetching_data();
+    Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
     super.initState();
   }
 
@@ -304,12 +304,11 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
           _isLoading = true;
         });
         try {
-          await Future.delayed(const Duration(milliseconds: 500));
+          //await Future.delayed(const Duration(milliseconds: 500));
           await Provider.of<folder_details>(context, listen: false)
-              .addfolder(await Storage().localPath())
+              .fetchdatabase()  
               .then((_) {
             setState(() {
-              //pref.setBool('is_loading', true).then((value) => _isLoading=false);
               _isLoading = false;
             });
           });

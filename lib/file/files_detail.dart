@@ -138,7 +138,7 @@ class _CharacteristListItemState extends State<Files_path> {
 Future<Directory> video_thumbail() async{
   //var dir = await getExternalStorageDirectory();
   //var path = dir?.path;
-  var directory = Directory("/storage/emulated/0/video_thumbnail/");
+  var directory = Directory("/storage/emulated/0/neo_player/");
   if (!await directory.exists()) {
     await directory.create();
   }
@@ -151,7 +151,7 @@ Future<String?> Createvideothumbail(File path) async{
   var thumbnail = await VideoThumbnail.thumbnailFile(
     video: path.path,
     thumbnailPath: dir.path,
-    imageFormat: ImageFormat.PNG,
+    imageFormat: ImageFormat.JPEG,
    
     quality: 75,
     
@@ -162,12 +162,17 @@ Future<String?> Createvideothumbail(File path) async{
 
 }
 
+void update_thumbail(String thum){
+  Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id, thum);
+}
+
   Widget image() {
     return FutureBuilder(
         future: Createvideothumbail(File(widget.file_path[widget.index].v_videoPath)),
         builder: (context, snapshot) {
           
-          if (snapshot.hasData&&Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id,  snapshot.data.toString())) {
+          if (snapshot.hasData) {
+            update_thumbail(snapshot.data.toString());
             return  Image.file(
               File(snapshot.data.toString()),
               height: 64,
@@ -190,7 +195,7 @@ Future<String?> Createvideothumbail(File path) async{
           ? const Icon(
               Icons.folder,
             )
-          : widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 64,
+          : widget.file_path[widget.index].v_thumbnailPath!=null&&File(widget.file_path[widget.index].v_thumbnailPath??"null").existsSync()? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 64,
               width: 64,) :  image(),
   
       title: titles(),

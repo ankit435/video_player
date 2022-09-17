@@ -66,6 +66,9 @@ class _Grid_view_fileState extends State<Grid_view_file> {
       },
     );
   }
+  void update_thumbail(String thum){
+  Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id, thum);
+}
    Widget linearprogress() {
     return LinearProgressIndicator(
       backgroundColor: Colors.red,
@@ -90,7 +93,7 @@ class _Grid_view_fileState extends State<Grid_view_file> {
   Future<Directory> video_thumbail() async{
   //var dir = await getExternalStorageDirectory();
   //var path = dir?.path;
-  var directory = Directory("/storage/emulated/0/video_thumbnail/");
+  var directory = Directory("/storage/emulated/0/neo_player/");
   if (!await directory.exists()) {
     await directory.create();
   }
@@ -103,9 +106,8 @@ Future<String?> Createvideothumbail(File path) async{
   var thumbnail = await VideoThumbnail.thumbnailFile(
     video: path.path,
     thumbnailPath: dir.path,
-    imageFormat: ImageFormat.PNG,
+    imageFormat: ImageFormat.JPEG,
     quality: 75,
-    
   );
   
   return thumbnail;
@@ -118,7 +120,8 @@ Future<String?> Createvideothumbail(File path) async{
         future: Createvideothumbail(File(widget.file_path[widget.index].v_videoPath)),
         builder: (context, snapshot) {
           
-          if (snapshot.hasData&&Provider.of<folder_details>(context, listen: false).setthumail(widget.file_path[widget.index].parent_folder_id,widget.file_path[widget.index].v_id,  snapshot.data.toString())) {
+          if (snapshot.hasData) {
+              update_thumbail(snapshot.data.toString());
             return  Image.file(
               File(snapshot.data.toString()),
               fit: BoxFit.cover,
@@ -175,7 +178,7 @@ Future<String?> Createvideothumbail(File path) async{
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-          widget.file_path[widget.index].v_thumbnailPath!=null? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 60,) :  image(),
+          widget.file_path[widget.index].v_thumbnailPath!=null&&File(widget.file_path[widget.index].v_thumbnailPath??"null").existsSync()? Image.file(File(widget.file_path[widget.index].v_thumbnailPath ?? "assets/video/video-play-button.png")  ,fit: BoxFit.fill,height: 60,) :  image(),
           ListTile(
             title: text(widget.file_path[widget.index].v_title),
             subtitle:  FittedBox(

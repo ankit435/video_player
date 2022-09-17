@@ -106,12 +106,15 @@ class _CharacteristListItemState extends State<CharacteristListItem> {
     );
   }
   Widget build(BuildContext context) {
+
+
+
     return ListTile(
       leading:  Icon(
         Icons.folder,
         color:IconTheme.of(context).color,
       ),
-      title: Text(widget.folder_detail.f_title,
+      title: Text("${widget.folder_detail.f_title} ${widget.folder_detail.f_detail.length}",
           style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ),
