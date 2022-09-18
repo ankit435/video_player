@@ -36,6 +36,7 @@ class _Show_dialogState extends State<Show_dialog> {
       
         backgroundColor: Colors.transparent,
         body: AlertDialog(
+              backgroundColor: Theme.of(context).backgroundColor,
           insetPadding: EdgeInsets.zero,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

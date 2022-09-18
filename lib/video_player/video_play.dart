@@ -18,7 +18,9 @@ import '../cliper/left_border_cliper.dart';
 import '../cliper/right_border_cliper.dart';
 import '../helper/file.dart';
 import '../helper/files.dart';
+import '../showdialogbox/Shubtitle_screen.dart';
 import '../showdialogbox/create_timer.dart';
+import '../showdialogbox/show_subtitile.dart';
 
 class Play_video extends StatefulWidget {
 
@@ -327,7 +329,12 @@ void exitfullscreen(){
               aspectRatio: _controller!.value.aspectRatio,
               child: GestureDetector(
                 child:
-                Transform.scale( scaleX: mirror?-1:1, child: VideoPlayer(_controller!)),
+                Transform.scale( scaleX: mirror?-1:1, child: Stack(
+                  children: [
+                    VideoPlayer(_controller!),
+                    Align(alignment: Alignment.bottomCenter,  child:  caption_play()),
+                  ],
+                )),
                 onTap: () {
                   // setState(() {
                   //   show = !show;
@@ -404,6 +411,11 @@ void exitfullscreen(){
           }break;
           case 6:{
  print("6");
+ showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Subtitle_screen();
+                    });
           }break;
           case 7:{
  print("7");
@@ -434,6 +446,8 @@ void _bottoslider(BuildContext context) {
       },
     );
   }
+
+  
 
 void defaultsorenatation() {
     SystemChrome.setPreferredOrientations([
@@ -657,7 +671,14 @@ void toggle_play_pause(){
     return [
       iconbutton(Icons.closed_caption_outlined,
          () {
-           // _bottombutton(context,r);
+                    showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Subtitle_screen(
+                         
+                      );
+                    });
+
           },),
           
 
@@ -850,6 +871,10 @@ void toggle_play_pause(){
         .join(':');
   }
 
+  Widget caption_play(){
+     return ClosedCaption( text: "Helo", textStyle: TextStyle(color: Colors.red), );
+  }
+
   Widget build(BuildContext context) {
     //print("repeat_mode=== "+ repeat_mode.toString());
     return Scaffold(
@@ -861,6 +886,7 @@ void toggle_play_pause(){
           child: Stack(
             children: [
               video_played(),
+              
         //  Padding(
         //   padding: EdgeInsets.only(left: 20),
         //   child:

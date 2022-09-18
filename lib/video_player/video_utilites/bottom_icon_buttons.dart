@@ -79,7 +79,7 @@ Widget row1(){
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         iconbutton(Icons.audiotrack,(){widget.icon_button_press(5);},text: "Audio"),
-        iconbutton(Icons.subtitles,(){widget.icon_button_press(6);},text: "Subtitles"),
+        iconbutton(Icons.subtitles,(){ Navigator.pop(context); widget.icon_button_press(6);},text: "Subtitles"),
         iconbutton(Icons.delete,(){widget.icon_button_press(7);},text: "Delete"),
         iconbutton(Icons.devices_other,(){widget.icon_button_press(8);},text: "Other"),
       ],
