@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/helper/theme_model.dart';
 import 'package:video/video_player/video_utilites/bottom_icon_buttons.dart';
 import 'package:video/video_player/video_utilites/slider.dart';
@@ -17,6 +18,7 @@ import '../cliper/left_border_cliper.dart';
 import '../cliper/right_border_cliper.dart';
 import '../helper/file.dart';
 import '../helper/files.dart';
+import '../showdialogbox/create_timer.dart';
 
 class Play_video extends StatefulWidget {
 
@@ -45,8 +47,14 @@ class _Play_videoState extends State<Play_video> {
   var queue_player;
   double speed = 1.0;
     late Timer _timer;
+    late Timer  _sleep_timer;
   int _start = 3;
   String? f_id, p_id;
+  int repeat_mode=1;
+  int decoder=1;
+  int sleep=0;
+  bool mirror=false;
+  
 
 
   //Future<void>screen_display;
@@ -84,6 +92,10 @@ void setfolderplylist(){
 
   
 }
+
+
+
+
   Future<void> _onControllerChange(video link) async {
     if (mounted) {
       if (_controller == null) {
@@ -103,7 +115,8 @@ void setfolderplylist(){
     //   //  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     //   index = widget.index;
     // });
-startTimer();
+    startTimer();
+    startsleepTimer();
     defaultsorenatation();
     if (mounted) {
       setfolderplylist();
@@ -115,11 +128,14 @@ startTimer();
       // _controller!.addListener(() {
       //   volume_listener();
       // });
+      repeat_mode_update();
+      Hw_sw_decoders();
     }
     super.initState();
   }
-
-
+  
+  
+  
   void setlistenerseeker() {
     if (mounted) {
       setState(() {
@@ -135,26 +151,130 @@ startTimer();
     });
   }
 
-  // void volume_listener(){
 
-  //   if(mounted){
-  //     setState(() {
-  //       volume=_controller!.value.
-  //     });
-  //   }
+void set_sleep_timer(int value){
+  setState(() {
+    sleep=value*60;
+  });
 
-  // }
+  sleeptimer();
+
+}
+
+void mirror_video_toggel(){
+  setState(() {
+    mirror=!mirror;
+  });
+}
+
+void sleeptimer(){
+
+  if(_sleep_timer.isActive){
+
+    _sleep_timer.cancel();
+    sleep=0;
+  }
+  else{
+    startsleepTimer();
+  }
+}
+void startsleepTimer() {
+    
+    if(mounted){
+    const oneSec = const Duration(seconds: 1);
+    _sleep_timer =  Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(
+        () {
+          if (sleep < 1) {
+          if (_controller!.value.isPlaying) {
+            _controller!.pause();
+          }
+            timer.cancel();
+          } else {
+            print(sleep);
+            sleep = sleep - 1;
+          }
+        },
+      ),
+    );
+    }
+
+  }
+
+
+void repeat_mode_updated_video(){
+
+  if(repeat_mode==1){
+    if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+      Provider.of<queue_playerss>(context, listen: false).getskipnextvideo();
+      _onControllerChange(getvideo());
+    }
+  }
+  else if(repeat_mode==2){
+   
+      if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+        _controller!.seekTo(const Duration(microseconds:0));
+        _controller!.play();
+      }
+  }
+  else if(repeat_mode==3){
+      if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+        Provider.of<queue_playerss>(context, listen: false).get_random_video();
+        _onControllerChange(getvideo());
+      }
+   
+  }
+  else if(repeat_mode==4){
+   if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+        Provider.of<queue_playerss>(context, listen: false).get_rotate_video();
+        _onControllerChange(getvideo());
+      }
+  }
+  
+
+}
+
+
+void repeat_mode_update({int? val}) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if(val==null){
+    repeat_mode=prefs.getInt('repeat_mode')??1;
+  }
+  else{
+    setState(() {
+       repeat_mode=val;
+       prefs.setInt('repeat_mode', repeat_mode);
+    });
+    
+
+  }
+}
+
+void Hw_sw_decoders({int? val}) async{
+SharedPreferences prefs = await SharedPreferences.getInstance();
+if(val==null){
+  decoder=prefs.getInt('decoder')??1;
+}
+else{
+  setState(() {
+     decoder=val;
+
+     
+  });
+  
+
+}
+}
+ 
 
   void updateseeker(double value) {
     _controller!.seekTo(Duration(milliseconds: value.round()));
   }
 
   video getvideo() {
-
     video v= Provider.of<queue_playerss>(context, listen: false).getvideo_by_id();
-    
     Provider.of<recent_videos>(context, listen: false).add_to_recent(v) ;
-
     return v;
   }
 
@@ -168,7 +288,7 @@ startTimer();
   @override
   void didChangeDependencies() {
     print("hello_dispose");
-    update_curent_watch_time();
+    //update_curent_watch_time();
     super.didChangeDependencies();
   }
 
@@ -180,6 +300,7 @@ void exitfullscreen(){
   void dispose() {
     super.dispose();
     _timer.cancel();
+   _sleep_timer.cancel();
     exitfullscreen();
 
     mounted = false;
@@ -205,7 +326,8 @@ void exitfullscreen(){
           ? AspectRatio(
               aspectRatio: _controller!.value.aspectRatio,
               child: GestureDetector(
-                child: VideoPlayer(_controller!),
+                child:
+                Transform.scale( scaleX: mirror?-1:1, child: VideoPlayer(_controller!)),
                 onTap: () {
                   // setState(() {
                   //   show = !show;
@@ -227,7 +349,6 @@ void exitfullscreen(){
         return GestureDetector(
             onTap: () {},
             behavior: HitTestBehavior.opaque,
-            //contdition to be ture for one video
             child: video_bottom_sheet(
                 playfolder_video: playfolder_video, f_id:f_id, p_id: p_id));
       },
@@ -235,6 +356,7 @@ void exitfullscreen(){
   }
 
   void _bottombutton(BuildContext context) {
+    print("called_icon");
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -246,7 +368,7 @@ void exitfullscreen(){
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             //contdition to be ture for one video
-            child: icon_butoons());
+            child: icon_butoons(repeat_mode_update:repeat_mode_update,repeat_mode: repeat_mode,Hw_sw_decoders:Hw_sw_decoders,decoder:decoder,icon_button_press:icon_button_press));
       },
     );
   }
@@ -261,9 +383,42 @@ void exitfullscreen(){
     }
   }
 
-  void icon_button_press(int val) {}
+  void icon_button_press(int val) {
 
-  void _bottoslider(BuildContext context) {
+      
+      switch (val){
+          case 1:{
+ print("1");
+          }break;
+          case 2:{
+ print("2");
+          }break;
+          case 3:{
+ print("3");
+          }break;
+          case 4:{
+ print("4");
+          }break;
+          case 5:{
+ print("5");
+          }break;
+          case 6:{
+ print("6");
+          }break;
+          case 7:{
+ print("7");
+          }break;
+          case 8:{
+ print("8");
+          }break;
+
+      }
+
+
+  }
+
+void _bottoslider(BuildContext context) {
+     print("called_slider");
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -280,7 +435,7 @@ void exitfullscreen(){
     );
   }
 
-  void defaultsorenatation() {
+void defaultsorenatation() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -289,7 +444,7 @@ void exitfullscreen(){
     ]);
   }
 
-  void specificorenation(bool orientation) {
+void specificorenation(bool orientation) {
     orientation
         ? SystemChrome.setPreferredOrientations([
             DeviceOrientation.portraitUp,
@@ -305,8 +460,7 @@ void exitfullscreen(){
 Widget icons_theme(IconData? icon){
   return Icon(icon, color: Colors.white,);
 }
-
-  Widget iconbutton(IconData? icon, Function param1, {String text = ""}) {
+Widget iconbutton(IconData? icon, Function param1, {String? text =null}) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -321,11 +475,11 @@ Widget icons_theme(IconData? icon){
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                text.isEmpty
+                text==null
                     ? icons_theme(icon)
                     : FittedBox(
                         child: Text(
-                        "${text}X",
+                        "${text}",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ))
@@ -361,6 +515,13 @@ Widget icons_theme(IconData? icon){
         .getcurrent_index();
   }
 
+void toggle_play_pause(){
+         if (_controller!.value.isPlaying) {
+            _controller!.pause();
+          } else {
+            _controller!.play();
+          }
+}
   List<Widget> Bottom_button() {
     return [
       iconbutton(lock ? Icons.lock : Icons.lock_open, () {
@@ -384,11 +545,7 @@ Widget icons_theme(IconData? icon){
           () {
         setState(() {
           update_curent_watch_time();
-          if (_controller!.value.isPlaying) {
-            _controller!.pause();
-          } else {
-            _controller!.play();
-          }
+            toggle_play_pause();
         });
       }),
       iconbutton(Icons.skip_next, () {
@@ -443,23 +600,56 @@ Widget icons_theme(IconData? icon){
       iconbutton(Icons.speed, () {
         _bottoslider(context);
       },
-      text: speed.toString()),
+      text: speed.toString()+"X"),
       SizedBox(
         width: 10,
       ),
     ];
   }
+  String formatHHMMSS(int seconds) {
+  int hours = (seconds / 3600).truncate();
+  seconds = (seconds % 3600).truncate();
+  int minutes = (seconds / 60).truncate();
+
+  String hoursStr = (hours).toString().padLeft(2, '0');
+  String minutesStr = (minutes).toString().padLeft(2, '0');
+  String secondsStr = (seconds % 60).toString().padLeft(2, '0');
+
+  if (hours == 0) {
+    return "$minutesStr:$secondsStr";
+  }
+
+  return "$hoursStr:$minutesStr:$secondsStr";
+}
 
   List<Widget> variable_button() {
     return [
-      iconbutton(Icons.brightness_1, () {}),
+      iconbutton(Icons.brightness_medium_outlined, () {}),
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.lock_clock, () {}),
+      iconbutton(Icons.alarm_rounded,() { _sleep_timer.isActive?_sleep_timer.cancel():
+          showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Create_timer(
+                        video_duration: _controller!.value.duration.inMinutes-_controller!.value.position.inMinutes,
+                        set_sleep_timer:set_sleep_timer
+                      );
+                    });
+
+
+      } ,text: _sleep_timer.isActive? formatHHMMSS(sleep):null),
       SizedBox(
         width: 10,
       ),
+
+      iconbutton(Icons.mobile_screen_share_rounded, () {
+        mirror_video_toggel();
+        
+      }),
+
+
     ];
   }
 
@@ -467,7 +657,7 @@ Widget icons_theme(IconData? icon){
     return [
       iconbutton(Icons.closed_caption_outlined,
          () {
-            _bottombutton(context);
+           // _bottombutton(context,r);
           },),
           
 
@@ -480,6 +670,7 @@ Widget icons_theme(IconData? icon){
       ),
       iconbutton(
           Icons.more_vert, () {
+             print("repeat_mode=== "+ repeat_mode.toString());
             _bottombutton(context);
           },
           ),
@@ -660,6 +851,7 @@ Widget icons_theme(IconData? icon){
   }
 
   Widget build(BuildContext context) {
+    //print("repeat_mode=== "+ repeat_mode.toString());
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(

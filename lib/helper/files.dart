@@ -1122,6 +1122,8 @@ class queue_playerss with ChangeNotifier {
     return queue_video_list[curentindex];
   }
 
+  
+
   void reorederd_quelist(int oldIndex, int newNdex) {
     newNdex = newNdex > oldIndex ? newNdex - 1 : newNdex;
     video v = queue_video_list[oldIndex];
@@ -1185,6 +1187,40 @@ class queue_playerss with ChangeNotifier {
       print(e);
     }
   }
+
+  void clear_queue() {
+    queue_video_list.clear();
+    curentindex = -1;
+    notifyListeners();
+  }
+
+  void update_play_pause() {
+    b_play = !b_play;
+    notifyListeners();
+  }
+
+  bool getplay_pause() {
+    return b_play;
+  }
+
+bool get_random_video() {
+    if (queue_video_list.length > 0) {
+      curentindex = Random().nextInt(queue_video_list.length);
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+bool get_rotate_video() {
+    if (queue_video_list.length > 0) {
+      curentindex = (curentindex + 1) % queue_video_list.length;
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
 
   bool getskipnextvideo() {
     if (curentindex + 1 >= queue_video_list.length) {

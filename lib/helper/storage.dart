@@ -136,10 +136,7 @@ class Storage {
   Future<List<String>> getVideowatchduration(String path) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? v_id = prefs.getStringList(path);
-
-   
     if (v_id == null) {
-    //  await prefs.setStringList(path, ['0','-1']);
       return ['0','-1'];
     }
     return v_id;
