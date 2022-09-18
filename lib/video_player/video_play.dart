@@ -56,6 +56,17 @@ class _Play_videoState extends State<Play_video> {
   int decoder=1;
   int sleep=0;
   bool mirror=false;
+  int aspect_ratio=0;
+
+  List<IconData> icon = [
+    Icons.fullscreen,
+    Icons.aspect_ratio,
+    Icons.image_aspect_ratio,
+    Icons.smart_display,
+    Icons.image_aspect_ratio,
+    Icons.smart_display
+
+  ];
   
 
 
@@ -321,20 +332,141 @@ void exitfullscreen(){
     _controller!.dispose();
   }
 
+void setAspectratio(){
+  if(aspect_ratio==0){
+    aspect_ratio=1;
+  }
+  else if( aspect_ratio==1){
+    aspect_ratio=2;
+  }
+  else if(aspect_ratio==2){
+    aspect_ratio=3;
+  }
+  else if(aspect_ratio==3){
+    aspect_ratio=4;
+  }
+  else if(aspect_ratio==4){
+    aspect_ratio=5;
+  }
+  else if(aspect_ratio==5){
+    aspect_ratio=0;
+  }
+  else{
+    aspect_ratio=0;
+  }
+ 
+
+}
+
+
+  
+
+ 
+
+  void setfullscreen() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void setfullscreen_portrait() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  void setfullscreen_landscape() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void setfullscreen_auto() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void setfullscreen_user() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void setfullscreen_landscape_left() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
+  void setfullscreen_landscape_right() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  void setfullscreen_portrait_up() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+
+
+double getAspect_ratio(){
+  
+  if(aspect_ratio==1)
+     return 16/9;
+  else if(aspect_ratio==2){
+    return 4/3;
+  }
+  else if(aspect_ratio==3){
+    return 1/1;
+  }
+  else if(aspect_ratio==4){
+    return 9/16;
+  }
+  else if(aspect_ratio==5){
+    return 3/4;
+  }
+  else{
+    return _controller!.value.aspectRatio;
+  }
+
+
+}
+
   @override
   Widget video_played() {
     return Center(
       child: _controller!.value.isInitialized
           ? AspectRatio(
-              aspectRatio: _controller!.value.aspectRatio,
+              aspectRatio: getAspect_ratio(),
               child: GestureDetector(
                 child:
-                Transform.scale( scaleX: mirror?-1:1, child: Stack(
+                Stack(
                   children: [
-                    VideoPlayer(_controller!),
-                    Align(alignment: Alignment.bottomCenter,  child:  caption_play()),
+                     Transform.scale( scaleX: mirror?-1:1, child: VideoPlayer(_controller!)),
+                      Align(alignment: Alignment.bottomCenter,  child:  caption_play()),
                   ],
-                )),
+                ),
                 onTap: () {
                   // setState(() {
                   //   show = !show;
@@ -565,8 +697,8 @@ void toggle_play_pause(){
       iconbutton(Icons.skip_next, () {
         play_next() ? _onControllerChange(getvideo()) : null;
       }),
-      iconbutton(Icons.fullscreen, () {
-          !show? SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky):exitfullscreen();
+      iconbutton(icon[aspect_ratio], () {
+          setAspectratio();
       }),
     ];
   }
@@ -763,15 +895,11 @@ void toggle_play_pause(){
             timer.cancel();
           }
 
-
          if(show&&_controller!.value.isPlaying){
-           
-         
-
           if (_start < 1) {
             setState(() {
               show = false;
-              _start=3;
+              _start=7;
             });
             timer.cancel();
           } else {
