@@ -36,7 +36,7 @@ class _playback_sliderState extends State<playback_slider> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                text(spe.toString() + "X")
+                text("${spe}X")
                 // text
               ],
             ),

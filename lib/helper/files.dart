@@ -1375,3 +1375,142 @@ class recent_videos with ChangeNotifier {
     return recent_video_list.length > 0;
   }
 }
+
+
+
+
+
+
+
+class Setting_data with ChangeNotifier{
+  
+static bool Show_music=true;
+static bool show_History=true;
+static bool remember_brightness=false;
+static bool remember_aspect_ratio=false;
+static bool Auto_play=true;
+static bool resume=true;
+static bool double_tap_fast_forward=true;
+static bool background_play=true;
+static bool show_thumbnail=true;
+static bool remeber_subtitle_creation=true;
+static bool remeber_subtitle_creation_language=true;
+static bool theme_create=true;
+
+
+
+ void set_setting() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Show_music = prefs.getBool('Show_music') ?? true;
+    show_History = prefs.getBool('show_History') ?? true;
+    remember_brightness = prefs.getBool('remember_brightness') ?? false;
+    remember_aspect_ratio = prefs.getBool('remember_aspect_ratio') ?? false;
+    Auto_play =   prefs.getBool('Auto_play') ?? true;
+    resume =  prefs.getBool('resume') ?? true;
+    double_tap_fast_forward =   prefs.getBool('double_tap_fast_forward') ?? true;
+    background_play =   prefs.getBool('background_play') ?? true;
+    show_thumbnail =   prefs.getBool('show_thumbnail') ?? true;
+    remeber_subtitle_creation =   prefs.getBool('remeber_subtitle_creation') ?? true;
+    remeber_subtitle_creation_language =   prefs.getBool('remeber_subtitle_creation_language') ?? true;
+    theme_create =   prefs.getBool('theme_create') ?? true;
+      
+ }
+  
+    void set_show_music(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('Show_music', value);
+      Show_music=value;
+      notifyListeners();
+    }
+  
+    void set_show_History(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('show_History', value);
+      show_History=value;
+      notifyListeners();
+    }
+  
+    void set_remember_brightness(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('remember_brightness', value);
+      remember_brightness=value;
+      notifyListeners();
+    }
+  
+    void set_remember_aspect_ratio(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('remember_aspect_ratio', value);
+      remember_aspect_ratio=value;
+      notifyListeners();
+    }
+  
+    void set_Auto_play(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('Auto_play', value);
+      Auto_play=value;
+      notifyListeners();
+    }
+  
+    void set_resume(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('resume', value);
+      resume=value;
+      notifyListeners();
+    }
+  
+    void set_double_tap_fast_forward(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('double_tap_fast_forward', value);
+      double_tap_fast_forward=value;
+      notifyListeners();
+    }
+  
+    void set_background_play(bool value) async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('background_play', value);
+      background_play=value;
+      notifyListeners();
+    }
+  
+  bool get_setting_show_music(){
+    return Show_music;
+  }
+
+  bool get_setting_show_History(){
+    return show_History;
+  }
+
+  bool get_setting_remember_brightness(){
+    return remember_brightness;
+  }
+
+  bool get_setting_remember_aspect_ratio(){
+    return remember_aspect_ratio;
+  }
+
+  bool get_setting_Auto_play(){
+    return Auto_play;
+  }
+
+
+
+  bool get_setting_resume(){
+    return resume;
+  }
+
+
+  
+  bool get_setting_double_tap_fast_forward(){
+    return double_tap_fast_forward;
+  }
+
+  bool get_setting_background_play(){
+    return background_play;
+  }
+
+
+
+
+
+
+}

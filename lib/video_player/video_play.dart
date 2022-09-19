@@ -163,7 +163,23 @@ void setfolderplylist(){
       _controller!.setPlaybackSpeed(speed);
     });
   }
+  void repeat_mode_update({int? val}) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if(val==null){
+    repeat_mode=prefs.getInt('repeat_mode')??1;
+  }
+  else{
+    setState(() {
+       repeat_mode=val;
+       prefs.setInt('repeat_mode', repeat_mode);
+    });
 
+  }
+}
+
+int get_repeat_mode(){
+  return repeat_mode;
+}
 
 void set_sleep_timer(int value){
   setState(() {
@@ -249,20 +265,7 @@ void repeat_mode_updated_video(){
 }
 
 
-void repeat_mode_update({int? val}) async{
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  if(val==null){
-    repeat_mode=prefs.getInt('repeat_mode')??1;
-  }
-  else{
-    setState(() {
-       repeat_mode=val;
-       prefs.setInt('repeat_mode', repeat_mode);
-    });
-    
 
-  }
-}
 
 void Hw_sw_decoders({int? val}) async{
 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -495,7 +498,7 @@ double getAspect_ratio(){
   }
 
   void _bottombutton(BuildContext context) {
-    print("called_icon");
+    
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -506,7 +509,6 @@ double getAspect_ratio(){
         return GestureDetector(
             onTap: () {},
             behavior: HitTestBehavior.opaque,
-            //contdition to be ture for one video
             child: icon_butoons(repeat_mode_update:repeat_mode_update,repeat_mode: repeat_mode,Hw_sw_decoders:Hw_sw_decoders,decoder:decoder,icon_button_press:icon_button_press));
       },
     );

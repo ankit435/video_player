@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 
 class icon_butoons extends StatefulWidget {
    final int repeat_mode;
@@ -9,7 +10,7 @@ class icon_butoons extends StatefulWidget {
    final  int decoder;
 void Function({int? val}) Hw_sw_decoders;
 void Function(int val) icon_button_press;
-   icon_butoons( {Key? key, required this.repeat_mode, required this.repeat_mode_update, required this.decoder, required this. Hw_sw_decoders, required this.icon_button_press }) : super(key: key);
+ icon_butoons( {Key? key, required this.repeat_mode, required this.repeat_mode_update, required this.decoder, required this. Hw_sw_decoders, required this.icon_button_press }) : super(key: key);
 
   @override
   State<icon_butoons> createState() => _icon_butoonsState();
@@ -28,7 +29,6 @@ class _icon_butoonsState extends State<icon_butoons> {
   }
 
 Widget iconbutton(IconData? icon, Function param1, {String text = "",int? light=null}) {
-   //print("repeat_mode=== "+widget. repeat_mode.toString()+"  light== "+light.toString());
     return SizedBox.fromSize(
       size: Size(65, 65), // button width and height
       child: ClipOval(
@@ -37,6 +37,7 @@ Widget iconbutton(IconData? icon, Function param1, {String text = "",int? light=
           child: InkWell(
             splashColor: Colors.green, // splash color
             onTap: () {
+              Navigator.pop(context);
               param1();
               
             }, // button pressed
@@ -79,7 +80,7 @@ Widget row1(){
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         iconbutton(Icons.audiotrack,(){widget.icon_button_press(5);},text: "Audio"),
-        iconbutton(Icons.subtitles,(){ Navigator.pop(context); widget.icon_button_press(6);},text: "Subtitles"),
+        iconbutton(Icons.subtitles,(){  widget.icon_button_press(6);},text: "Subtitles"),
         iconbutton(Icons.delete,(){widget.icon_button_press(7);},text: "Delete"),
         iconbutton(Icons.devices_other,(){widget.icon_button_press(8);},text: "Other"),
       ],
@@ -144,16 +145,17 @@ Widget row1(){
            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(onPressed: (){
-              setState(() {
+              Navigator.pop(context);
+              //setState(() {
                 widget.Hw_sw_decoders(val: 1);
-              });
+              //});
 
             }, child: text("HW Decoder",colors: 1)),
             TextButton(onPressed: (){
-
-                setState(() {
+                Navigator.pop(context);
+                //setState(() {
                   widget.Hw_sw_decoders(val: 2);
-                });
+                //});
 
             }, child: text("SW Decoder",colors:2))
           ],

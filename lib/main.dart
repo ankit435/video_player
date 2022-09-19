@@ -40,8 +40,7 @@ WidgetsFlutterBinding.ensureInitialized();
     theme_id=1;
   }
   await playerDatabase.instance;
-
-  runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(theme_id),)], child: MyApp()));
+  runApp(MultiProvider(providers: [ChangeNotifierProvider<themes>(create: (_)=>themes(theme_id),),ChangeNotifierProvider<Setting_data>(create: (_)=>Setting_data(),)  ], child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
