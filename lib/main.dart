@@ -12,6 +12,7 @@ import 'package:video/helper/neo_player/player.dart';
 
 import 'package:video/properties/setting.dart';
 import 'package:video/search/search.dart';
+import 'package:video/showdialogbox/Decoder.dart';
 import 'package:video/theme/theme_constants.dart';
 import 'package:video/theme/theme_create.dart';
 
@@ -138,6 +139,7 @@ Future<void> loaddata() async {
         theme_screen.routeName:(context) => theme_screen(),
         Create_theme.routeName:(context) => Create_theme(),
         Play_video.routeName:(context) => Play_video(),
+        //Decoder.routeName:(context) => Decoder(),
 
       },
     ),);

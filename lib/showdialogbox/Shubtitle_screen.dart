@@ -26,54 +26,60 @@ class _Subtitle_screenState extends State<Subtitle_screen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: AlertDialog(
-          backgroundColor: Theme.of(context).backgroundColor,
-          insetPadding: EdgeInsets.zero,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          scrollable: true,
-          //title: text("subtitle"),
-          //ListTile(title: text("Subtitle"),subtitle: text("None"),),
-          content: Column(
-            children: [
-              ListTile(
-                title: text("Subtitle"),
-                subtitle: text("None"),
-              ),
-              Divider(),
-              ListTile(
-                onTap: () {
-                  Navigator.pop(context);
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Show_subtitle();
-                      });
-                },
-                title: text("Select"),
-              ),
-              ListTile(
-                onTap: () {},
-                title: text("Open form"),
-              ),
-              ListTile(
-                onTap: () {},
-                title: text("Download"),
-              ),
-              ListTile(
-                onTap: () {},
-                title: text("Customese"),
+   return GestureDetector (
+      onTap: (){
+        Navigator.of(context).pop();
+      
+      },
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: AlertDialog(
+            backgroundColor: Theme.of(context).backgroundColor,
+            insetPadding: EdgeInsets.zero,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            scrollable: true,
+            //title: text("subtitle"),
+            //ListTile(title: text("Subtitle"),subtitle: text("None"),),
+            content: Column(
+              children: [
+                ListTile(
+                  title: text("Subtitle"),
+                  subtitle: text("None"),
+                ),
+                Divider(),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Show_subtitle();
+                        });
+                  },
+                  title: text("Select"),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: text("Open form"),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: text("Download"),
+                ),
+                ListTile(
+                  onTap: () {},
+                  title: text("Customese"),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child:Text('Cancel'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child:Text('Cancel'),
-            ),
-          ],
-        ));
+          )),
+    );
   }
 }

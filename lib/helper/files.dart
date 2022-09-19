@@ -1396,10 +1396,11 @@ static bool show_thumbnail=true;
 static bool remeber_subtitle_creation=true;
 static bool remeber_subtitle_creation_language=true;
 static bool theme_create=true;
+int aspect_ratio=0;
 
 
 
- void set_setting() async{
+ void set_setting_data() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Show_music = prefs.getBool('Show_music') ?? true;
     show_History = prefs.getBool('show_History') ?? true;
@@ -1413,6 +1414,10 @@ static bool theme_create=true;
     remeber_subtitle_creation =   prefs.getBool('remeber_subtitle_creation') ?? true;
     remeber_subtitle_creation_language =   prefs.getBool('remeber_subtitle_creation_language') ?? true;
     theme_create =   prefs.getBool('theme_create') ?? true;
+
+
+
+    aspect_ratio =   prefs.getInt('aspect_ratio') ?? 0;
       
  }
   
@@ -1471,6 +1476,14 @@ static bool theme_create=true;
       background_play=value;
       notifyListeners();
     }
+
+  Future<void> setAspectiovalue(int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('aspect_ratio',value);
+      aspect_ratio=value;
+      notifyListeners();
+
+  }
   
   bool get_setting_show_music(){
     return Show_music;
@@ -1495,6 +1508,7 @@ static bool theme_create=true;
 
 
   bool get_setting_resume(){
+    
     return resume;
   }
 
@@ -1506,6 +1520,12 @@ static bool theme_create=true;
 
   bool get_setting_background_play(){
     return background_play;
+  }
+
+
+
+  int get_setting_aspect_ratio() {
+    return aspect_ratio;
   }
 
 

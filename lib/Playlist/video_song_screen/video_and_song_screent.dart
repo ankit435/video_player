@@ -137,7 +137,7 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
                   snap: true,
                   title: text(selction_list.length.toString() + " Selected"),
                   actions: action(),
-                  bottom: TabBar(tabs: [
+                  bottom:Provider.of<Setting_data>(context,listen: true).get_setting_show_music()? TabBar(tabs: [
                     Tab(
                       child: text("Song") ,
                       //text: "Song",
@@ -146,10 +146,10 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
                     Tab(
                      child: text("Video") ,
                     )
-                  ]),
+                  ]):null
                 ),
               ],
-              body: TabBarView(
+              body: Provider.of<Setting_data>(context,listen: true).get_setting_show_music()? TabBarView(
                 children: [
                   Song_playlist(),
                   Video_playlist(
@@ -158,7 +158,11 @@ class _Videos_And_SongsState extends State<Videos_And_Songs> {
                       Files_path: file_detail,
                       select_all_file: _select_all_file),
                 ],
-              ),
+              ):Video_playlist(
+                      selction_list: selction_list,
+                      toggleselctionlist: toggleselctionlist,
+                      Files_path: file_detail,
+                      select_all_file: _select_all_file),
             ),
           ),
         ));

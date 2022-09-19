@@ -61,6 +61,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
    //_fetching_data();
     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
+    Provider.of<Setting_data>(context, listen: false).set_setting_data();
     super.initState();
   }
 

@@ -34,7 +34,7 @@ class Play_video extends StatefulWidget {
 class _Play_videoState extends State<Play_video> {
   @override
   bool show = true;
-  late int currentDuration;
+   late int currentDuration;
   
   late double volume;
 
@@ -86,7 +86,10 @@ class _Play_videoState extends State<Play_video> {
             }
             Provider.of<folder_details>(context, listen: false)
                 .updatevideoopen(v.v_id, v.parent_folder_id);
-            updateseeker(v.v_watched.toDouble());
+          if(Provider.of<Setting_data>(context,listen: false).get_setting_resume())
+           {
+              updateseeker(v.v_watched.toDouble());
+           }
           });
         });
       _controller!.addListener(() {
@@ -135,14 +138,18 @@ void setfolderplylist(){
       setfolderplylist();
       video v = getvideo();
       _onControllerChange(v);
-      _controller!.addListener(() {
-        setlistenerseeker();
-      });
+      // _controller!.addListener(() {
+      //   setlistenerseeker();
+      // });
       // _controller!.addListener(() {
       //   volume_listener();
       // });
       repeat_mode_update();
       Hw_sw_decoders();
+      if(Provider.of<Setting_data>(context,listen: false).get_setting_remember_aspect_ratio()){
+        aspect_ratio=Provider.of<Setting_data>(context,listen: false).get_setting_aspect_ratio();
+      }
+
     }
     super.initState();
   }
@@ -336,6 +343,7 @@ void exitfullscreen(){
   }
 
 void setAspectratio(){
+  
   if(aspect_ratio==0){
     aspect_ratio=1;
   }
@@ -357,6 +365,10 @@ void setAspectratio(){
   else{
     aspect_ratio=0;
   }
+
+if(Provider.of<Setting_data>(context,listen: true).get_setting_remember_aspect_ratio());{
+  Provider.of<Setting_data>(context,listen: true).setAspectiovalue(aspect_ratio);
+}
  
 
 }
@@ -608,7 +620,7 @@ void specificorenation(bool orientation) {
 Widget icons_theme(IconData? icon){
   return Icon(icon, color: Colors.white,);
 }
-Widget iconbutton(IconData? icon, Function param1, {String? text =null}) {
+Widget iconbutton(IconData? icon, Function? param1, {String? text =null}) {
     return SizedBox.fromSize(
       size: Size(56, 56), // button width and height
       child: ClipOval(
@@ -617,7 +629,7 @@ Widget iconbutton(IconData? icon, Function param1, {String? text =null}) {
           child: InkWell(
             splashColor: Colors.green, // splash color
             onTap: () {
-              param1();
+              param1!();
               
             }, // button pressed
             child: Column(
@@ -728,10 +740,14 @@ void toggle_play_pause(){
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.headphones, () {
+      Provider.of<Setting_data>(context,listen: false).get_setting_background_play()?
+      iconbutton(Icons.headphones,() {
+
+        
         setState(() {
           background_play = true;
         });
+
         Provider.of<queue_playerss>(context, listen: false)
             .togle_bacground_play();
         Provider.of<queue_playerss>(context, listen: false)
@@ -741,7 +757,7 @@ void toggle_play_pause(){
           _controller!.pause();
         }
         //  dispose();
-      }),
+      }):SizedBox(),
       SizedBox(
         width: 10,
       ),

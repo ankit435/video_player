@@ -6,8 +6,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/helper/files.dart';
+import 'package:video/showdialogbox/Decoder.dart';
 import 'package:video/theme/theme_screen.dart';
 
+enum video_decoder { HW_Decoder, SW_Decoder }
 class Setting extends StatefulWidget {
 //  final bool isLoading;
    Setting( {Key? key,}) : super(key: key);
@@ -24,6 +26,7 @@ class _SettingState extends State<Setting> {
     "History": false
   };
   @override
+   video_decoder? character = video_decoder.HW_Decoder;
 
   void update_function( String key, bool value)   {
 
@@ -75,7 +78,6 @@ class _SettingState extends State<Setting> {
         setState(() {
           isSwitched = value;
           update_function(key, value);
-        
            
         });
       },
@@ -101,8 +103,6 @@ class _SettingState extends State<Setting> {
         onTap: param1==null?null:() {
           param1();
         });
-
-        
         
   }
   
@@ -113,6 +113,14 @@ class _SettingState extends State<Setting> {
            ));
   }
 
+void update_decoder(video_decoder? val){
+
+setState(() {
+  character = val;
+});
+  
+
+}
 
 
   Widget build(BuildContext context) {
@@ -172,7 +180,20 @@ class _SettingState extends State<Setting> {
                   ),
                   Column(
                     children: [
-                      listiles("Decoder", subtitle: "Use Decoder"),
+                      listiles("Decoder", subtitle:character.toString().toString().split('.').last,param1:(){
+
+                             showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Decoder(
+                         character: character,
+                         update_decoder:update_decoder
+
+
+                      );
+                    });
+
+                      }), 
                       Divider(),
                       listiles("Subtitle Rendring" ,),
                       Divider(),
