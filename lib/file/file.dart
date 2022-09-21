@@ -16,11 +16,13 @@ import 'package:share_plus/share_plus.dart';
 import 'grid_view.dart';
 
 class Files extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final String f_id;
   final String title;
   final bool recent;
 
-  Files({Key? key,required this.f_id,required this.title,required this.recent}) : super(key: key);
+  // ignore: non_constant_identifier_names
+  const Files({Key? key,required this.f_id,required this.title,required this.recent}) : super(key: key);
   static const routeName = '/file_video';
   @override
   State<Files> createState() => _FilesState();
@@ -53,7 +55,7 @@ class _FilesState extends State<Files> {
         ));
   }
 
-  void _videoproprties(BuildContext context, String v_id, String f_id) {
+  void _videoproprties(BuildContext context, String vId, String fId) {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -66,16 +68,16 @@ class _FilesState extends State<Files> {
           behavior: HitTestBehavior.opaque,
           child: Bottom_model(
               onsinglefiledelete: onsinglefiledelete,
-              v_id: v_id,
+              v_id: vId,
               file_detail: File_path,
-              f_id: f_id,
+              f_id: fId,
               onPressed: _bottoplaylist),
         );
       },
     );
   }
 
-  void _bottoplaylist(BuildContext context, String v_id, String f_id) {
+  void _bottoplaylist(BuildContext context, String vId, String fId) {
     showModalBottomSheet(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
@@ -88,7 +90,7 @@ class _FilesState extends State<Files> {
           behavior: HitTestBehavior.opaque,
           //contdition to be ture for one video
           child: BottomPlayList(
-              v_id: v_id, passvideo: [], f_id: f_id, condition: true),
+              v_id: vId, passvideo: [], f_id: fId, condition: true),
         );
       },
     );
@@ -133,13 +135,13 @@ class _FilesState extends State<Files> {
 
 // }
 
-  void toggleselctionlist(String value, int size, String p_id) {
+  void toggleselctionlist(String value, int size, String pId) {
     setState(() {
       if (selction_list.containsKey(value)) {
         selction_list.remove(value);
         selcted_size -= size;
       } else {
-        selction_list.addAll({value: p_id});
+        selction_list.addAll({value: pId});
         selcted_size += size;
       }
     });
@@ -174,31 +176,31 @@ class _FilesState extends State<Files> {
     selction_list.clear();
   }
 
-  Future<void> onsinglefiledelete(Map<String, String> single_video_list) async {
+  Future<void> onsinglefiledelete(Map<String, String> singleVideoList) async {
 
-    if (single_video_list.isNotEmpty) {
+    if (singleVideoList.isNotEmpty) {
 
        if(widget.recent){
-        Provider.of<recent_videos>(context, listen: false).remove_from_recent(single_video_list.keys.toList());
+        Provider.of<recent_videos>(context, listen: false).remove_from_recent(singleVideoList.keys.toList());
       }
       else{
 
       Map<String, Set<String>> removeList =
           await Provider.of<folder_details>(context, listen: false)
-              .delete_file(single_video_list);
+              .delete_file(singleVideoList);
       remove_playlist(removeList);
     }
     }
   }
 
-  void _select_all_file(List<video> file_path, int size) {
+  void _select_all_file(List<video> filePath, int size) {
     setState(() {
-      if (file_path.length == selction_list.length) {
+      if (filePath.length == selction_list.length) {
         selction_list.clear();
         selcted_size = 0;
       } else {
         selction_list.clear();
-        file_path.forEach((element) {
+        filePath.forEach((element) {
           selction_list.addAll({element.v_id: element.parent_folder_id});
         });
         selcted_size = size;
@@ -352,13 +354,13 @@ class _FilesState extends State<Files> {
     );
   }
 
-  Widget _listViewbulder(List<video> File_path) {
+  Widget _listViewbulder(List<video> FilePath) {
     return ListView.builder(
         padding: EdgeInsets.zero,
-        itemCount: File_path.length,
+        itemCount: FilePath.length,
         itemBuilder: (context, index) {
           return Files_path(
-            file_path: File_path,
+            file_path: FilePath,
             index: index,
             value: icons_value,
             onPressed: toggleselction,
@@ -370,10 +372,10 @@ class _FilesState extends State<Files> {
         });
   }
 
-  Widget _gridviewbuilder(List<video> File_path) {
+  Widget _gridviewbuilder(List<video> FilePath) {
     print(MediaQuery.of(context).size.width);
     return GridView.builder(
-      itemCount: File_path.length,
+      itemCount: FilePath.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: (MediaQuery.of(context).size.width / 125.0).toInt(),
         //childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height/2.5),
@@ -382,7 +384,7 @@ class _FilesState extends State<Files> {
       itemBuilder: (context, index) {
         return GridTile(
             child: Grid_view_file(
-          file_path: File_path,
+          file_path: FilePath,
           index: index,
           value: icons_value,
           onPressed: toggleselction,
@@ -547,7 +549,7 @@ class _FilesState extends State<Files> {
        : Provider.of<folder_details>(context, listen: true).gefoldersize(widget.f_id);
     queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
-    String selected_title = selction_list.length.toString() + " " + 'selected';
+    String selectedTitle = selction_list.length.toString() + " " + 'selected';
     return Scaffold(
       body: Container(
         color: Theme.of(context).backgroundColor,
@@ -565,7 +567,7 @@ class _FilesState extends State<Files> {
               ),
               floating: true,
               snap: true,
-              title: text(selection ? selected_title : widget.title),
+              title: text(selection ? selectedTitle : widget.title),
               actions: action(),
             ),
           ],

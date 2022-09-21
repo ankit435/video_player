@@ -9,6 +9,8 @@ import 'package:video/helper/files.dart';
 import 'package:video/showdialogbox/Decoder.dart';
 import 'package:video/theme/theme_screen.dart';
 
+import '../showdialogbox/skip_time.dart';
+
 enum video_decoder { HW_Decoder, SW_Decoder }
 class Setting extends StatefulWidget {
 //  final bool isLoading;
@@ -95,11 +97,11 @@ class _SettingState extends State<Setting> {
     return value;
   }
 
-  Widget listiles(String titles, {String subtitle="", String? key,Function? param1,bool? cond} ) {
+  Widget listiles(String titles, {String? subtitle, String? key,Function? param1,bool? cond,String? trailing_text} ) {
     return ListTile(
         title: text(titles),
-        subtitle: subtitle.isNotEmpty ? text(subtitle) : null,
-        trailing: key!=null ? Switch_button(key, cond ?? false) : null,
+        subtitle: subtitle==null ?null: text(subtitle),
+        trailing: key!=null ? Switch_button(key, cond ?? false) : text(trailing_text),
         onTap: param1==null?null:() {
           param1();
         });
@@ -107,8 +109,8 @@ class _SettingState extends State<Setting> {
   }
   
 
-  Widget text(String text){
-  return Text(text , style: TextStyle(
+  Widget? text(String? text){
+  return text==null?null: Text(text , style: TextStyle(
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ));
   }
@@ -121,103 +123,119 @@ setState(() {
   
 
 }
+Widget body(){
+  return SingleChildScrollView (
+    child: Column(
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+          alignment: Alignment.centerLeft,
+          child: Text("General",style: TextStyle(color: Colors.red),),
+          
+        ),
+        Column(
+          children: [
+            listiles("Theme", subtitle: Theme.of(context).toString(),param1:(){
+              Navigator.pushNamed(context, '/theme_screen');
+  
+            }),
+          Divider(),
+            listiles("Language",subtitle:  "Auto", param1:(){
+            Provider.of<themes>(context,listen: false).update_curr_theme_id(2);
+            }),
+          ],
+        ),
+       Container(
+          padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+          alignment: Alignment.centerLeft,
+          child: Text("Media",style: TextStyle(color: Colors.red),),
+          
+        ),
+        Column(
+          children: [
+            listiles("Show Music", key: "Music",subtitle: "Support Music player" ,cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_music()),
+            Divider(),
+            listiles("Manage Scanlist", subtitle: "Manage Scanlist",param1:(){
+              Navigator.pushNamed(context, '/Manage_scan_list');
+            }),
+            Divider(),
+            listiles("Show History", key: "History",cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_History()),
+            Divider(),
+            listiles("Show Hidden File", key: "Hidden file",),
+          ],
+        ),
+       Container(
+          padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
+          alignment: Alignment.centerLeft,
+          child: Text("PlayBack",style: TextStyle(color: Colors.red),),
+          
+        ),
+        Column(
+          children: [
+            listiles("Decoder", subtitle:character.toString().toString().split('.').last,param1:(){
+  
+                   showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Decoder(
+               character: character,
+               update_decoder:update_decoder
+  
+  
+            );
+          });
+  
+            }), 
+            Divider(),
+            listiles("Subtitle Rendring" ,),
+            Divider(),
+            listiles("Remember Brightness", key: "Brightness", cond: Provider.of<Setting_data>(context,listen: true).get_setting_remember_brightness()),
+            Divider(),
+            listiles("Remember Apect Ratio", key: "Apectratio", subtitle: "Remeber aspect Ratio of all Video",cond: Provider.of<Setting_data>(context,listen: true).get_setting_remember_aspect_ratio()),
+            Divider(),
+            listiles("Resume", key: "Resume", subtitle: "Continue playing from where you stopeed", cond: Provider.of<Setting_data>(context,listen: true).get_setting_resume()),
+           Divider(),
+            listiles("Auto Play Next", key: "Auto_play_next", cond: Provider.of<Setting_data>(context,listen: true).get_setting_Auto_play()),
+           Divider(),
+            listiles("Background play", key: "Back_ground_play", cond: Provider.of<Setting_data>(context,listen: true).get_setting_background_play()),
+           Divider(),
+            listiles("Time To Fast Forward", subtitle: "Double tap to fast forward",param1:Provider.of<Setting_data>(context,listen: true).get_setting_double_tap_fast_forward()? (){
+              showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Skip_time();
+          });
+            }:null, trailing_text: Provider.of<Setting_data>(context,listen: true).get_skip_time().toString() ),
+           Divider(),
+            listiles("Double tap to fast forward", key: "Double_tap", cond: Provider.of<Setting_data>(context,listen: true).get_setting_double_tap_fast_forward()),
+  
+          ],
+        ),
+      ]
+      
+    ),
+  );
+  
+}
 
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar( 
+     //   appBar: 
+        body:Container(
+          color: Theme.of(context).backgroundColor,
+          child:
+          
+          Column(children: [
+          AppBar( 
           elevation: 0,
           backgroundColor: Theme.of(context).backgroundColor,
-       title: text("Setting")),
-        body:Container(
-             color: Theme.of(context).backgroundColor,
-          child: Center(
-            child: SingleChildScrollView (
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                    alignment: Alignment.centerLeft,
-                    child: Text("General",style: TextStyle(color: Colors.red),),
-                    
-                  ),
-                  Column(
-                    children: [
-                      listiles("Theme", subtitle: Theme.of(context).toString(),param1:(){
-                        Navigator.pushNamed(context, '/theme_screen');
-
-                      }),
-                    Divider(),
-                      listiles("Language",subtitle:  "Auto", param1:(){
-                      Provider.of<themes>(context,listen: false).update_curr_theme_id(2);
-                      }),
-                    ],
-                  ),
-                 Container(
-                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                    alignment: Alignment.centerLeft,
-                    child: Text("Media",style: TextStyle(color: Colors.red),),
-                    
-                  ),
-                  Column(
-                    children: [
-                      listiles("Show Music", key: "Music",subtitle: "Support Music player" ,cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_music()),
-                      Divider(),
-                      listiles("Manage Scanlist", subtitle: "Manage Scanlist",param1:(){
-                        //Navigator.pushNamed(context, '/scanlist');
-                      }),
-                      Divider(),
-                      listiles("Show History", key: "History",cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_History()),
-                      Divider(),
-                      listiles("Show Hidden File", key: "Hidden file",),
-                    ],
-                  ),
-                 Container(
-                    padding: EdgeInsets.fromLTRB(10, 5, 0, 3),
-                    alignment: Alignment.centerLeft,
-                    child: Text("PlayBack",style: TextStyle(color: Colors.red),),
-                    
-                  ),
-                  Column(
-                    children: [
-                      listiles("Decoder", subtitle:character.toString().toString().split('.').last,param1:(){
-
-                             showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Decoder(
-                         character: character,
-                         update_decoder:update_decoder
-
-
-                      );
-                    });
-
-                      }), 
-                      Divider(),
-                      listiles("Subtitle Rendring" ,),
-                      Divider(),
-                      listiles("Remember Brightness", key: "Brightness", cond: Provider.of<Setting_data>(context,listen: true).get_setting_remember_brightness()),
-                      Divider(),
-                      listiles("Remember Apect Ratio", key: "Apectratio", subtitle: "Remeber aspect Ratio of all Video",cond: Provider.of<Setting_data>(context,listen: true).get_setting_remember_aspect_ratio()),
-                      Divider(),
-                      listiles("Resume", key: "Resume", subtitle: "Continue playing from where you stopeed", cond: Provider.of<Setting_data>(context,listen: true).get_setting_resume()),
-                     Divider(),
-                      listiles("Auto Play Next", key: "Auto_play_next", cond: Provider.of<Setting_data>(context,listen: true).get_setting_Auto_play()),
-                     Divider(),
-                      listiles("Background play", key: "Back_ground_play", cond: Provider.of<Setting_data>(context,listen: true).get_setting_background_play()),
-                     Divider(),
-                      listiles("Time To Fast Forward", subtitle: "Double tap to fast forward",),
-                     Divider(),
-                      listiles("Double tap to fast forward", key: "Double_tap", cond: Provider.of<Setting_data>(context,listen: true).get_setting_double_tap_fast_forward()),
-
-                    ],
-                  ),
-                ]
-                
-              ),
-            ),
-          ),
-        ));
+          title: text("Setting")),
+          Flexible (child: body())
+          ],)
+          
+         )
+         
+         );
   }
 }

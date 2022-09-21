@@ -983,13 +983,13 @@ void toggle_play_pause(){
 
   void fastforward() {
     Duration currentPosition = _controller!.value.position;
-    Duration targetPosition = currentPosition + const Duration(seconds: 10);
+    Duration targetPosition = currentPosition +  Duration(seconds: Provider.of<Setting_data>(context,listen: false).get_skip_time());
     _controller!.seekTo(targetPosition);
   }
 
   void backward() {
     Duration currentPosition = _controller!.value.position;
-    Duration targetPosition = currentPosition - const Duration(seconds: 10);
+    Duration targetPosition = currentPosition -  Duration(seconds:Provider.of<Setting_data>(context,listen: false).get_skip_time());
     _controller!.seekTo(targetPosition);
   }
 
@@ -1112,9 +1112,9 @@ void toggle_play_pause(){
               GestureDetector(
                 onHorizontalDragEnd: (details) => fastforward(),
                 onTap: show_content,
-                onDoubleTap: () {
+                onDoubleTap: Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
                   fastforward();
-                },
+                }:null,
                 onVerticalDragUpdate: (details) {
                   int sensitivity = 1;
                   if (details.delta.dy > sensitivity) {
@@ -1142,10 +1142,10 @@ void toggle_play_pause(){
               ),
              GestureDetector(
                onTap: show_content,
-               onDoubleTap: () {
+               onDoubleTap:Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
                  print("left");
                  backward();
-               },
+               }:null,
                onVerticalDragUpdate: (details) {
                  int sensitivity = 0;
                  if (details.delta.dy > sensitivity) {

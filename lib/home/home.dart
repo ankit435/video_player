@@ -33,6 +33,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   int selcted_size = 0;
   var queue;
   bool mounted = true;
+   List<folder> folder_list=[];
 
   Set<String> selction_list = {};
   void toggleselction() {
@@ -62,6 +63,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
    //_fetching_data();
     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
     Provider.of<Setting_data>(context, listen: false).set_setting_data();
+   
     super.initState();
   }
 
@@ -457,7 +459,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     );
   }
 
-  var folder_list;
+ 
   Widget build(BuildContext context) {
     folder_list = Provider.of<folder_details>(context, listen: true).items();
     queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
@@ -601,7 +603,8 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
       padding: EdgeInsets.zero,
       itemCount: folder_list.length,
       itemBuilder: (context, index) {
-        return CharacteristListItem(
+
+        return  folder_list[index].show?Container():CharacteristListItem(
           bottomsheet: _videoproprties,
           folder_detail: folder_list[index],
           toggleselction: toggleselction,

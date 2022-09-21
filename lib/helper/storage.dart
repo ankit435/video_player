@@ -55,6 +55,8 @@ class Storage {
     return directory;
   }
 
+
+
 // Future<String?> Createvideothumbail(File path) async{
 //   var dir = await video_thumbail();
 //   var thumbnail = await VideoThumbnail.thumbnailFile(
@@ -142,6 +144,15 @@ class Storage {
     return v_id;
   }
 
+  Future<bool> getshowfolder_video(String path) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? v_id = prefs.getBool(path);
+    if (v_id == null) {
+      return false;
+    }
+    return v_id;
+  }
+
   
 
   void getfolder(List root, List<folder> folders, String parent, dynamic size,
@@ -193,7 +204,9 @@ class Storage {
           f_path: parent,
           f_detail: file,
           f_timestamp: DateTime.now(),
-          f_size: size);
+          f_size: size,
+          show: await getshowfolder_video(parent)
+          );
       folders.add(newfolder);
     }
   }

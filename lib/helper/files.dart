@@ -271,7 +271,9 @@ class folder_details with ChangeNotifier {
   List<video> getAllvideo() {
     List<video> videos = [];
     for (var element in _folder_item) {
+      if(element.show==false){
       videos.addAll(element.f_detail);
+      }
     }
 
     return videos;
@@ -295,7 +297,9 @@ class folder_details with ChangeNotifier {
   int gettotalvideosize() {
     int size = 0;
     for (var element in _folder_item) {
+      if(element.show==false){
       size += element.f_size;
+      }
     }
 
     return size;
@@ -611,6 +615,31 @@ class folder_details with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+Future<bool> set_folder_shows(String path,bool cond) async{
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.setBool(path, cond);
+  } catch (e) {
+    throw Exception(e);
+  }
+   
+}
+
+
+  void toggle_show_folder(String f_path) async{
+    try {
+       int index = folder_index(f_path);
+    if(await set_folder_shows(f_path, !_folder_item[index].show)){
+      _folder_item[index].show = !_folder_item[index].show;
+      notifyListeners();
+    }
+    } catch (e) {
+      throw Exception('Failed $e not found');
+    }
+   
+    
   }
 }
 
@@ -1282,7 +1311,7 @@ class recent_videos with ChangeNotifier {
   }
 
   Future<int> delete_recent_video(String r_id) async {
-    final db = await playerDatabase.instance;
+    final db = playerDatabase.instance;
     return await db.delete_recent_video(r_id);
   }
 
@@ -1316,8 +1345,8 @@ class recent_videos with ChangeNotifier {
           recent_video_list.insert(0, r);
         }
       } else {
-        if (recent_video_list.length >= 31) {
-          recent_video_list.removeAt(31);
+        if (recent_video_list.length >= 21) {
+          recent_video_list.removeAt(21);
         }
         add_to_database(r);
         recent_video_list.insert(0, r);
@@ -1397,6 +1426,7 @@ static bool remeber_subtitle_creation=true;
 static bool remeber_subtitle_creation_language=true;
 static bool theme_create=true;
 int aspect_ratio=0;
+int skip_time=10;
 
 
 
@@ -1417,7 +1447,9 @@ int aspect_ratio=0;
 
 
 
+
     aspect_ratio =   prefs.getInt('aspect_ratio') ?? 0;
+    skip_time =   prefs.getInt('skip_time') ?? 10;
       
  }
   
@@ -1484,6 +1516,14 @@ int aspect_ratio=0;
       notifyListeners();
 
   }
+  Future<void> set_skip_time(int value) async{
+
+ SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('skip_time',value);
+      skip_time=value;
+      notifyListeners();  
+
+  }
   
   bool get_setting_show_music(){
     return Show_music;
@@ -1526,6 +1566,10 @@ int aspect_ratio=0;
 
   int get_setting_aspect_ratio() {
     return aspect_ratio;
+  }
+
+  int get_skip_time() {
+    return skip_time;
   }
 
 

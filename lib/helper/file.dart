@@ -63,6 +63,7 @@ class folder with ChangeNotifier {
   List<video> f_detail = [];
   final DateTime f_timestamp;
   int f_size;
+  bool show = false;
 
   folder({
     required this.f_id,
@@ -71,6 +72,7 @@ class folder with ChangeNotifier {
     required this.f_detail,
     required this.f_timestamp,
     required this.f_size,
+    this.show=false,
   });
 }
 

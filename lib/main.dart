@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video/file/file.dart';
 import 'package:video/home/home.dart';
 import 'package:video/helper/neo_player/player.dart';
+import 'package:video/properties/manage_scanlist.dart';
 
 
 
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Brightness? _brightness;
     @override
   void initState() {
+     Provider.of<Setting_data>(context, listen: false).set_setting_data();
     WidgetsBinding.instance.addObserver(this);
     _brightness = WidgetsBinding.instance.window.platformBrightness;
    // _themeManager.addListener(themeListener);
@@ -139,7 +141,7 @@ Future<void> loaddata() async {
         theme_screen.routeName:(context) => theme_screen(),
         Create_theme.routeName:(context) => Create_theme(),
         Play_video.routeName:(context) => Play_video(),
-        //Decoder.routeName:(context) => Decoder(),
+        Manage_scan_list.routeName:(context) => Manage_scan_list(),
 
       },
     ),);

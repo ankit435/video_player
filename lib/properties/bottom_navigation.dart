@@ -104,6 +104,16 @@ List<BottomNavigationBarItem> bottobar(){
       _selectedIndex = index;
     });
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
+    // Provider.of<Setting_data>(context, listen: false).set_setting_data();
+     setState(() {
+    });
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       //body: IndexedStack(children:_widgetOptions,index: _selectedIndex,) ,
