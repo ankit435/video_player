@@ -157,23 +157,26 @@ class _FilesState extends State<Files> {
   }
 
   Future<void> ondelete() async {
-    if (selction_list.isNotEmpty) {
-
       if(widget.recent){
-        Provider.of<recent_videos>(context, listen: false).remove_from_recent(selction_list.keys.toList());
+        List<String>recent_delete=[];
+        File_path.forEach((element) {recent_delete.add(element.v_id);});
+        Provider.of<recent_videos>(context, listen: false).remove_from_recent(recent_delete);
       }
       else{
+         if (selction_list.isNotEmpty){
         Map<String, Set<String>> removeList =
           await Provider.of<folder_details>(context, listen: false)
               .delete_file(selction_list);
         remove_playlist(removeList);
-
+        toggleselction();
+        selction_list.clear();
       }
-
-
     }
-    toggleselction();
-    selction_list.clear();
+
+    setState(() {
+      
+    });
+    
   }
 
   Future<void> onsinglefiledelete(Map<String, String> singleVideoList) async {
@@ -190,6 +193,9 @@ class _FilesState extends State<Files> {
               .delete_file(singleVideoList);
       remove_playlist(removeList);
     }
+    setState(() {
+      
+    });
     }
   }
 
@@ -368,6 +374,8 @@ class _FilesState extends State<Files> {
             selction_list: selction_list,
             onPressed1: toggleselctionlist,
             bottommodel: _videoproprties,
+            onsinglefiledelete: onsinglefiledelete,
+            recent_played: widget.recent,
           );
         });
   }
@@ -456,7 +464,7 @@ class _FilesState extends State<Files> {
             style:
                 TextStyle(fontSize: 13, color: Theme.of(context).primaryColor),
           ),
-          trailing: selection
+          trailing: selection&&widget.recent==false
               ? Checkbox(
                 checkColor: Theme.of(context).textTheme.bodyText1!.color,
      fillColor: MaterialStateProperty.resolveWith(getColor),
@@ -465,7 +473,7 @@ class _FilesState extends State<Files> {
                   onChanged: (value) {
                     _select_all_file(File_path, size);
                   })
-              : null),
+              :widget.recent? TextButton(onPressed:(){ ondelete();}, child:const Text("Clear All") ):null),
     );
   }
 

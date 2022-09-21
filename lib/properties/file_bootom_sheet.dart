@@ -19,7 +19,8 @@ class Bottom_model extends StatefulWidget {
   //Future<void> Function(Map<int, int> delete) ondelete;
   void Function(BuildContext context, String v_id, String f_id) onPressed;
   Future<void> Function(Map<String, String> single_video_list) onsinglefiledelete;
-   Bottom_model({Key? key, required this.file_detail, required this.v_id, required this.f_id, required this.onPressed, required this. onsinglefiledelete, 
+  bool recent_played=false;
+   Bottom_model({Key? key, required this.file_detail, required this.v_id, required this.f_id, required this.onPressed, required this. onsinglefiledelete,this.recent_played=false 
    ///required this.ondelete
   })
       : super(key: key);

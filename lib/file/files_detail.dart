@@ -20,10 +20,13 @@ class Files_path extends StatefulWidget {
   final bool selection;
   Map<String, String> selction_list;
   void Function(String, int, String)? onPressed1;
+  bool recent_played=false;
   void Function(BuildContext context, String f_id, String p_id)? bottommodel;
+  Future<void> Function(Map<String, String> single_video_list)? onsinglefiledelete;
   final int index;
   Files_path(
       {Key? key,
+      this.recent_played=false,
       required this.index,
       required this.file_path,
       required this.value,
@@ -31,7 +34,9 @@ class Files_path extends StatefulWidget {
       required this.selection,
       required this.selction_list,
       required this.onPressed1,
-      required this.bottommodel})
+      required this.bottommodel,
+      this.onsinglefiledelete=null,
+      })
       : super(key: key);
   @override
   State<Files_path> createState() => _CharacteristListItemState();
@@ -76,7 +81,8 @@ class _CharacteristListItemState extends State<Files_path> {
           color: Colors.transparent, // button color
           child: InkWell(
             splashColor: Colors.green, // splash color
-            onTap: () {
+            onTap: widget.recent_played?(){widget.onsinglefiledelete!({widget.file_path[widget.index].v_id:
+                  widget.file_path[widget.index].parent_folder_id});}:  () {
               widget.bottommodel!(context, widget.file_path[widget.index].v_id,
                   widget.file_path[widget.index].parent_folder_id);
             }, // button pressed
@@ -84,7 +90,7 @@ class _CharacteristListItemState extends State<Files_path> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Icon(
-                  Icons.more_vert,
+                 widget.recent_played?Icons.close:  Icons.more_vert,
                   color: IconTheme.of(context).color,
                 ), // icon
                 // text
@@ -214,7 +220,7 @@ void update_thumbail(String thum){
               widget.onPressed1 != null
           ? checkbox()
           : iconbutton(),
-      onTap: (widget.selection || widget.bottommodel == null) &&
+      onTap:  (widget.selection || widget.bottommodel == null) &&
               widget.onPressed1 != null
           ? () {
               widget.onPressed1!(
@@ -237,7 +243,7 @@ void update_thumbail(String thum){
               // );
               Navigator.of(context).pushNamed(Play_video.routeName);
             },
-      onLongPress: widget.onPressed1 != null
+      onLongPress: widget.onPressed1 != null&&widget.recent_played==false
           ? () {
               widget.onPressed!();
               widget.onPressed1!(

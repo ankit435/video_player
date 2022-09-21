@@ -73,12 +73,12 @@ class _Manage_scan_listState extends State<Manage_scan_list> {
                  // actions: action(),
                   bottom:Provider.of<Setting_data>(context,listen: true).get_setting_show_music()? TabBar(tabs: [
                     Tab(
-                      child: text("Song") ,
+                      child: text("Video") ,
                       //text: "Song",
                       
                     ),
                     Tab(
-                     child: text("Video") ,
+                     child: text("Song") ,
                     )
                   ]):null
                 ),
