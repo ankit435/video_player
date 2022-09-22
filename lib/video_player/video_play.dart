@@ -297,7 +297,9 @@ else{
 
   video getvideo() {
     video v= Provider.of<queue_playerss>(context, listen: false).getvideo_by_id();
-    Provider.of<recent_videos>(context, listen: false).add_to_recent(v) ;
+    if(Provider.of<Setting_data>(context,listen: false).get_setting_show_History()) {
+      Provider.of<recent_videos>(context, listen: false).add_to_recent(v) ;
+    }
     return v;
   }
 
@@ -682,7 +684,10 @@ void toggle_play_pause(){
             _controller!.play();
           }
 }
-  List<Widget> Bottom_button() {
+bool isLand_scape(){
+  return MediaQuery.of(context).orientation == Orientation.landscape;
+}
+List<Widget> Bottom_button() {
     return [
       iconbutton(lock ? Icons.lock : Icons.lock_open, () {
         if (!lock) {
@@ -698,19 +703,35 @@ void toggle_play_pause(){
           });
         }
       }),
-      iconbutton(Icons.skip_previous, () {
-        play_prv() ? _onControllerChange(getvideo()) : null;
-      }),
-      iconbutton(_controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          () {
-        setState(() {
-          update_curent_watch_time();
-            toggle_play_pause();
-        });
-      }),
-      iconbutton(Icons.skip_next, () {
-        play_next() ? _onControllerChange(getvideo()) : null;
-      }),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          isLand_scape()?iconbutton(Icons.fast_rewind, (){ backward(); }):Container(),
+          Transform.scale(
+            scale: 1.5,
+            child: iconbutton(Icons.skip_previous, () {
+              play_prv() ? _onControllerChange(getvideo()) : null;
+            }),
+          ),
+         Transform.scale(scale:2,
+            child: iconbutton(_controller!.value.isPlaying ? Icons.pause_circle_outline_outlined : Icons.play_circle_outline_outlined, 
+                () {
+              setState(() {
+                update_curent_watch_time();
+                  toggle_play_pause();
+              });
+            }),
+          ),
+          Transform.scale(
+            scale: 1.5,
+            child: iconbutton(Icons.skip_next, () {
+              play_next() ? _onControllerChange(getvideo()) : null;
+            }),
+          ),
+          isLand_scape()?Transform.scale (scaleX: -1, child: iconbutton(Icons.fast_rewind, (){fastforward();})):Container(),
+          
+        ],
+      ),
       iconbutton(icon[aspect_ratio], () {
           setAspectratio();
       }),
@@ -941,7 +962,7 @@ void toggle_play_pause(){
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(getDuration(currentDuration.toDouble()),
-                  style: TextStyle(
+                  style: const TextStyle(
                       //color: Theme.of(context).sliderTheme.activeTrackColor,
                       color: Colors.white,
                       fontSize: 12.5,
@@ -962,7 +983,7 @@ void toggle_play_pause(){
                   getDuration(
                       _controller!.value.duration.inMilliseconds.toDouble() -
                           currentDuration.toDouble()),
-                  style: TextStyle(
+                  style: const TextStyle(
                       //color: Theme.of(context).sliderTheme.inactiveTrackColor,
                       color: Colors.white,
                       fontSize: 12.5,

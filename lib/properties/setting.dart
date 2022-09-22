@@ -159,7 +159,7 @@ Widget body(){
               Navigator.pushNamed(context, '/Manage_scan_list');
             }),
             Divider(),
-            listiles("Show History", key: "History",cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_History()),
+            listiles("Recent History", key: "History",cond: Provider.of<Setting_data>(context,listen: true).get_setting_show_History()),
             Divider(),
             listiles("Show Hidden File", key: "Hidden file",),
           ],
@@ -205,7 +205,7 @@ Widget body(){
           builder: (BuildContext context) {
             return Skip_time();
           });
-            }:null, trailing_text: Provider.of<Setting_data>(context,listen: true).get_skip_time().toString() ),
+            }:null, trailing_text: "${Provider.of<Setting_data>(context,listen: true).get_skip_time()} sec  " ),
            Divider(),
             listiles("Double tap to fast forward", key: "Double_tap", cond: Provider.of<Setting_data>(context,listen: true).get_setting_double_tap_fast_forward()),
   

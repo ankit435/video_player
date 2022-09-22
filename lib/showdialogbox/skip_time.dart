@@ -53,9 +53,9 @@ class _Skip_timeState extends State<Skip_time> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             scrollable: true,
-            title: ListTile(title: text("Subtitle"),subtitle: text("None"),),
+            title: ListTile(title: text("Skip Time"),subtitle: text("${Provider.of<Setting_data>(context,listen: true).get_skip_time()} sec  "),),
             
-            content: Container(
+            content: SizedBox(
              
               width: double.minPositive,
                     height: 300,

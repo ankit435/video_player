@@ -61,6 +61,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
    //_fetching_data();
+  
     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
     Provider.of<Setting_data>(context, listen: false).set_setting_data();
    
@@ -482,9 +483,9 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                             ? "Video"
                             : selction_list.length.toString() + " Selected"),
                       ),
-                      Provider.of<recent_videos>(context, listen: true).showReecent()? 
+                      Provider.of<recent_videos>(context, listen: true).showReecent()&&Provider.of<Setting_data>(context,listen: true).get_setting_show_History()? 
 
-                      Container(
+                      SizedBox(
                         height: 50,
                         child: ListTile(
                           leading: Icon(
@@ -494,7 +495,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                           title: text("Recently Played"),
                           onTap: (){
                             Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Files(
+                          builder: (context) =>const Files(
                           f_id: "",
                           title: "Recent Video",
                           recent: true,

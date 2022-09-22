@@ -34,7 +34,6 @@ class _DecoderState extends State<Decoder> {
               color:  Theme.of(context).textTheme.bodyText1!.color,
            ));
 }
-  int _currentIndex=0;
  
   Widget build(BuildContext context) {
     return GestureDetector (
