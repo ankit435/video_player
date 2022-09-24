@@ -198,8 +198,9 @@ class folder_details with ChangeNotifier {
 
   Future<bool> fetchdatabase() async {
     try {
+      print("loadind data");
       _folder_item = await Storage().localPath();
-      var db = await playerDatabase.instance;
+      //var db = await playerDatabase.instance;
 
       // for (int i = 0; i < _folder_item.length; i++) {
       //   for (int j = 0; j < _folder_item[i].f_detail.length; j++) {

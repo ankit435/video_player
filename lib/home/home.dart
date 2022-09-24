@@ -61,7 +61,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
    //_fetching_data();
-  
+
     Provider.of<recent_videos>(context, listen: false).fetchrecent_video();
     Provider.of<Setting_data>(context, listen: false).set_setting_data();
    
@@ -110,7 +110,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
               ),
               PopupMenuItem(
                   value: 3,
-                  // onTap:   Navigator.of(context).pushNamed(Setting.routeName)
+                 
                   child: ListTile(
                     leading: icons(Icons.settings),
                     title: text("Setting"),
@@ -304,11 +304,10 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
       //print(_isInit);
       if (initData != null && initData) {
         setState(() {
-          // pref.setBool('is_loading', true).then((value) => _isLoading=true);
           _isLoading = true;
         });
         try {
-          //await Future.delayed(const Duration(milliseconds: 500));
+          await Future.delayed(const Duration(milliseconds: 500));
           await Provider.of<folder_details>(context, listen: false)
               .fetchdatabase()  
               .then((_) {
@@ -394,7 +393,6 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
   Future<void> getloaddata() async {
-    print("load data");
     var pref = await SharedPreferences.getInstance();
     await pref.setBool('init_data', true);
     _fetching_data();

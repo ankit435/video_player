@@ -21,6 +21,9 @@ import '../helper/files.dart';
 import '../showdialogbox/Shubtitle_screen.dart';
 import '../showdialogbox/create_timer.dart';
 import '../showdialogbox/show_subtitile.dart';
+import 'package:perfect_volume_control/perfect_volume_control.dart';
+
+
 
 class Play_video extends StatefulWidget {
 
@@ -49,14 +52,25 @@ class _Play_videoState extends State<Play_video> {
   var queue_player;
   double speed = 1.0;
     late Timer _timer;
-    late Timer  _sleep_timer;
+  Timer?  _sleep_timer;
   int _start = 3;
   String? f_id, p_id;
-  int repeat_mode=1;
+  late int repeat_mode;
   int decoder=1;
   int sleep=0;
   bool mirror=false;
   int aspect_ratio=0;
+  double currentvol = 0.5;
+  double current_brightness=0.5;
+
+  double _maxVolume = 1.0;
+  bool _showVolumeStatus = false;
+  Timer? _closeVolumeStatus;
+  double _maxBright_ness = 1.0;
+  bool _showBright_nessStatus = false;
+  Timer? _closeBright_nessStatus;
+  StreamSubscription<double>? volume_subscription ;
+  
 
   List<IconData> icon = [
     Icons.fullscreen,
@@ -94,6 +108,12 @@ class _Play_videoState extends State<Play_video> {
         });
       _controller!.addListener(() {
         setlistenerseeker();
+        if( _controller!.value.isInitialized&&currentDuration==_controller!.value.duration.inMilliseconds){
+       
+            repeat_mode_updated_video();
+
+      }
+        
       });
 
       _controller!.play();
@@ -125,32 +145,45 @@ void setfolderplylist(){
       }
     }
   }
-
-  void initState() {
-    // setState(() {
-    //   //  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    //   index = widget.index;
-    // });
-    startTimer();
-    startsleepTimer();
-    defaultsorenatation();
-    if (mounted) {
-      setfolderplylist();
-      video v = getvideo();
-      _onControllerChange(v);
-      // _controller!.addListener(() {
-      //   setlistenerseeker();
-      // });
-      // _controller!.addListener(() {
-      //   volume_listener();
-      // });
+String buttontype = "none";
+ void initState() {
       repeat_mode_update();
       Hw_sw_decoders();
       if(Provider.of<Setting_data>(context,listen: false).get_setting_remember_aspect_ratio()){
         aspect_ratio=Provider.of<Setting_data>(context,listen: false).get_setting_aspect_ratio();
       }
+    startTimer();
+   //startsleepTimer();
+    defaultsorenatation();
+    if (mounted) {
+      setfolderplylist();
+      video v = getvideo();
+      _onControllerChange(v);
+     Future.delayed(Duration.zero,() async {
+        currentvol = (await PerfectVolumeControl.getVolume());
+        setState(() {
+            //refresh UI
+        });
+    });
+   volume_subscription=  PerfectVolumeControl.stream.listen((volume) {  
+      //volume button is pressed, 
+      // this listener will be triggeret 3 times at one button press
+        
+       if(volume != currentvol){ //only execute button type check once time
+           if(volume > currentvol){ //if new volume is greater, then it up button
+              buttontype = "up";
+           }else{ //else it is down button
+              buttontype = "down";
+           }
+       }
+
+       setState(() {
+          currentvol = volume;
+       });
+    });
 
     }
+    PerfectVolumeControl.hideUI = true;
     super.initState();
   }
   
@@ -161,6 +194,7 @@ void setfolderplylist(){
       setState(() {
         currentDuration = _controller!.value.position.inMilliseconds;
       });
+    
     }
   }
 
@@ -177,8 +211,14 @@ void setfolderplylist(){
   }
   else{
     setState(() {
-       repeat_mode=val;
+      try {
+         repeat_mode=val;
+
        prefs.setInt('repeat_mode', repeat_mode);
+      } catch (e) {
+        print(e);
+      }
+      
     });
 
   }
@@ -205,9 +245,9 @@ void mirror_video_toggel(){
 
 void sleeptimer(){
 
-  if(_sleep_timer.isActive){
-
-    _sleep_timer.cancel();
+  if( _sleep_timer!=null&& _sleep_timer!.isActive){
+    _sleep_timer!.cancel();
+    _sleep_timer=null;
     sleep=0;
   }
   else{
@@ -242,30 +282,27 @@ void startsleepTimer() {
 void repeat_mode_updated_video(){
 
   if(repeat_mode==1){
-    if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+   
       Provider.of<queue_playerss>(context, listen: false).getskipnextvideo();
       _onControllerChange(getvideo());
-    }
-  }
-  else if(repeat_mode==2){
    
-      if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+  }
+  else if(repeat_mode==2){   
         _controller!.seekTo(const Duration(microseconds:0));
         _controller!.play();
-      }
+      
   }
   else if(repeat_mode==3){
-      if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
+      
         Provider.of<queue_playerss>(context, listen: false).get_random_video();
         _onControllerChange(getvideo());
-      }
+     
    
   }
   else if(repeat_mode==4){
-   if (_controller!.value.position.inMicroseconds == _controller!.value.duration.inMicroseconds) {
         Provider.of<queue_playerss>(context, listen: false).get_rotate_video();
         _onControllerChange(getvideo());
-      }
+      
   }
   
 
@@ -312,7 +349,7 @@ else{
 
   @override
   void didChangeDependencies() {
-    print("hello_dispose");
+
     //update_curent_watch_time();
     super.didChangeDependencies();
   }
@@ -323,14 +360,16 @@ void exitfullscreen(){
 }
   @override
   void dispose() {
+   volume_subscription!.cancel();
     super.dispose();
     _timer.cancel();
-   _sleep_timer.cancel();
+    if(_sleep_timer!=null){
+      _sleep_timer!.cancel();
+      _sleep_timer=null;
+    }
+  
     exitfullscreen();
-
     mounted = false;
-
-   
     defaultsorenatation();
 
     if (_controller!.value.isPlaying || _controller != null) {
@@ -338,7 +377,10 @@ void exitfullscreen(){
       _controller!.removeListener(() {
         setlistenerseeker();
       });
+
     }
+    _controller=null;
+
     // update_curent_watch_time();
 
     _controller!.dispose();
@@ -813,7 +855,7 @@ List<Widget> Bottom_button() {
       SizedBox(
         width: 10,
       ),
-      iconbutton(Icons.alarm_rounded,() { _sleep_timer.isActive?_sleep_timer.cancel():
+      iconbutton(Icons.alarm_rounded,() {_sleep_timer!=null&& _sleep_timer!.isActive?_sleep_timer!.cancel():
           showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -824,7 +866,7 @@ List<Widget> Bottom_button() {
                     });
 
 
-      } ,text: _sleep_timer.isActive? formatHHMMSS(sleep):null),
+      } ,text:_sleep_timer!=null&& _sleep_timer!.isActive? formatHHMMSS(sleep):null),
       SizedBox(
         width: 10,
       ),
@@ -974,6 +1016,7 @@ List<Widget> Bottom_button() {
                   min: 0.0,
                   max: _controller!.value.duration.inMilliseconds.toDouble(),
                   value: currentDuration.toDouble(),
+                  label: getDuration(currentDuration.toDouble()),
                   onChanged: (value) {
                     updateseeker(value);
                   },
@@ -1042,8 +1085,11 @@ List<Widget> Bottom_button() {
      return ClosedCaption( text: "Helo", textStyle: TextStyle(color: Colors.red), );
   }
 
+ bool horizontal_dragging=false;
+
   Widget build(BuildContext context) {
     //print("repeat_mode=== "+ repeat_mode.toString());
+  //  / print("currrnt vol"+ currentvol.toString());
     return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(
@@ -1059,18 +1105,18 @@ List<Widget> Bottom_button() {
         //   child:
         //      Align (
         //       alignment: Alignment.centerLeft,
-        //         child: SizedBox(
-        //           height: 200,
-        //           child: RotatedBox (
-        //             quarterTurns: -1,
-        //             child: LinearProgressIndicator(
-        //               minHeight: 20,
-        //               value: 0.89,
-        //               valueColor: AlwaysStoppedAnimation(Colors.purple),
-        //               backgroundColor: Colors.lime,
-        //             ),
-        //           ),
-        //         ),
+                // child: SizedBox(
+                //   height: 200,
+                //   child: RotatedBox (
+                //     quarterTurns: -1,
+                //     child: LinearProgressIndicator(
+                //       minHeight: 20,
+                //       value: 0.89,
+                //       valueColor: AlwaysStoppedAnimation(Colors.purple),
+                //       backgroundColor: Colors.lime,
+                //     ),
+                //   ),
+                // ),
         //       )
         // ),
         // Padding(
@@ -1129,64 +1175,233 @@ List<Widget> Bottom_button() {
                       ],
                     ),
 
+                GestureDetector(
+                  onTap: show_content,
+                 onDoubleTapDown: ( TapDownDetails details){
+                    if(details.globalPosition.dx<MediaQuery.of(context).size.width/2){
+                      backward();
+                    }else{
+                      fastforward();
+                    }
+                 },
 
-              GestureDetector(
-                onHorizontalDragEnd: (details) => fastforward(),
-                onTap: show_content,
-                onDoubleTap: Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
-                  fastforward();
-                }:null,
-                onVerticalDragUpdate: (details) {
-                  int sensitivity = 1;
-                  if (details.delta.dy > sensitivity) {
-                     print("swipe down + "+details.delta.dy .toString() );
-                  } else if (details.delta.dy < -sensitivity) {
-                      print("swipe up + "+details.delta.dy .toString() );
+                onVerticalDragStart: (details){
+                   if(details.globalPosition.dx<MediaQuery.of(context).size.width/2){
+
+                      setState(() {
+                         _closeBright_nessStatus?.cancel();
+                        _showBright_nessStatus=true;
+                      });
+
+                       
+                   }
+                   else{
+                          _closeVolumeStatus?.cancel();
+                           _showVolumeStatus = true;
+
+                   }
+
+                },
+
+                onVerticalDragEnd: (details){
+                    
+                  if(_showVolumeStatus){
+                    _closeVolumeStatus = Timer(Duration(seconds: 1), () {
+                      setState(() {
+                       _closeVolumeStatus?.cancel();
+                      _closeVolumeStatus = null;
+                      _showVolumeStatus = false;
+                      });
+                    });
+                  }
+                  else if(_showBright_nessStatus){
+                   _closeBright_nessStatus = Timer(Duration(seconds: 1), () {
+                      setState(() {
+                       _closeBright_nessStatus?.cancel();
+                      _closeBright_nessStatus = null;
+                      _showBright_nessStatus = false;
+                      });
+                    });
+
                   }
                 },
-                child: ClipPath(
-                  clipper: OvalLeftBorderClipper(
-                      curveHeight: MediaQuery.of(context).size.width),
-                  child: Container(
-                      color: Colors.transparent,
-                      height: double.infinity,
-                      width: double.infinity,
+                  
+
+                 onVerticalDragUpdate: (details) {
+                  int sensitivity = 2;
+          
+                   if(details.globalPosition.dx<MediaQuery.of(context).size.width/2){
+                      // if (details.delta.dy > sensitivity) {
+                      //   print("Bright_nesss swipe down + "+details.delta.dy .toString() );
+                      // } else if (details.delta.dy < -sensitivity) {
+                      //     print("Bright_nesss swipe up + "+details.delta.dy .toString() );
+                      // }
+
+                      print("Bright_nesss swipe up + "+ _showBright_nessStatus.toString() );
+                   }
+                   else{
+                  
+
+                      if (details.delta.dy > sensitivity) {
+                       if(currentvol<0.0){
+                        _setVolume(0.0);
+                      }
+                      else if(currentvol>1.0){
+                        _setVolume (1.0);
+                      }
+                      else{
+                        _setVolume (currentvol-details.delta.dy/100);
+                      }
+                      } else if (details.delta.dy < -sensitivity) {
+                        if(currentvol<0.0){
+                        _setVolume(0.0);
+                      }
+                      else if(currentvol>1.0){
+                        _setVolume (1.0);
+                      }
+                      else{
+                        _setVolume (currentvol-details.delta.dy/100);
+                      }
+                      }
+                   
+                   }
                       
 
-        //               child: RotatedBox(quarterTurns: -1,
-        // child: LinearProgressIndicator(
-        //   value: 0.12,
-        // ),),
+                    
+                      
+                    
+                       
+                   
+                },
 
-                      ),
+                onHorizontalDragUpdate: (details){
+
+                  int sensitivity = 1;
+                  if (details.delta.dx > sensitivity) {
+                    print("swipe right + "+details.delta.dx .toString() );
+                  } else if (details.delta.dx < -sensitivity) {
+                      print("swipe left + "+details.delta.dx .toString() );
+                  }
+
+                },
+
+                onLongPress: (){},
+                // onLongPressStart: (details){
+                //   horizontal_dragging=true;
+                //   },
+
+                
+               
+                onLongPressMoveUpdate: (details){
+                     _seekToRelativePosition(details.localPosition, true);
+              
+                },
+              
+                // onLongPressEnd: (details){
+                //   horizontal_dragging=false;
+                //   _controller!.play();
+                //   },
+                
+
+                 onDoubleTap: (){},
+                  child: Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    color: Colors.transparent,
+                    child: _showVolumeStatus||_showBright_nessStatus?Align(
+                      alignment: _showVolumeStatus? Alignment.centerLeft:Alignment.centerRight,
+                      
+                    child: Padding(
+                          padding: _showVolumeStatus?EdgeInsets.only(left:10.0):EdgeInsets.only(right:10.0),
+                          child: SizedBox(
+                  height: 200,
+                  child: RotatedBox (
+                    quarterTurns: -1,
+                    child: LinearProgressIndicator(
+                      minHeight: 20,
+                      value: _showVolumeStatus? currentvol:current_brightness,
+                      valueColor: AlwaysStoppedAnimation(Colors.purple),
+                      backgroundColor: Colors.lime,
+                    ),
+                  ),
                 ),
-              ),
-             GestureDetector(
-               onTap: show_content,
-               onDoubleTap:Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
-                 print("left");
-                 backward();
-               }:null,
-               onVerticalDragUpdate: (details) {
-                 int sensitivity = 0;
-                 if (details.delta.dy > sensitivity) {
-                 print("swipe down");
-                 } else if (details.delta.dy < -sensitivity) {
-                 print("swipe up");
-                 }
-               },
-               child: ClipPath(
-                 clipper: OvalRightBorderClipper(
-                     curveHeight: MediaQuery.of(context).size.height),
-                 child: Container(
-                     color: Colors.transparent,
-                     height: double.infinity,
-                     width: double.infinity,
+                        ),
+                    ):Container(),
+                  ),
+                    
+
+                  // onHorizontalDragUpdate: (details) {
+                  //   if (details.delta.dx > 0) {
+                  //     // swiped right
+                  //     setState(() {
+                  //       backward();
+                  //     });
+                  //   } else if (details.delta.dx < 0) {
+                  //     // swiped left
+                  //     setState(() {
+                  //       fastforward();
+                  //     });
+                  //   }
+                  // },
+                ),
+
+        //       GestureDetector(
+        //         onHorizontalDragEnd: (details) => fastforward(),
+        //         onTap: show_content,
+        //         onDoubleTap: Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
+        //           fastforward();
+        //         }:null,
+                // onVerticalDragUpdate: (details) {
+                //   int sensitivity = 1;
+                //   if (details.delta.dy > sensitivity) {
+                //      print("swipe down + "+details.delta.dy .toString() );
+                //   } else if (details.delta.dy < -sensitivity) {
+                //       print("swipe up + "+details.delta.dy .toString() );
+                //   }
+                // },
+        //         child: ClipPath(
+        //           clipper: OvalLeftBorderClipper(
+        //               curveHeight: MediaQuery.of(context).size.width),
+        //           child: Container(
+        //               color: Colors.transparent,
+        //               height: double.infinity,
+        //               width: double.infinity,
+                      
+
+        // //               child: RotatedBox(quarterTurns: -1,
+        // // child: LinearProgressIndicator(
+        // //   value: 0.12,
+        // // ),),
+
+        //               ),
+        //         ),
+        //       ),
+        //      GestureDetector(
+        //        onTap: show_content,
+        //        onDoubleTap:Provider.of<Setting_data>(context,listen: false).get_setting_double_tap_fast_forward()? () {
+        //          print("left");
+        //          backward();
+        //        }:null,
+        //        onVerticalDragUpdate: (details) {
+        //          int sensitivity = 0;                
+        //          if (details.delta.dy > sensitivity) {
+        //          print("swipe down");
+        //          } else if (details.delta.dy < -sensitivity) {
+        //          print("swipe up");
+        //          }
+        //        },
+        //        child: ClipPath(
+        //          clipper: OvalRightBorderClipper(
+        //              curveHeight: MediaQuery.of(context).size.height),
+        //          child: Container(
+        //              color: Colors.transparent,
+        //              height: double.infinity,
+        //              width: double.infinity,
                      
-                    // child: LinearProgressIndicator(value: 0.3),
-                     ),
-               ),
-             ),
+        //             // child: LinearProgressIndicator(value: 0.3),
+        //              ),
+        //        ),
+        //      ),
               show && !lock
                   ? Container(
                       child: Column(
@@ -1232,5 +1447,29 @@ List<Widget> Bottom_button() {
             ],
           ),
         ));
+  }
+  
+
+  
+  void _seekToRelativePosition(Offset localPosition, bool bool) {
+    if (_controller!.value.duration == null) {
+      return;
+    }
+    final RenderBox box = context.findRenderObject() as RenderBox;
+
+    final Offset tapPos = box.globalToLocal(localPosition);
+    final double relativePosition = tapPos.dx / box.size.width;
+    final Duration position = _controller!.value.duration *
+        relativePosition;
+    if (position >= Duration.zero && position <= _controller!.value.duration ) {
+      _controller!.seekTo(position);
+    }
+    
+  }
+  
+  void _setVolume(double d) {
+
+  PerfectVolumeControl.setVolume(d);
+    
   }
 }
