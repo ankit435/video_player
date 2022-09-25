@@ -77,11 +77,18 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Widget text(String text) {
-    return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.start,}) {
+    return AutoSizeText(text,
+    maxLines: maxLines,
+    textAlign:align,
+    overflow: TextOverflow.ellipsis,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
 
   Widget _Popups() {
@@ -460,10 +467,12 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
 
  
   Widget build(BuildContext context) {
-    folder_list = Provider.of<folder_details>(context, listen: true).items();
+    folder_list = Provider.of<folder_details>(context, listen: true).video_items();
     queue = Provider.of<queue_playerss>(context, listen: true).getqueuevideo();
 
-    return Scaffold(body: LayoutBuilder(
+    return Scaffold(
+      
+      body: LayoutBuilder(
       builder: (context, constraints) {
         return Container(
           
@@ -490,7 +499,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                             Icons.folder,
                             color: IconTheme.of(context).color,
                           ),
-                          title: text("Recently Played"),
+                          title: text("Recently Played",),
                           onTap: (){
                             Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>const Files(

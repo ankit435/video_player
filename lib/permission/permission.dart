@@ -140,9 +140,6 @@ void initState() {
   }
 }
 
-
-
-
 class ImagePermissions extends StatelessWidget {
   final int isPermanent;
   final VoidCallback onPressed;
@@ -155,7 +152,7 @@ class ImagePermissions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("isPermanent=="+isPermanent.toString());
+   
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar( 

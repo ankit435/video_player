@@ -54,7 +54,7 @@ class _Manage_scan_listState extends State<Manage_scan_list> {
   }
   @override
   Widget build(BuildContext context) {
-  folder_list= Provider.of<folder_details>(context, listen: true).items();
+  folder_list= Provider.of<folder_details>(context, listen: true).video_items();
    return DefaultTabController(
         length: 2,
         child: Scaffold(

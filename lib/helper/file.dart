@@ -64,6 +64,7 @@ class folder with ChangeNotifier {
   final DateTime f_timestamp;
   int f_size;
   bool show = false;
+  List<Music>f_music = [];
 
   folder({
     required this.f_id,
@@ -73,9 +74,40 @@ class folder with ChangeNotifier {
     required this.f_timestamp,
     required this.f_size,
     this.show=false,
+    required this.f_music,
   });
 }
+class Music with ChangeNotifier {
+  final String m_id;
+  String m_title;
+  String m_path;
+  bool show = false;
+  String? m_artist;
+  String? m_album;
+  String? m_duration;
+  String? m_thumbnail;
+  String? m_albumart;
+  String? m_discnumber;
+  String? m_lyrics;
+  String? m_format;
+  String? m_filesize;
+  String? m_filetype;
+  String? m_fileextension;
+  String? m_folder;
+  String? m_playlist;
+  String? m_lastmodified;
 
+
+
+
+  Music({
+    required this.m_id,
+    required this.m_title,
+    required this.m_path,
+    this.show=false,
+  });
+
+}
 
 class video with ChangeNotifier {
   final String v_id;
@@ -196,39 +228,39 @@ class video with ChangeNotifier {
       playlist_id: playlist_id ?? this.playlist_id,
     );
   }
-
-  
-
   
 }
 
 
 
-final String Video_databasename = 'Video_Table';
 
 
-class video_database{
+
+// final String Video_databasename = 'Video_Table';
 
 
-static final List<String> values =[ 
-  Video_id,Video_name,Video_path,Video_size,Video_date,Video_duration,Video_folder_id, Video_thumbnail_path,Video_open,Video_lastmodified,Video_favourite,Video_watched,Video_playlist_id
-  ];
+// class video_database{
 
- // static final String Video_table = 'Video_Table';
-  static final String Video_id = 'v_id';
-  static final String Video_name = 'v_title';
-  static final String Video_path = 'v_videoPath';
-  static final String Video_size = 'v_size';
-  static final String Video_date = 'v_timestamp';
-  static final String Video_duration = 'v_duration';
-  static final String Video_watched = 'v_watched';
-  static final String Video_folder_id = 'parent_folder_id';
-  static final String Video_thumbnail_path = 'v_thumbnailPath';
-  static final String Video_open = "v_open";
-  static final String Video_favourite = "v_favourite";
-  static final String Video_lastmodified="v_lastmodified";
-  static final String Video_ListedTime="ListedTime";
-  static final String Video_playlist_id="playlist_id";
+
+// static final List<String> values =[ 
+//   Video_id,Video_name,Video_path,Video_size,Video_date,Video_duration,Video_folder_id, Video_thumbnail_path,Video_open,Video_lastmodified,Video_favourite,Video_watched,Video_playlist_id
+//   ];
+
+//  // static final String Video_table = 'Video_Table';
+//   static final String Video_id = 'v_id';
+//   static final String Video_name = 'v_title';
+//   static final String Video_path = 'v_videoPath';
+//   static final String Video_size = 'v_size';
+//   static final String Video_date = 'v_timestamp';
+//   static final String Video_duration = 'v_duration';
+//   static final String Video_watched = 'v_watched';
+//   static final String Video_folder_id = 'parent_folder_id';
+//   static final String Video_thumbnail_path = 'v_thumbnailPath';
+//   static final String Video_open = "v_open";
+//   static final String Video_favourite = "v_favourite";
+//   static final String Video_lastmodified="v_lastmodified";
+//   static final String Video_ListedTime="ListedTime";
+//   static final String Video_playlist_id="playlist_id";
 
 
  
@@ -236,41 +268,41 @@ static final List<String> values =[
 
 
 
-}
+// }
 
 
-class favourite with ChangeNotifier {
-  final int v_id;
-  String v_title;
-  final String v_videoPath;
-  final String v_thumbnailPath;
-  final String v_duration;
-  final DateTime v_timestamp;
-  final String v_watched;
-  bool v_favourites;
+// class favourite with ChangeNotifier {
+//   final int v_id;
+//   String v_title;
+//   final String v_videoPath;
+//   final String v_thumbnailPath;
+//   final String v_duration;
+//   final DateTime v_timestamp;
+//   final String v_watched;
+//   bool v_favourites;
 
-  bool v_open;
+//   bool v_open;
 
-  favourite({
-    required this.v_id,
-    required this.v_title,
-    required this.v_thumbnailPath,
-    required this.v_videoPath,
-    required this.v_duration,
-    required this.v_timestamp,
-    required this.v_watched,
-    this.v_favourites = false,
-    this.v_open = false,
-  });
-  void toggleBoostStatus() {
-    v_open = true;
-    notifyListeners();
-  }
+//   favourite({
+//     required this.v_id,
+//     required this.v_title,
+//     required this.v_thumbnailPath,
+//     required this.v_videoPath,
+//     required this.v_duration,
+//     required this.v_timestamp,
+//     required this.v_watched,
+//     this.v_favourites = false,
+//     this.v_open = false,
+//   });
+//   void toggleBoostStatus() {
+//     v_open = true;
+//     notifyListeners();
+//   }
 
-  void togglefavstatus() {
-    notifyListeners();
-  }
-}
+//   void togglefavstatus() {
+//     notifyListeners();
+//   }
+// }
 
 // class Hide_list with ChangeNotifier {
 //   final int h_id;

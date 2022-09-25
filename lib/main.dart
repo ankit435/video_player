@@ -17,6 +17,7 @@ import 'package:video/showdialogbox/Decoder.dart';
 import 'package:video/theme/theme_constants.dart';
 import 'package:video/theme/theme_create.dart';
 
+import 'Music_player/Music_play_screent.dart';
 import 'Playlist/playlist_file.dart';
 import 'Playlist/video_song_screen/video_and_song_screent.dart';
 import 'helper/files.dart';
@@ -107,9 +108,7 @@ Future<void> loaddata() async {
        ChangeNotifierProvider.value(
           value: folder_details()
         ),
-        ChangeNotifierProvider.value(
-          value: favourite_details()
-        ),
+      
         ChangeNotifierProvider.value(
           value: video_details()
         ),
@@ -142,6 +141,7 @@ Future<void> loaddata() async {
         Create_theme.routeName:(context) => Create_theme(),
         Play_video.routeName:(context) => Play_video(),
         Manage_scan_list.routeName:(context) => Manage_scan_list(),
+        Music_play_screen.routeName:(context) => Music_play_screen(),
 
       },
     ),);

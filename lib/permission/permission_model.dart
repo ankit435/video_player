@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 // This enum will manage the overall state of the app
 enum VideoSection {
   noStoragePermission,
+  // ignore: constant_identifier_names
   Nofullpermission, // Permission denied, but not forever
   noStoragePermissionPermanent, // Permission denied forever
   browseFiles,

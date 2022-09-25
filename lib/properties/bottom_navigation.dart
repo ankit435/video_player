@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Music/music.dart';
+import '../Music_player/Music_play_screent.dart';
 import '../Playlist/playlist_screen.dart';
 import '../Videos/video.dart';
 import '../helper/files.dart';

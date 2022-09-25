@@ -1,6 +1,7 @@
 
 
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -74,11 +75,18 @@ class _Playlist_ScreenState extends State<Playlist_Screen> {
         .remove_playlist_folder(p_id);
   }
 
-  Widget text(String text) {
-    return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.start,}) {
+    return AutoSizeText(text,
+    maxLines: maxLines,
+    textAlign:align,
+    overflow: TextOverflow.ellipsis,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
 
   Widget _body() {

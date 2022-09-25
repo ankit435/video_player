@@ -18,11 +18,17 @@ class Subtitle_screen extends StatefulWidget {
 
 class _Subtitle_screenState extends State<Subtitle_screen> {
   @override
-  Widget text(String text) {
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.center,}) {
     return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+    maxLines: maxLines,
+    textAlign:align,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
 
   Widget build(BuildContext context) {

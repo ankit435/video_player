@@ -14,11 +14,17 @@ class playback_slider extends StatefulWidget {
 
 class _playback_sliderState extends State<playback_slider> {
   @override
-  Widget text(String text) {
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.center,}) {
     return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+    maxLines: maxLines,
+    textAlign:align,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
   Widget iconbutton(double spe) {
     return SizedBox.fromSize(

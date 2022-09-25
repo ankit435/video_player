@@ -48,11 +48,17 @@ class _FilesState extends State<Files> {
     "Length": false
   };
   bool sortrevrsed = false;
-  Widget text(String text) {
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.center,}) {
     return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+    maxLines: maxLines,
+    textAlign:align,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
 
   void _videoproprties(BuildContext context, String vId, String fId) {

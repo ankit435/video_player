@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -146,7 +147,7 @@ class _Playlist_fileState extends State<Playlist_file> {
                 return ListTile(
                     key: ValueKey(index),
                     leading: iconbutton(Icons.queue_play_next_outlined, () {}),
-                    title: text(playLists[index].v_title),
+                    title: text(playLists[index].v_title,maxLines: 2),
                     onTap: () {
                       Provider.of<queue_playerss>(context, listen: false)
                           .add_video_list_in_queue(index, playLists,
@@ -163,11 +164,18 @@ class _Playlist_fileState extends State<Playlist_file> {
     );
   }
 
-  Widget text(String text) {
-    return Text(text,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyText1!.color,
-        ));
+ Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.start,}) {
+    return AutoSizeText(text,
+    maxLines: maxLines,
+    textAlign:align,
+    overflow: TextOverflow.ellipsis,
+    style: style?? TextStyle(
+      color:color?? Theme.of(context).textTheme.bodyText1!.color,
+      fontSize: size,
+      fontWeight: weight,
+    //  fontFamily: 'Roboto',
+    ),);
+
   }
 
   Widget build(BuildContext context) {

@@ -265,20 +265,48 @@ class folder_details with ChangeNotifier {
 
 
 
-  List<folder> items() {
-    return _folder_item;
+  List<folder> video_items() {
+    List<folder> temp = [];
+    _folder_item.forEach((element) { 
+      if(element.f_detail.length>0){
+        temp.add(element);
+      }
+    });
+    return temp;
+  }
+
+  List<folder>Music_item(){
+    List<folder>temp=[];
+      _folder_item.forEach((element) {
+      
+        if(element.f_music.isNotEmpty){
+        temp.add(element);
+      }});
+
+    return temp;
   }
 
   List<video> getAllvideo() {
     List<video> videos = [];
     for (var element in _folder_item) {
-      if(element.show==false){
+      if(element.show==false&&element.f_detail.isNotEmpty){
       videos.addAll(element.f_detail);
       }
     }
-
     return videos;
   }
+
+  List<Music>get_all_music(){
+    List<Music>Musics=[];
+     _folder_item.forEach((element) {
+      if(element.f_music.isNotEmpty){
+        Musics.addAll(element.f_music);
+      }
+     });
+    return Musics;
+  }
+
+
 
   int folder_index(String fId) {
     int index = _folder_item.indexWhere((element) => element.f_id == fId);
@@ -655,15 +683,15 @@ class video_details with ChangeNotifier {
 }
 
 // ignore: camel_case_types
-class favourite_details with ChangeNotifier {
-  List<favourite> _favourites = [];
+// class favourite_details with ChangeNotifier {
+//   List<favourite> _favourites = [];
 
-  List<favourite> findByAlias(String title) {
-    return _favourites
-        .where((fav) => fav.v_title.contains(title.toLowerCase()))
-        .toList();
-  }
-}
+//   List<favourite> findByAlias(String title) {
+//     return _favourites
+//         .where((fav) => fav.v_title.contains(title.toLowerCase()))
+//         .toList();
+//   }
+// }
 
 // class Hide_list_detail extends folder_details {
 //   List<Hide_list> _Hide_list_detail = [];
@@ -1034,43 +1062,6 @@ class PlayList_detail with ChangeNotifier {
   }
 }
 
-// class queue_playerss with ChangeNotifier{
-
-//   static queue_player? q=null;
-
-// void setvideo_controler(VideoPlayerController controllers){
-//   q!.controller=controllers;
-//   notifyListeners();
-// }
-
-//   void add_video_list_in_queue(int currindex,List<video> videos){
-//     //q.controller=controllers;
-//     print("ji");
-//     q!.curentindex=currindex;
-//     q!.queue_video_list=videos;
-//     notifyListeners();
-//   }
-
-// queue_player? getqueuevideo(){
-//   return q;
-// }
-
-// String getcurrentvideo(int index){
-//   return q!.queue_video_list[index].v_videoPath;
-// }
-// String getskipnextvideo(int index){
-//   if(index>=q!.queue_video_list.length)
-//     return "";
-//   return q!.queue_video_list[index].v_videoPath;
-// }
-// String getskipprevvideo(int index){
-//   if(index<0)
-//     return "";
-//   return q!.queue_video_list[index].v_videoPath;
-// }
-
-// }
-
 class queue_playerss with ChangeNotifier {
   VideoPlayerController? controller;
   String? f_id = null;
@@ -1078,14 +1069,9 @@ class queue_playerss with ChangeNotifier {
   static int curentindex = -1;
   List<video> queue_video_list = [];
   static bool b_play = false;
+  List<Music> queue_music_list = [];
 
-  //  queue_player({
-  //   this.controller=null,
-  //   required this.curentindex,
-  //   required this.queue_video_list,
-  //   this.b_play=false,
-
-  // });
+  
 
   void setvideo_controler(VideoPlayerController controllers) {
     controller = controllers;

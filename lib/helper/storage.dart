@@ -8,7 +8,8 @@ import 'package:video_player/video_player.dart';
 import 'neo_player/player.dart';
 
 class Storage {
-  static Set<String> ext = {'MP4', 'FLV', 'MOV', 'MKV', 'AVI', 'WMV'};
+  static Set<String> vid_ext = {'MP4', 'FLV', 'MOV', 'MKV', 'AVI', 'WMV'};
+  static Set<String>Mus_ext={ 'MP3' };
 
   int v_id = 0;
   int f_id = 0;
@@ -39,7 +40,7 @@ class Storage {
 
   static bool isVideo(FileSystemEntity file) {
     if (file is File) {
-      return ext.contains(getFileExtensions(file).toUpperCase());
+      return vid_ext.contains(getFileExtensions(file).toUpperCase());
     } else {
       throw "FileSystemEntity is Directory, not a File";
     }
@@ -57,20 +58,6 @@ class Storage {
 
 
 
-// Future<String?> Createvideothumbail(File path) async{
-//   var dir = await video_thumbail();
-//   var thumbnail = await VideoThumbnail.thumbnailFile(
-//     video: path.path,
-//     thumbnailPath: dir.path,
-//     imageFormat: ImageFormat.JPEG,
-//     maxHeight: 128, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
-//     quality: 7,
-//   );
-//   print(thumbnail.toString());
-//   return thumbnail;
-
-// }
-
   String idGenerator() {
     final now = DateTime.now();
     return now.microsecondsSinceEpoch.toString();
@@ -83,8 +70,11 @@ class Storage {
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
-  static bool filterExtension(String extension) {
-    return ext.contains(extension.toUpperCase());
+  static bool filterVideoExtension(String extension) {
+    return vid_ext.contains(extension.toUpperCase());
+  }
+  static bool filterMusicExtension(String extension) {
+    return Mus_ext.contains(extension.toUpperCase());
   }
 
   String getFileExtension(String fileName) {
@@ -95,18 +85,6 @@ class Storage {
     }
   }
 
-  // Future<int> getVideowatchduration( String path) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   int? v_id = prefs.getInt(path);
-  //   if(v_id ==null)
-  //   {
-  //     await prefs.setInt(path, 0);
-  //     return 0;
-  //   }
-  //   return v_id;
-  // }
-  
-  
 
       String get_thumbail_path(String path){
       String filename = folder_name(path);
@@ -157,7 +135,8 @@ class Storage {
 
   void getfolder(List root, List<folder> folders, String parent, dynamic size,
       int t_id, int z_id) async {
-    List<video> file = [];
+    List<video> videos = [];
+    List<Music> Musics = [];
     String f_id = parent;
 
     for (var i in root) {
@@ -168,12 +147,12 @@ class Storage {
               i.absolute.path, 0, t_id++, 0);
         } else {
           // file.add(i.absolute.path);
-          if (filterExtension(getFileExtensions(i))) {
+          String extension=getFileExtensions(i);
+          if (filterVideoExtension(extension)) {
             size += i.lengthSync();
             //Future<String?> thum= Createvideothumbail(i);
              List<String> watched=await getVideowatchduration(i.absolute.path);
-            file.add(
-             
+            videos.add(
               video(
                 parent_folder_id: f_id,
                 v_id: i.absolute.path,
@@ -192,20 +171,27 @@ class Storage {
               ),
             );
           }
+          if(filterMusicExtension(extension)){
+            Musics.add(Music(m_id:i.absolute.path, m_title: folder_name(i.absolute.path,), m_path: i.absolute.path,)
+            );
+          }
+
         }
       }
     }
 
-    if (file.isNotEmpty) {
+    if (videos.isNotEmpty||Musics.isNotEmpty) {
       // print("f_id == "+f_id.toString()+"  ,  v_id== "+v_id.toString()+" , file len == "+file.length.toString());
       folder newfolder = folder(
           f_id: f_id,
           f_title: folder_name(parent),
           f_path: parent,
-          f_detail: file,
+          f_detail: videos,
           f_timestamp: DateTime.now(),
           f_size: size,
-          show: await getshowfolder_video(parent)
+          show: await getshowfolder_video(parent),
+          f_music: Musics,
+          
           );
       folders.add(newfolder);
     }
