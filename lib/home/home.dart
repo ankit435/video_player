@@ -78,7 +78,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
  Widget text(String text,{TextStyle? style,double size=16,maxLines,Color? color,FontWeight? weight , TextAlign align= TextAlign.start,}) {
-    return AutoSizeText(text,
+    return Text(text,
     maxLines: maxLines,
     textAlign:align,
     overflow: TextOverflow.ellipsis,
@@ -550,7 +550,7 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
   }
 
   Widget bottom_background() {
-    return queue[0] && queue[3].length > 0
+    return Provider.of<Video_player>(context, listen: true). get_is_mounted() && queue[3].length > 0
         ? Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -563,8 +563,10 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     iconbutton(Icons.close, () {
-                      Provider.of<queue_playerss>(context, listen: false)
-                          .togle_bacground_play();
+                      setState(() {
+                         Provider.of<Video_player>(context, listen: false).dispose();
+                      });
+                    
                     }),
                     iconbutton(Icons.disc_full, () {
                       Navigator.of(context).pushNamed(Play_video.routeName);
@@ -586,11 +588,10 @@ class _FlutterDemoState extends State<FlutterDemo> with WidgetsBindingObserver {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     iconbutton(
-                        queue[1].value.isPlaying
+                       Provider.of<Video_player>(context, listen: true).get_is_playing()
                             ? Icons.pause
                             : Icons.play_arrow, () {
-                      Provider.of<queue_playerss>(context, listen: false)
-                          .updatecontoler_play_pause();
+                              Provider.of<Video_player>(context, listen: false).play_pause();
                     }),
                     iconbutton(Icons.skip_next, () {
                       // print(queue[0]);

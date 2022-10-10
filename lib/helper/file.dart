@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:video/helper/theme_model.dart';
-import 'package:video_player/video_player.dart';
+
 
 // final String folder_databasename  = 'folder_databasename';
 // final String playlist_databasename = 'Playlists';
@@ -82,6 +81,7 @@ class Music with ChangeNotifier {
   String m_title;
   String m_path;
   bool show = false;
+  String m_f_id;
   String? m_artist;
   String? m_album;
   String? m_duration;
@@ -93,7 +93,7 @@ class Music with ChangeNotifier {
   String? m_filesize;
   String? m_filetype;
   String? m_fileextension;
-  String? m_folder;
+  
   String? m_playlist;
   String? m_lastmodified;
 
@@ -102,6 +102,7 @@ class Music with ChangeNotifier {
 
   Music({
     required this.m_id,
+    required this.m_f_id,
     required this.m_title,
     required this.m_path,
     this.show=false,
@@ -485,3 +486,5 @@ class recent_video with ChangeNotifier {
         time_stamp = json[Recent_video.time_stamp],
         videos = video.fromJson(jsonDecode(json[Recent_video.videos]));
 }
+
+

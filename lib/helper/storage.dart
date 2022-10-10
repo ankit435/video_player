@@ -49,7 +49,7 @@ class Storage {
   Future<Directory> video_thumbail() async {
     //var dir = await getExternalStorageDirectory();
     //var path = dir?.path;
-    var directory = Directory("/storage/emulated/0/neo_player/");
+    var directory = Directory("/storage/emulated/0/.neo_player/");
     if (!await directory.exists()) {
       await directory.create();
     }
@@ -85,12 +85,18 @@ class Storage {
     }
   }
 
-
-      String get_thumbail_path(String path){
+String get_file_title(String path)
+{
       String filename = folder_name(path);
       var lastSeparator = filename.lastIndexOf('.');
       var newPath = filename.substring(0, lastSeparator);
-     return  "/storage/emulated/0/neo_player/$newPath.jpg";
+  return newPath;
+}
+
+      String get_thumbail_path(String path){
+      
+      String new_path=get_file_title(path);
+     return  "/storage/emulated/0/.neo_player/$new_path.jpg";
 }
 
 
@@ -154,7 +160,7 @@ class Storage {
              List<String> watched=await getVideowatchduration(i.absolute.path);
             videos.add(
               video(
-                parent_folder_id: f_id,
+                parent_folder_id: parent,
                 v_id: i.absolute.path,
                 v_title: folder_name(i.absolute.path),
                 v_thumbnailPath: gethumbail(i.absolute.path),
@@ -172,7 +178,7 @@ class Storage {
             );
           }
           if(filterMusicExtension(extension)){
-            Musics.add(Music(m_id:i.absolute.path, m_title: folder_name(i.absolute.path,), m_path: i.absolute.path,)
+            Musics.add(Music(m_id:i.absolute.path, m_title: folder_name(i.absolute.path,), m_path: i.absolute.path,m_f_id: parent )
             );
           }
 
@@ -279,7 +285,7 @@ String? rename_thumbaile(String? path,String newtitle)
           if (File(oldpath).existsSync()) {
              var lastSeparator = newtitle.lastIndexOf('.');
              var newPath = newtitle.substring(0, lastSeparator);
-             String new_thumbail_path="/storage/emulated/0/neo_player/" + newPath + ".jpg";
+             String new_thumbail_path="/storage/emulated/0/.neo_player/" + newPath + ".jpg";
              File(oldpath).renameSync(new_thumbail_path);
              return new_thumbail_path;
 

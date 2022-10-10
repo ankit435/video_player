@@ -1,16 +1,18 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video/Playlist/playlist_file.dart';
+
 import 'package:video/helper/file.dart';
 import 'package:video/helper/storage.dart';
 import 'package:video/helper/theme_model.dart';
-import 'package:video/theme/theme_constants.dart';
+
 import 'package:video_player/video_player.dart';
+
+import 'package:audioplayers/audioplayers.dart';
 
 import 'neo_player/player.dart';
 
@@ -305,6 +307,11 @@ class folder_details with ChangeNotifier {
      });
     return Musics;
   }
+
+
+Music getmusic(String M_id,String P_id){
+return _folder_item.firstWhere((element) => element.f_id==P_id).f_music.firstWhere((element) => element.m_id==M_id);
+}
 
 
 
@@ -1166,6 +1173,8 @@ class queue_playerss with ChangeNotifier {
     return queue_video_list[curentindex].v_videoPath;
   }
 
+
+
   String video_title() {
     try {
       return queue_video_list[curentindex].v_title;
@@ -1561,6 +1570,811 @@ int skip_time=10;
 
 
 
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+class Audio_player with ChangeNotifier{
+  AudioPlayer? audioPlayer = AudioPlayer();
+  PlayerState? playerState;
+  Duration? duration;
+  Duration? position;
+  String? audioPath;
+  bool mounted = false;
+  bool isPlaying = false;
+  bool isPaused = false;
+  bool isStopped = false;
+  bool isCompleted = false;
+  bool isLooping = false;
+  bool isShuffle = false;
+  bool isMuted = false;
+  bool isSeeking = false;
+  bool isBuffering = false;
+  bool isSeekComplete = false;
+  double volume = 1.0;
+  
+  Audio_player(){
+    initAudioPlayer();
+  }
+
+  
+  
+  void initAudioPlayer() {
+    audioPlayer = AudioPlayer();
+    audioPlayer!.setReleaseMode(ReleaseMode.stop);
+    // audioPlayer!.setNotification(
+    //   title: 'Audio Player',
+    //   forwardSkipInterval: Duration(seconds: 30),
+    //   backwardSkipInterval: Duration(seconds: 30),
+    //   duration: duration,
+    //   elapsedTime: position,
+    //   hasNextTrack: true,
+    //   hasPreviousTrack: true,
+    //   stopEnabled: true,
+    //   playPauseEnabled: true,
+    // );
+    audioPlayer!.onPlayerStateChanged.listen((state) {
+      if (!mounted) return;
+      playerState = state;
+      if (state == PlayerState.playing) {
+         audioPlayer!.getDuration().then((d) {
+          duration = d;
+        });
+      } 
+      
+      else if (state == PlayerState.stopped) {
+        isStopped = true;
+        position = Duration(seconds: 0);
+        audioPlayer!.stop();
+      }
+      notifyListeners();
+    });
+
+    audioPlayer!.onPlayerComplete.listen((event) {
+      isCompleted = true;
+      notifyListeners();
+    });
+
+    audioPlayer!.onPositionChanged.listen((p) {
+      if (!isSeeking) {
+        position = p;
+      }
+      notifyListeners();
+    });
+
+    audioPlayer!.onDurationChanged.listen((d) {
+      duration = d;
+      notifyListeners();
+    });
+    
+    
+    
+   
+
+
+
+
+    // audioPlayer!.onNotificationPlayerStateChanged.listen((state) {
+    //   if (!mounted) return;
+    //   playerState = state;
+    //   if (state == PlayerState.playing) {
+    //     audioPlayer!.getDuration().then((d) {
+    //       duration = d;
+    //     });
+    //   } else if (state == PlayerState.stopped) {
+    //     isStopped = true;
+    //     position = Duration(seconds: 0);
+    //     audioPlayer!.stop();
+    //   }
+    //   notifyListeners();
+    // });
+    
+  }
+
+  void play() async {
+  try {
+    await audioPlayer!.play(DeviceFileSource(audioPath!)); 
+    isPlaying = true;
+    isPaused = false;
+    isStopped = false;
+    isCompleted = false;
+    mounted = true;
+    notifyListeners();
+  } catch (e) {
+    print('Playing error: $e');
+  }
+ 
+ 
+  }
+
+  void pause() async {
+    await audioPlayer!.pause();
+    isPlaying = false;
+    isPaused = true;
+    isStopped = false;
+    isCompleted = false;
+    notifyListeners();
+  }
+
+  void stop() async {
+    await audioPlayer!.stop();
+    isPlaying = false;
+    isPaused = false;
+    isStopped = true;
+    isCompleted = false;
+    notifyListeners();
+  }
+
+  void completed() async{
+    await audioPlayer!.stop();
+    isPlaying = false;
+    isPaused = false;
+    isStopped = false;
+    isCompleted = true;
+    notifyListeners();
+  }
+
+  void seekToSecond(int second) {
+    //isSeeking = true;
+    Duration newDuration = Duration(seconds: second);
+    audioPlayer!.seek(newDuration);
+  }
+
+  void setVolume(double volume) {
+    audioPlayer!.setVolume(volume);
+  }
+
+  void setLoop(bool Loop) {
+    audioPlayer!.setReleaseMode(Loop ? ReleaseMode.loop : ReleaseMode.release);
+  }
+
+  void setShuffle(bool shuffle) {
+    audioPlayer!.setReleaseMode(shuffle ? ReleaseMode.loop : ReleaseMode.release);
+  }
+
+  void setMute(bool mute) {
+    audioPlayer!.setVolume(mute ? 0.0 : 1.0);
+  }
+
+  void setSpeed(double speed) {
+    audioPlayer!.setPlaybackRate(speed);
+  }
+
+  void onPlayerStateChanged(PlayerState state) {
+    playerState = state;
+    if (state == PlayerState.playing) {
+      audioPlayer!.getDuration().then((value) {
+        duration = value;
+      });
+    } else if (state == PlayerState.stopped) {
+      isPlaying = false;
+      position = Duration(seconds: 0);
+    }
+    notifyListeners();
+  }
+
+  void onPlayerCompletion() {
+    isPlaying = false;
+    isPaused = false;
+    isStopped = false;
+    isCompleted = true;
+    position = Duration(seconds: 0);
+    notifyListeners();
+  }
+
+  void onDurationChanged(Duration d) {
+    duration = d;
+    notifyListeners();
+  }
+
+  void onAudioPositionChanged(Duration p) {
+    position = p;
+    notifyListeners();
+  }
+
+  void onSeekComplete() {
+    isSeekComplete = true;
+    notifyListeners();
+  }
+
+  void onPlayerError(String message) {
+    print('audioPlayer error : $message');
+    notifyListeners();
+  }
+
+  void onPlayerBuffering(bool isBuffering) {
+    this.isBuffering = isBuffering;
+    notifyListeners();
+  }
+
+  void onPlayerSeeking(bool isSeeking) {
+    this.isSeeking = isSeeking;
+    notifyListeners();
+  }
+
+
+  void dispose() {
+    print("dispose caolled");
+    audioPlayer!.dispose();
+    audioPlayer = null;
+    mounted=false;
+    super.dispose();
+  }
+
+
+  void play_pause(){
+    if(mounted){
+     if(audioPlayer!.state==PlayerState.playing){
+      audioPlayer!.pause();
+      isPlaying = false;
+      isPaused = true;
+     }
+    else{
+      audioPlayer!.resume();
+      isPlaying = true;
+      isPaused = false;
+    }
+    notifyListeners();
+
+    }
+  }
+
+
+
+
+  void set_audio_path(String? path){
+    if(path==audioPath||path==null){
+      return;
+    }
+    if(audioPlayer!.state==PlayerState.playing||audioPlayer!.state==PlayerState.paused){
+        audioPlayer!.setReleaseMode(ReleaseMode.stop).then((value) => {
+        isPaused=true,
+        isPlaying=false,
+        isStopped=true,
+        audioPath = path,
+          play(),
+      });
+    }
+    else{
+      audioPath = path;
+      play();
+    }
+    notifyListeners();
+  }
+
+  String? get_audio_path(){
+    return audioPath;
+  }
+
+  bool get_is_playing(){
+    return isPlaying;
+  }
+
+  bool get_is_paused(){
+    return isPaused;
+  }
+
+  bool get_is_stopped(){
+    return isStopped;
+  }
+
+  bool get_is_completed(){
+    return isCompleted;
+  }
+
+  bool get_is_looping(){
+    return isLooping;
+  }
+
+
+  bool get_is_shuffle(){
+    return isShuffle;
+  }
+
+  bool get_is_muted(){
+    return isMuted;
+  }
+
+  bool get_is_buffering(){
+    return isBuffering;
+  }
+
+  bool get_is_seek_complete(){
+    return isSeekComplete;
+  }
+
+  bool get_is_seek(){
+    return isSeeking;
+  }
+
+  int get_duration(){
+    return duration==null?0:duration!.inSeconds;
+  }
+
+  int get_position(){
+    return position==null||isStopped?0: position!.inSeconds;
+  }
+
+  double get_volume(){
+    return volume;
+  }
+
+  bool get_is_mounted(){
+    return mounted;
+  }
+
+ 
+
+
+
+
+
+
+}
+
+
+
+
+class Video_player with ChangeNotifier{
+
+  VideoPlayerController? videoPlayerController;
+  String ? videoPath;
+  Duration? duration;
+  Duration? position;
+  bool is_initailized = false;
+  bool mounted = false;
+  bool isPlaying = false;
+  bool isPaused = false;
+  bool isStopped = false;
+  bool isCompleted = false;
+  bool isLooping = false;
+  bool isShuffle = false;
+  bool isMuted = false;
+  bool isSeeking = false;
+  bool is_mounted=false;
+  double volume = 0.5;
+  double speed = 1.0;
+  late double aspect_ratio;
+  
+
+
+Video_player(){
+  _init();
+}
+
+void _init() async
+{
+ 
+try {
+
+// if(mounted&&videoPlayerController!=null){
+//   videoPlayerController!.dispose();
+//   videoPlayerController = null;
+//   mounted=false;
+//   notifyListeners();
+// }
+
+if(videoPath==null){
+  return;
+}
+videoPlayerController = VideoPlayerController.file(File(videoPath!));
+   videoPlayerController!.initialize().then((_) {
+    duration = videoPlayerController!.value.duration;
+    aspect_ratio=videoPlayerController!.value.aspectRatio;
+    mounted = true;
+    is_initailized = true;
+    notifyListeners();
+  });
+
+  //  videoPlayerController!.setNotification(
+  //     title: 'Video Player',
+  //     forwardSkipInterval: Duration(seconds: 30),
+  //     backwardSkipInterval: Duration(seconds: 30),
+  //     duration: duration,
+  //     elapsedTime: position,
+  //     hasNextTrack: true,
+  //     hasPreviousTrack: true,
+  //     stopEnabled: true,
+  //     playPauseEnabled: true,
+  //   );
+
+// videoPlayerController!.onNotificationPlayerStateChanged.listen((value) {
+//       if (!mounted) return;
+      
+//       if (videoPlayerController!.value.isPlaying) {
+//         duration = videoPlayerController!.value.duration;
+//       } else if (videoPlayerController!.value.isInitialized) {
+//         isStopped = true;
+//         position = Duration(seconds: 0);
+//         videoPlayerController!.pause();
+//       }
+//       notifyListeners();
+//     });
+
+  //  print( "is_int  " + is_initailized.toString() +" mounted   "+mounted.toString() + duration.toString());
+ // if(!mounted)return;
+  
+  videoPlayerController!.addListener(() {
+   // if (!mounted) return;
+    if (videoPlayerController!.value.hasError) {
+      print('Video Error: ${videoPlayerController!.value.errorDescription}');
+      return;
+    }
+  });
+
+
+  videoPlayerController!.addListener(() {
+  //  if (!mounted) return;
+    if (videoPlayerController!.value.isInitialized) {
+      isPlaying = false;
+      isPaused = false;
+      isStopped = false;
+      isCompleted = false;
+      is_initailized=true;
+    }
+    notifyListeners();
+  });
+
+ 
+ 
+
+  videoPlayerController!.addListener(() {
+    //if (!mounted) return;
+    if (videoPlayerController!.value.isPlaying) {
+      isPlaying = true;
+      isPaused = false;
+      isStopped = false;
+      isCompleted = false;
+    } else {
+      isPlaying = false;
+      isPaused = false;
+      isStopped = true;
+      isCompleted = false;
+    }
+    notifyListeners();
+  });
+  videoPlayerController!.addListener(() {
+   // if (!mounted) return;
+    if (videoPlayerController!.value.isLooping) {
+      isLooping = true;
+    } else {
+      isLooping = false;
+    }
+    notifyListeners();
+  });
+  videoPlayerController!.addListener(() {
+    //if (!mounted) return;
+    if (videoPlayerController!.value.isBuffering) {
+      isPlaying = false;
+      isPaused = false;
+      isStopped = false;
+      isCompleted = false;
+    }
+    notifyListeners();
+  });
+  videoPlayerController!.addListener(() {
+      position = videoPlayerController!.value.position;
+      notifyListeners();
+   
+  });
+
+  videoPlayerController!.addListener(() {
+    //if (!mounted) return;
+    if ( videoPlayerController!.value.isInitialized&& videoPlayerController!.value.duration.inMilliseconds==position!.inMilliseconds) {
+      isPlaying = false;
+      isPaused = false;
+      isStopped = false;
+      isCompleted = true;
+      position = Duration(seconds: 0);
+    notifyListeners();
+    }
+    
+  });
+
+ //videoPlayerController!.setLooping(isLooping);
+  videoPlayerController!.setVolume(volume);
+  videoPlayerController!.play();
+  isPlaying = true;
+  isPaused = false;
+  isStopped = false;
+  isCompleted = false;
+  mounted = true;
+  is_initailized = true;
+  notifyListeners();
+
+} catch (e) {
+
+  print(e);
+
+  
+}
+
+}
+
+void play() async {
+  if(!mounted)return;
+  await videoPlayerController!.play();
+  isPlaying = true;
+  isPaused = false;
+  isStopped = false;
+  isCompleted = false;
+  mounted = true;
+  notifyListeners();
+}
+
+void pause() async {
+  if(!mounted)return;
+  await videoPlayerController!.pause();
+  isPlaying = false;
+  isPaused = true;
+  isStopped = false;
+  isCompleted = false;
+  mounted = true;
+  notifyListeners();
+}
+
+void stop() async {
+  if(!mounted)return;
+  await videoPlayerController!.pause();
+  isPlaying = false;
+  isPaused = false;
+  isStopped = true;
+  isCompleted = false;
+ // mounted = true;
+  notifyListeners();
+}
+
+void complete() async {
+  if(!mounted)return;
+  await videoPlayerController!.pause();
+  isPlaying = false;
+  isPaused = false;
+  isStopped = false;
+  isCompleted = true;
+  mounted = true;
+  
+  notifyListeners();
+}
+
+void set_volume(double volume) async {
+  if(!mounted)return;
+  await videoPlayerController!.setVolume(volume);
+  this.volume = volume;
+  notifyListeners();
+}
+
+void set_looping(bool isLooping) async {
+  if(!mounted)return;
+  await videoPlayerController!.setLooping(isLooping);
+  this.isLooping = isLooping;
+  notifyListeners();
+}
+
+
+void set_shuffle(bool isShuffle) async {
+  if(!mounted)return;
+  this.isShuffle = isShuffle;
+  notifyListeners();
+}
+
+
+void set_muted() async {
+  if(!mounted)return;
+  await videoPlayerController!.setVolume(!isMuted ? 0.0 : volume);
+  this.isMuted = !isMuted;
+  notifyListeners();
+}
+
+
+void seek_to(Duration duration) async {
+  if(!mounted)return;
+  await videoPlayerController!.seekTo(duration);
+  notifyListeners();
+}
+
+
+void seek_to_position(int position) async {
+  if(!mounted)return;
+  await videoPlayerController!.seekTo(Duration(milliseconds: position));
+  notifyListeners();
+}
+
+
+void set_play_speed(double speed) async {
+  if(!mounted)return;
+  await videoPlayerController!.setPlaybackSpeed(speed);
+  notifyListeners();
+}
+
+void set_aspect_ratio(double aspect_ratio) async {
+  if(!mounted)return;
+  this.aspect_ratio = aspect_ratio;
+  notifyListeners();
+}
+
+
+
+
+void onPlayerStateChanged(VideoPlayerValue state) {
+  if (state.isPlaying) {
+    duration = state.duration;
+  } else if (state.isBuffering) {
+    isPlaying = false;
+    position = Duration(seconds: 0);
+  }
+  notifyListeners();
+
+}
+
+void onSeekComplete() {
+  isSeeking = true;
+  notifyListeners();
+}
+
+
+void onPlayerError(String message) {
+  print('videoPlayer error : $message');
+  notifyListeners();
+}
+
+void onPlayerBuffering(bool isBuffering) {
+  this.isSeeking = isBuffering;
+  notifyListeners();
+}
+
+void onPlayerSeeking(bool isSeeking) {
+  this.isSeeking = isSeeking;
+  notifyListeners();
+}
+
+
+void dispose(){
+  print("dispose caolled");
+  //stop();
+  
+  videoPlayerController!.dispose();
+  videoPlayerController = null;
+  mounted=false;
+  isPlaying = false;
+  isPaused = false;
+  isStopped = false;
+  isCompleted = false;
+  notifyListeners();
+  super.dispose();
+}
+
+
+void play_pause(){
+  if(mounted){
+    if(isPlaying){
+      pause();
+    }else{
+      play();
+    }
+  }
+}
+
+bool checkOld_controller() {
+  if (videoPlayerController != null) {
+    if (videoPlayerController!.value.isInitialized) {
+      videoPlayerController!.pause();
+      final oldController = videoPlayerController;
+        oldController!.dispose().then((value) => {
+        notifyListeners(),
+      });
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+    return false;
+
+
+ 
+
+}
+
+  void set_video_path(String? path){
+    if(path==videoPath||path==null){
+      return;
+    }
+    if(checkOld_controller()){
+         videoPath = path;
+        _init();
+      }
+    
+    else{
+         videoPath = path;
+        _init();
+    }
+    
+   
+    notifyListeners();
+  }
+
+  VideoPlayerController? get_video_player_controller(){
+    return videoPlayerController;
+  }
+
+  double get_aspect_ratio(){
+    return aspect_ratio;
+  }
+
+
+  String? get_video_path(){
+    return videoPath;
+  }
+
+  bool get_is_playing(){
+    return isPlaying;
+  }
+
+  bool get_is_paused(){
+    return isPaused;
+  }
+
+  bool get_is_stopped(){
+    return isStopped;
+  }
+  bool get_is_completed(){
+    return isCompleted;
+  }
+
+  bool get_is_looping(){
+    return isLooping;
+  }
+
+
+  bool get_is_shuffle(){
+    return isShuffle;
+  }
+
+  bool get_is_muted(){
+    
+    return isMuted;
+  }
+
+
+
+  // bool get_is_buffering(){
+  //   return is_Buffering;
+  // }
+
+  // bool get_is_seek_complete(){
+  //   return isSeekComplete;
+  // }
+
+  bool get_is_seek(){
+    return isSeeking;
+  }
+
+  int get_duration(){
+    return duration==null?0:duration!.inMilliseconds;
+  }
+
+  int get_position(){
+    return position==null?0:position!.inMilliseconds;
+  }
+
+  // double get_volume(){
+  //   return volume;
+  // }
+
+  bool get_is_mounted(){
+    return mounted;
+  }
 
 
 

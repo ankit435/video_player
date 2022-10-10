@@ -93,7 +93,7 @@ class _Grid_view_fileState extends State<Grid_view_file> {
   Future<Directory> video_thumbail() async{
   //var dir = await getExternalStorageDirectory();
   //var path = dir?.path;
-  var directory = Directory("/storage/emulated/0/neo_player/");
+  var directory = Directory("/storage/emulated/0/.neo_player/");
   if (!await directory.exists()) {
     await directory.create();
   }

@@ -11,6 +11,7 @@ import 'package:video/helper/storage.dart';
 import 'package:video/helper/theme_model.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../helper/files.dart';
+
 import '../video_player/video_play.dart';
 
 class Files_path extends StatefulWidget {
@@ -150,7 +151,7 @@ class _CharacteristListItemState extends State<Files_path> {
 Future<Directory> video_thumbail() async{
   //var dir = await getExternalStorageDirectory();
   //var path = dir?.path;
-  var directory = Directory("/storage/emulated/0/neo_player/");
+  var directory = Directory("/storage/emulated/0/.neo_player/");
   if (!await directory.exists()) {
     await directory.create();
   }
@@ -158,8 +159,9 @@ Future<Directory> video_thumbail() async{
 }
 
 Future<String?> Createvideothumbail(File path) async{
- 
+
   var dir = await video_thumbail();
+
   var thumbnail = await VideoThumbnail.thumbnailFile(
     video: path.path,
     thumbnailPath: dir.path,
@@ -237,17 +239,18 @@ void update_thumbail(String thum){
           : () {
               // file dettai pass to context of video;
               //  print(widget.index);
-
+            print("tapped");
               Provider.of<queue_playerss>(context, listen: false)
                   .add_video_list_in_queue(widget.index, widget.file_path,f_id: widget.file_path[widget.index].parent_folder_id);
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(
-              //     builder: (context) => Play_video(
-              //         f_id: widget.file_path[widget.index].parent_folder_id),
+              //     builder: (context) => Demo_palyer(
+              //         v_path: widget.file_path[widget.index].v_videoPath),
               //   ),
               // );
               Navigator.of(context).pushNamed(Play_video.routeName);
+             //Demo_palyer( v_path: widget.file_path[widget.index].v_videoPath,);
             },
       onLongPress: widget.onPressed1 != null&&widget.recent_played==false
           ? () {

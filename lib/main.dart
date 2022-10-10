@@ -102,7 +102,9 @@ Future<void> loaddata() async {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        
+        ChangeNotifierProvider.value(value: Video_player()),
+        ChangeNotifierProvider.value(value: Audio_player()),
+
         ChangeNotifierProvider.value(value: recent_videos()),
         
        ChangeNotifierProvider.value(
@@ -141,7 +143,7 @@ Future<void> loaddata() async {
         Create_theme.routeName:(context) => Create_theme(),
         Play_video.routeName:(context) => Play_video(),
         Manage_scan_list.routeName:(context) => Manage_scan_list(),
-        Music_play_screen.routeName:(context) => Music_play_screen(),
+       // Music_play_screen.routeName:(context) => Music_play_screen(),
 
       },
     ),);

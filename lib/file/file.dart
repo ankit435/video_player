@@ -502,7 +502,7 @@ class _FilesState extends State<Files> {
   }
 
   Widget bottom_play_bar() {
-    return queue[0] && queue[3].length > 0
+    return Provider.of<Video_player>(context, listen: true).get_is_mounted() && queue[3].length > 0
         ? Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -515,8 +515,7 @@ class _FilesState extends State<Files> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     iconbutton(Icons.close, () {
-                      Provider.of<queue_playerss>(context, listen: false)
-                          .togle_bacground_play();
+                     Provider.of<Video_player>(context, listen: false).dispose();
                     }),
                     iconbutton(Icons.disc_full, () {
                       Navigator.of(context).pushNamed(Play_video.routeName);
@@ -538,11 +537,10 @@ class _FilesState extends State<Files> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     iconbutton(
-                        queue[1].value.isPlaying
+                       Provider.of<Video_player>(context, listen: true).get_is_playing()
                             ? Icons.pause
                             : Icons.play_arrow, () {
-                      Provider.of<queue_playerss>(context, listen: false)
-                          .updatecontoler_play_pause();
+                              Provider.of<Video_player>(context, listen: false).play_pause();
                     }),
                     iconbutton(Icons.skip_next, () {}),
                     iconbutton(Icons.menu, () {
